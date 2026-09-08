@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner.svg" alt="Engenharia de Software Seguro">
+</p>
+
 # Engenharia de Software Seguro
 
 ## Trabalho Final
