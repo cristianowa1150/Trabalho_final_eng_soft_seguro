@@ -32,6 +32,9 @@ O trabalho tem como objetivos:
 - Compreender o conceito de detecção de intrusões;
 - Compreender o conceito de DevSecOps.
 
+- <img width="1600" height="843" alt="WhatsApp Image 2026-09-03 at 19 11 34" src="https://github.com/user-attachments/assets/2f786386-9324-4349-830b-a2463935fe0e" />
+
+
 ---
 
 ## Engenharia de Software Seguro
