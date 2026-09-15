@@ -4,6 +4,8 @@
 
 # Engenharia de Software Seguro
 
+[![AWS Academy Educator](https://img.shields.io/badge/AWS%20Academy-Educator-FF9900?logo=amazonaws&logoColor=white)](https://aws.amazon.com/training/awsacademy/)
+
 ## Trabalho Final
 
 Trabalho final desenvolvido para a disciplina de **Engenharia de Software Seguro**, abordando conceitos, práticas e estratégias relacionadas ao desenvolvimento seguro de software.
