@@ -27,35 +27,37 @@
 ### 3. Repudiation (Repúdio)
 
 * O sistema de logs (RNF15) irá registrar com exatidão o momento e o IP de quando um artista(usuário)aceita uma comissão ou de quando um cliente aprova o serviço? 
-> **Resposta:** [Insira a resposta aqui]
+> **Resposta:** Sim. As ações relevantes, como aceite de propostas, aprovação de serviços e alterações de contratação, deverão ser registradas com identificação do usuário, data e hora, ação realizada e identificação da contratação. O sistema poderá registrar o endereço IP e outras informações técnicas necessárias para auditoria, respeitando as regras de privacidade e retenção de dados. Os registros deverão ser protegidos contra alterações indevidas e acesso não autorizado. A data e hora deverão ser armazenadas em formato consistente, preferencialmente UTC, para evitar problemas de fuso horário. O objetivo é permitir reconstruir o histórico de uma contratação e auxiliar na resolução de disputas.
+
 
 * Se houver uma disputa ou denúncia (RF42), teremos um histórico imutável das mensagens e negociações feitas dentro da plataforma para o administrador analisar?
-> **Resposta:** [Insira a resposta aqui]
+> **Resposta:** Sim. A plataforma deverá preservar um histórico das mensagens e negociações relevantes para contratações e denúncias. As propostas aceitas, recusadas ou alteradas deverão ser registradas com suas condições, autor e data. O histórico não deverá ser alterado unilateralmente por clientes ou artistas. Para mensagens, o sistema não permitirá exclusão delas. O administrador terá acesso ao histórico somente quando necessário para resolver denúncias, conflitos ou questões de segurança, com registro de seus acessos.
 
 * De acordo com a lei 13709 LGPD caso algum usuário solicite seus dados, ou sua exclusão o controlador dará esta opção no sistema? 
-> **Resposta:** [Insira a resposta aqui]
+> **Resposta:** Sim. A plataforma deverá disponibilizar mecanismos para que os usuários solicitem acesso, correção e exclusão de seus dados pessoais, conforme os direitos previstos na LGPD. O sistema deverá permitir que o usuário solicite seus dados por meio de uma área de privacidade ou canal oficial de atendimento. Também deverá permitir a solicitação de exclusão da conta. A exclusão não deverá necessariamente apagar imediatamente todos os registros, pois dados relacionados a obrigações legais, contratações e resolução de conflitos poderão precisar ser preservados durante um período definido. Os dados que não forem mais necessários deverão ser excluídos ou anonimizados conforme as regras aplicáveis. O tratamento deverá respeitar os direitos dos titulares e as medidas de segurança previstas na LGPD.
 
 
 ### 4. Information Disclosure (Divulgação de Informações)
 * Além de utilizar HTTPS (RNF04) e criptografar senhas (RNF02), os dados sensíveis dos clientes e artistas (como informações de pagamento, se houver no futuro, e dados cadastrais do RF03) estarão criptografados no banco de dados, e o banco estará no mesmo servidor da aplicação?
-> **Resposta:** [Insira a resposta aqui]
+> **Resposta:** As senhas não serão armazenadas de forma reversível, utilizando hash seguro. Dados pessoais que necessitem de proteção adicional poderão ser criptografados em repouso, conforme a arquitetura escolhida. Inicialmente, a aplicação poderá utilizar um servidor de aplicação separado do banco de dados, permitindo restringir o acesso direto ao banco e reduzir a superfície de ataque.
 
 * Como garantimos que a funcionalidade de busca e filtros (RF15 a RF19) não permita, via técnicas de injeção (ex: SQLi ou GraphQL abuse), a extração em massa da base de usuários?
-> **Resposta:** [Insira a resposta aqui]
+> **Resposta:** A busca e os filtros deverão utilizar consultas parametrizadas ou mecanismos de ORM que evitem a concatenação direta de entradas fornecidas pelo usuário em consultas SQL. Inicialmente pensei em deixar os tópicos de busca pré-definidos, deixando aos artistas apenas a função de selecionar quais os estilos que ele faz. E a área de busca do usuário seria uma busca facetada, sem necessariamente escrever uma entrada (Similar ao Ifood).
+
 ### 5. Denial of Service (Negação de Serviço)
 * O upload de imagens para os portfólios (RF08) terá limite de tamanho e taxa de requisições por minuto (Rate Limiting) para evitar que a plataforma fique sem espaço ou caia?
-> **Resposta:** [Insira a resposta aqui]
+> **Resposta:** Sim. O upload de imagens deverá possuir limites de tamanho e quantidade de arquivos permitidos por usuário. O sistema deverá validar o formato e o conteúdo dos arquivos, além de limitar a frequência de uploads por usuário para evitar abuso. Também deverá existir um limite de armazenamento por conta ou por artista, conforme a capacidade da infraestrutura. Os arquivos deverão ser armazenados de maneira segura, e o sistema deverá monitorar o consumo de espaço. Caso um usuário ultrapasse os limites, a aplicação deverá informar o motivo e impedir novos uploads até que o limite seja liberado ou ajustado.
 
 * As operações de busca e filtragem (RNF06) possuem paginação e limites rígidos? O que impede um robô de fazer buscas complexas repetidas vezes até esgotar os recursos do servidor, violando a disponibilidade (RNF17)?
-> **Resposta:** [Insira a resposta aqui]
+> **Resposta:** Sim. As operações de busca e filtragem deverão utilizar paginação e limites máximos de resultados por requisição. O sistema deverá limitar a frequência de consultas por usuário ou endereço IP, evitando que robôs realizem buscas excessivas. As consultas deverão ser otimizadas e utilizar índices no banco de dados quando necessário. Filtros que possam gerar consultas muito complexas deverão ser limitados ou validados, uma vez que a busca será por meio de uma busca facetada muitas dessas possibilidades serão reduzidas. Também deverão ser implementados mecanismos de monitoramento para identificar padrões de abuso e reduzir o impacto sobre a disponibilidade da plataforma. Os limites exatos deverão ser definidos após testes de desempenho e análise da infraestrutura.
 
 
 ### 6. Elevation of Privilege (Elevação de Privilégios)
 * O sistema que define os tipos de perfil (RF05) tem validações rigorosas no backend para impedir que um usuário recém-criado altere seu próprio status no banco para "Administrador" (violando o acesso à área do RF38)?
-> **Resposta:** [Insira a resposta aqui]
+> **Resposta:** Sim. O tipo de perfil e as permissões deverão ser controlados pelo _backend_. O sistema não deverá confiar em valores enviados pelo cliente para definir se um usuário é administrador. Usuários recém-criados deverão receber apenas as permissões padrão, como cliente. Caso desejem atuar como artistas, deverão realizar o cadastro ou ativação do perfil de artista conforme as regras da plataforma. A atribuição de permissões administrativas deverá ser restrita a uma operação autorizada, realizada por um administrador existente ou por um processo administrativo seguro. O banco de dados deverá impedir alterações indevidas nas permissões por usuários comuns, e os _endpoints_ administrativos deverão validar as permissões do usuário autenticado, no caso de administradores ainda sendo obrigatório a verificação em duas etapas.
 
 * Como vamos isolar a área administrativa das funções normais de cliente/artista para garantir que endpoints de moderação (RF40 e RF43) jamais sejam executados sem um token de administrador válido?
-> **Resposta:** [Insira a resposta aqui]
+> **Resposta:** A área administrativa deverá ser separada das funcionalidades comuns de cliente e artista, utilizando autenticação e autorização específicas. Cada endpoint administrativo deverá validar o token de autenticação e verificar se o usuário possui o papel e as permissões necessárias para realizar a ação. A aplicação não deverá confiar apenas na ocultação de botões da interface. Mesmo que um cliente tente acessar diretamente uma URL ou enviar uma requisição manualmente, o backend deverá bloquear a operação caso ele não possua autorização. As ações de moderação, bloqueio de contas e alteração de conteúdos deverão ser registradas em logs, permitindo identificar o administrador responsável.
 
 * Vamos implementar alguma stored procedure no banco para garantir consistencia?
-> **Resposta:** [Insira a resposta aqui]
+> **Resposta:**A utilização de _stored procedures_ poderá ser considerada para operações que exijam regras de integridade ou consistência no banco de dados. Entretanto, não será obrigatório utilizar stored procedures em todas as operações. A consistência deverá ser garantida principalmente por meio de transações, _constraints_, chaves estrangeiras e validações no _backend_.
