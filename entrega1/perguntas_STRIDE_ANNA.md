@@ -6,13 +6,7 @@
 ### Sobre o fluxo e o que tem valor
 
 * Você pode descrever uma contratação completa, desde a busca pelo artista até a conclusão? Quem participa de cada etapa?
-> **Resposta:** O cliente inicia o processo pesquisando artistas por meio de filtros, como estilo de arte, tipo de comissão e outras características. Em seguida, visualiza os perfis, portfólios, preços-base e condições de trabalho dos artistas disponíveis.
-
-Após escolher um artista, o cliente envia uma solicitação de comissão, informando as características desejadas para o trabalho. O artista recebe a solicitação e pode aceitar, recusar ou negociar o preço, prazo e condições do serviço.
-
-Quando ambas as partes concordam, a contratação é registrada na plataforma com as condições definidas. O artista realiza o trabalho e envia a entrega pelo sistema. O cliente pode solicitar revisões conforme o combinado e, após receber o trabalho, confirmar a conclusão da comissão.
-
-Ao final, o cliente poderá avaliar o artista e o serviço prestado. De fundo tambem haveria o **Administrador** que atua na moderação, resolução de conflitos e manutenção da plataforma, quando necessário.
+> **Resposta:** O cliente inicia o processo pesquisando artistas por meio de filtros, como estilo de arte, tipo de comissão e outras características. Em seguida, visualiza os perfis, portfólios, preços-base e condições de trabalho dos artistas disponíveis. Após escolher um artista, o cliente envia uma solicitação de comissão, informando as características desejadas para o trabalho. O artista recebe a solicitação e pode aceitar, recusar ou negociar o preço, prazo e condições do serviço. Quando ambas as partes concordam, a contratação é registrada na plataforma com as condições definidas. O artista realiza o trabalho e envia a entrega pelo sistema. O cliente pode solicitar revisões conforme o combinado e, após receber o trabalho, confirmar a conclusão da comissão. Ao final, o cliente poderá avaliar o artista e o serviço prestado. De fundo tambem haveria o **Administrador** que atua na moderação, resolução de conflitos e manutenção da plataforma, quando necessário.
 
 * Qual seria o pior incidente possível para você como dono da plataforma? Quem seria prejudicado e por quê?
 > **Resposta:** Acredito que o pior incidente possível seria de um acesso não autorizado a alguma conta, principalmente referente a contas de artista, levando-o a perder a conta com *comissions* já contratadas, as avaliações da conta ou ter alguém se passando pelo artista em questão e roubando projetos e clientes dele.
@@ -30,9 +24,7 @@ Ao final, o cliente poderá avaliar o artista e o serviço prestado. De fundo ta
 
 ### 2. Tampering (Adulteração)
 * Se o artista alterar preço, prazo ou número de revisões depois do aceite, o pedido deve preservar as condições anteriores? Quando uma mudança é permitida?
-> **Resposta:** Sim. Após o aceite de uma proposta, a contratação deverá preservar as condições acordadas, incluindo preço, prazo, quantidade de revisões e características do serviço. O artista poderá alterar os valores e condições dos serviços que ainda não foram contratados, mas essas alterações não deverão modificar automaticamente uma contratação já aceita.
-
-Caso seja necessário alterar uma contratação existente, a mudança deverá ser apresentada ao cliente como uma nova proposta ou alteração contratual, **exigindo a concordância das partes**. O sistema deverá manter o histórico das condições anteriores e das alterações realizadas, evitando que uma das partes modifique unilateralmente os termos acordados.
+> **Resposta:** Sim. Após o aceite de uma proposta, a contratação deverá preservar as condições acordadas, incluindo preço, prazo, quantidade de revisões e características do serviço. O artista poderá alterar os valores e condições dos serviços que ainda não foram contratados, mas essas alterações não deverão modificar automaticamente uma contratação já aceita. Caso seja necessário alterar uma contratação existente, a mudança deverá ser apresentada ao cliente como uma nova proposta ou alteração contratual, **exigindo a concordância das partes**. O sistema deverá manter o histórico das condições anteriores e das alterações realizadas, evitando que uma das partes modifique unilateralmente os termos acordados.
 
 * O administrador poderá corrigir preços, propostas ou pedidos? Quais alterações exigem justificativa ou comunicação às partes?
 > **Resposta:** O administrador poderá corrigir informações administrativas ou atuar na resolução de conflitos, mas não deverá alterar livremente os termos de uma contratação sem justificativa. Alterações em preços, propostas, prazos ou condições de pedidos deverão ser registradas em um histórico, contendo o responsável, a data, o motivo e os dados anteriores e posteriores à alteração. Quando a alteração afetar diretamente uma contratação, as partes envolvidas deverão ser comunicadas.
@@ -43,45 +35,41 @@ Caso seja necessário alterar uma contratação existente, a mudança deverá se
 * Quais ações precisam registrar autor, data e condições vigentes?
 > **Resposta:** A plataforma deverá registrar as ações relevantes para a segurança e para a resolução de conflitos. Contendo, quando aplicável, o autor da ação, data e hora, identificação da contratação, condições vigentes e informações necessárias para reconstruir o histórico do evento. Sendo as ações:
 
-- Cadastro, login e alterações de conta.
+> Cadastro, login e alterações de conta.
 
-- Criação e alteração de perfis e portfólios.
+> Criação e alteração de perfis e portfólios.
 
-- Cadastro e alteração de preços, prazos e condições de comissões.
+> Cadastro e alteração de preços, prazos e condições de comissões.
 
-- Envio, aceite, recusa e alteração de propostas.
+> Envio, aceite, recusa e alteração de propostas.
 
-- Mensagens e alterações relevantes na negociação.
+> Mensagens e alterações relevantes na negociação.
 
-- Criação, alteração, cancelamento e conclusão de contratações.
+> Criação, alteração, cancelamento e conclusão de contratações.
 
-- Envio e recebimento de arquivos de entrega.
+> Envio e recebimento de arquivos de entrega.
 
-- Ações administrativas, como bloqueios e alterações realizadas por moderadores.
+> Ações administrativas, como bloqueios e alterações realizadas por moderadores.
 
 * Se o artista afirmar que entregou e o cliente disser que não recebeu, o que será considerado evidência de entrega?
-> **Resposta:** A evidência de entrega deverá ser baseada no registro da própria plataforma, incluindo o arquivo enviado, o autor do envio, a data e hora e a identificação da contratação. O sistema deverá registrar o status da entrega e permitir que o cliente confirme o recebimento. Caso haja divergência, o histórico da contratação, os registros de envio e as mensagens relacionadas poderão ser utilizados pelo administrador para analisar o conflito.
-
-A plataforma deverá evitar que uma das partes consiga apagar ou alterar unilateralmente os registros necessários para essa análise.
+> **Resposta:** A evidência de entrega deverá ser baseada no registro da própria plataforma, incluindo o arquivo enviado, o autor do envio, a data e hora e a identificação da contratação. O sistema deverá registrar o status da entrega e permitir que o cliente confirme o recebimento. Caso haja divergência, o histórico da contratação, os registros de envio e as mensagens relacionadas poderão ser utilizados pelo administrador para analisar o conflito. A plataforma deverá evitar que uma das partes consiga apagar ou alterar unilateralmente os registros necessários para essa análise.
 
 * Se uma das partes apagar a conta ou uma mensagem, o que precisa continuar disponível para resolver um conflito?
 > **Resposta:** A exclusão de uma conta não deverá apagar imediatamente os registros necessários para resolver conflitos relacionados a contratações já realizadas.
 
-Deverão ser preservados, conforme as regras de retenção da plataforma:
+> Deverão ser preservados, conforme as regras de retenção da plataforma:
 
-- Histórico das contratações.
+> Histórico das contratações.
 
-- Propostas aceitas e condições acordadas.
+> Propostas aceitas e condições acordadas.
 
-- Registros de pagamentos, caso existam dentro do sistema.
+> Registros de pagamentos, caso existam dentro do sistema.
 
-- Evidências de entrega e arquivos necessários para análise.
+> Evidências de entrega e arquivos necessários para análise.
 
-- Registros de ações administrativas.
+> Registros de ações administrativas.
 
-- Mensagens.
-
-  Mensagens não devem ser possíveis de serem apagadas, apenas por adiministradores.
+> Mensagens. De forma que mensagens não devem ser possíveis de serem apagadas, apenas por administradores.
 
 
 
@@ -93,17 +81,17 @@ Deverão ser preservados, conforme as regras de retenção da plataforma:
 * Os administradores precisam acessar todas as conversas e arquivos, ou apenas em determinadas situações?
 > **Resposta:** Os administradores não deverão ter acesso irrestrito às conversas e arquivos dos usuários. O acesso deverá ocorrer apenas quando necessário para atividades legítimas da plataforma, como:
 
-- Resolução de denúncias e conflitos.
+> Resolução de denúncias e conflitos.
 
-- Investigação de fraude ou abuso.
+> Investigação de fraude ou abuso.
 
-- Moderação de conteúdo.
+> Moderação de conteúdo.
 
-- Atendimento de suporte autorizado.
+> Atendimento de suporte autorizado.
 
-- Cumprimento de obrigações legais.
+> Cumprimento de obrigações legais.
 
-O acesso deverá ser limitado por permissões, registrado em logs e restrito às informações necessárias para a finalidade da análise. Sempre que possível, o usuário deverá ser informado quando seus dados forem acessados para fins de moderação ou resolução de conflitos.
+> O acesso deverá ser limitado por permissões, registrado em logs e restrito às informações necessárias para a finalidade da análise. Sempre que possível, o usuário deverá ser informado quando seus dados forem acessados para fins de moderação ou resolução de conflitos.
 
 * O que deve acontecer com arquivos e dados após a exclusão de uma conta?
 > **Resposta:** A exclusão da conta deverá iniciar um processo de tratamento dos dados do usuário, considerando a finalidade dos dados e as regras de retenção da plataforma. Dados que não sejam mais necessários deverão ser excluídos ou anonimizados, conforme as regras de privacidade aplicáveis. Entretanto, informações relacionadas a contratações, disputas, registros de segurança ou obrigações legais poderão precisar ser preservadas durante um período definido.
@@ -111,21 +99,21 @@ O acesso deverá ser limitado por permissões, registrado em logs e restrito às
 * Quais dados serão públicos e quais serão privados? Isso muda quando uma solicitação vira contratação?
 > **Resposta:** Antes da contratação, as informações públicas serão aquelas necessárias para o cliente conhecer o artista e seus serviços:
 
-- Nome de exibição.
+> Nome de exibição.
 
-- Descrição do perfil.
+> Descrição do perfil.
 
-- Portfólio.
+> Portfólio.
 
-- Categorias e tags.
+> Categorias e tags.
 
-- Tipos de comissão.
+> Tipos de comissão.
 
-- Preços-base e prazos informados.
+> Preços-base e prazos informados.
 
-Para o artista estará disponível apenas o nome do contratante.
+> Para o artista estará disponível apenas o nome do contratante.
 
-Dados privados, como e-mail, mensagens, informações cadastrais e propostas de negociação, deverão ser protegidos. Quando uma solicitação virar contratação, as partes poderão ter acesso às informações necessárias para executar o serviço, como condições acordadas, prazo, arquivos de referência e dados da comissão. A contratação não deverá tornar automaticamente públicos os dados privados do cliente ou do artista.
+> Dados privados, como e-mail, mensagens, informações cadastrais e propostas de negociação, deverão ser protegidos. Quando uma solicitação virar contratação, as partes poderão ter acesso às informações necessárias para executar o serviço, como condições acordadas, prazo, arquivos de referência e dados da comissão. A contratação não deverá tornar automaticamente públicos os dados privados do cliente ou do artista.
 
 ### 5. Denial of Service (Negação de Serviço)
 
@@ -135,26 +123,26 @@ Dados privados, como e-mail, mensagens, informações cadastrais e propostas de 
 * Quanto tempo cada função pode ficar fora do ar antes de causar um problema grave: busca, login, mensagens e entrega?
 > **Resposta:** Busca e filtros: a indisponibilidade impede a descoberta de artistas, mas não necessariamente interrompe contratações já existentes. Então poderia ficar algumas horas fora do ar antes de causar um problema grave.
 
-Login: impede o acesso às contas e às funcionalidades privadas. Então seria ideal ficar fora de ar o mínimo de tempo possível.
+> Login: impede o acesso às contas e às funcionalidades privadas. Então seria ideal ficar fora de ar o mínimo de tempo possível.
 
-Mensagens: pode interromper negociações e dificultar a comunicação entre cliente e artista, mas não necessariamente interrompe contratações já existentes. Então poderia ficar algumas horas fora do ar antes de causar um problema grave.
+> Mensagens: pode interromper negociações e dificultar a comunicação entre cliente e artista, mas não necessariamente interrompe contratações já existentes. Então poderia ficar algumas horas fora do ar antes de causar um problema grave.
 
-Entrega: pode impedir a conclusão de uma comissão e causar conflitos relacionados a prazos. Então seria ideal ficar fora de ar o mínimo de tempo possível.
+> Entrega: pode impedir a conclusão de uma comissão e causar conflitos relacionados a prazos. Então seria ideal ficar fora de ar o mínimo de tempo possível.
 
 * Se alguém enviar centenas de solicitações a um artista, como isso afeta sua rotina? Ele precisa poder limitar, recusar ou pausar novos pedidos?
 > **Resposta:** Sim. A plataforma deverá permitir que o artista gerencie sua disponibilidade para receber novas solicitações.
 
-O artista poderá:
+> O artista poderá:
 
-- Pausar temporariamente o recebimento de novas comissões.
+> Pausar temporariamente o recebimento de novas comissões.
 
-- Recusar solicitações.
+> Recusar solicitações.
 
-- Definir limites de solicitações em andamento.
+> Definir limites de solicitações em andamento.
 
-- Informar sua disponibilidade e prazo estimado.
+> Informar sua disponibilidade e prazo estimado.
 
-Além disso, o sistema deverá implementar mecanismos para reduzir o abuso, como limitação de requisições e prevenção de envio automatizado excessivo de solicitações. Essas medidas deverão proteger tanto a rotina do artista quanto a disponibilidade da plataforma.
+> Além disso, o sistema deverá implementar mecanismos para reduzir o abuso, como limitação de requisições e prevenção de envio automatizado excessivo de solicitações. Essas medidas deverão proteger tanto a rotina do artista quanto a disponibilidade da plataforma.
 
 * Qual perda de informações seria tolerável após uma falha? Perder uma imagem de portfólio e perder um aceite de proposta têm a mesma gravidade?
 > **Resposta:** Os dados possuem diferentes níveis de importância para o funcionamento da plataforma. A perda de uma imagem de portfólio pode ser inconveniente, mas o artista poderá eventualmente reenviá-la. Já a perda de um aceite de proposta pode causar conflitos, prejuízos financeiros e dúvidas sobre a existência da contratação. Por isso, os dados relacionados a negociações, aceites, contratos, mensagens relevantes e entregas deverão possuir maior prioridade de proteção e recuperação.
@@ -162,53 +150,54 @@ Além disso, o sistema deverá implementar mecanismos para reduzir o abuso, como
 ### 6. Elevation of Privilege (Elevação de Privilégios)
 
 * Quais ações são exclusivas de clientes, artistas, moderadores e administradores?
-> **Resposta:** **Cliente:**
+> **Resposta:**
+> **Cliente:**
 
-- Pesquisar artistas.
+> Pesquisar artistas.
 
-- Visualizar perfis e portfólios.
+> Visualizar perfis e portfólios.
 
-- Enviar solicitações.
+> Enviar solicitações.
 
-- Negociar com artistas.
+> Negociar com artistas.
 
-- Acompanhar suas contratações.
+> Acompanhar suas contratações.
 
-- Confirmar recebimento e avaliar serviços.
+> Confirmar recebimento e avaliar serviços.
 
-**Artista:**
+> **Artista:**
 
-- Criar e gerenciar seu perfil.
+> Criar e gerenciar seu perfil.
 
-- Cadastrar portfólio e comissões.
+> Cadastrar portfólio e comissões.
 
-- Definir preços-base e condições.
+> Definir preços>base e condições.
 
-- Receber e responder solicitações.
+> Receber e responder solicitações.
 
-- Gerenciar suas contratações.
+> Gerenciar suas contratações.
 
-- Enviar entregas.
+> Enviar entregas.
 
-****Administrador/ Moderador:**
+>**Administrador/ Moderador:**
 
-- Analisar denúncias.
+> Analisar denúncias.
 
-- Moderar conteúdos.
+> Moderar conteúdos.
 
-- Aplicar medidas de moderação autorizadas.
+> Aplicar medidas de moderação autorizadas.
 
-- Consultar informações necessárias para investigar violações.
+> Consultar informações necessárias para investigar violações.
 
-- Gerenciar usuários e permissões.
+> Gerenciar usuários e permissões.
 
-- Gerenciar categorias.
+> Gerenciar categorias.
 
-- Administrar configurações da plataforma.
+> Administrar configurações da plataforma.
 
-- Acessar funções administrativas autorizadas.
+> Acessar funções administrativas autorizadas.
 
-- Resolver conflitos e incidentes.
+> Resolver conflitos e incidentes.
 
 * Se um artista tentar confirmar a conclusão no lugar do cliente, em alguma situação isso seria permitido? Quem pode resolver pedidos sem resposta?
 > **Resposta:** A conclusão de uma comissão deverá ser confirmada pelo cliente, após o recebimento e a análise da entrega. O artista poderá marcar o trabalho como enviado, mas não deverá confirmar unilateralmente que o cliente recebeu ou aprovou a comissão. Caso o cliente não responda, a plataforma poderá definir um prazo para análise e encerramento automático, desde que essa regra seja previamente informada às partes. Em situações de conflito ou ausência de resposta, o administrador poderá analisar o histórico da contratação e resolver o caso conforme as regras da plataforma. A possibilidade de conclusão automática deverá ser implementada com cuidado para evitar prejuízos ao cliente ou ao artista.
