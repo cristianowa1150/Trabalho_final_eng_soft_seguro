@@ -1,0 +1,116 @@
+[
+  {
+    "total": 1,
+    "weeks": [
+      {
+        "w": 1788652800,
+        "a": 119,
+        "d": 0,
+        "c": 1
+      },
+      {
+        "w": 1789257600,
+        "a": 0,
+        "d": 0,
+        "c": 0
+      }
+    ],
+    "author": {
+      "login": "vndmtrx",
+      "id": 596651,
+      "node_id": "MDQ6VXNlcjU5NjY1MQ==",
+      "avatar_url": "https://avatars.githubusercontent.com/u/596651?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/vndmtrx",
+      "html_url": "https://github.com/vndmtrx",
+      "followers_url": "https://api.github.com/users/vndmtrx/followers",
+      "following_url": "https://api.github.com/users/vndmtrx/following{/other_user}",
+      "gists_url": "https://api.github.com/users/vndmtrx/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/vndmtrx/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/vndmtrx/subscriptions",
+      "organizations_url": "https://api.github.com/users/vndmtrx/orgs",
+      "repos_url": "https://api.github.com/users/vndmtrx/repos",
+      "events_url": "https://api.github.com/users/vndmtrx/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/vndmtrx/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    }
+  },
+  {
+    "total": 1,
+    "weeks": [
+      {
+        "w": 1788652800,
+        "a": 85,
+        "d": 0,
+        "c": 1
+      },
+      {
+        "w": 1789257600,
+        "a": 0,
+        "d": 0,
+        "c": 0
+      }
+    ],
+    "author": {
+      "login": "annaletycia",
+      "id": 80076282,
+      "node_id": "MDQ6VXNlcjgwMDc2Mjgy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/80076282?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/annaletycia",
+      "html_url": "https://github.com/annaletycia",
+      "followers_url": "https://api.github.com/users/annaletycia/followers",
+      "following_url": "https://api.github.com/users/annaletycia/following{/other_user}",
+      "gists_url": "https://api.github.com/users/annaletycia/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/annaletycia/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/annaletycia/subscriptions",
+      "organizations_url": "https://api.github.com/users/annaletycia/orgs",
+      "repos_url": "https://api.github.com/users/annaletycia/repos",
+      "events_url": "https://api.github.com/users/annaletycia/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/annaletycia/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    }
+  },
+  {
+    "total": 6,
+    "weeks": [
+      {
+        "w": 1788652800,
+        "a": 1266,
+        "d": 1,
+        "c": 6
+      },
+      {
+        "w": 1789257600,
+        "a": 0,
+        "d": 0,
+        "c": 0
+      }
+    ],
+    "author": {
+      "login": "cristianowa1150",
+      "id": 96080292,
+      "node_id": "U_kgDOBboRpA",
+      "avatar_url": "https://avatars.githubusercontent.com/u/96080292?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/cristianowa1150",
+      "html_url": "https://github.com/cristianowa1150",
+      "followers_url": "https://api.github.com/users/cristianowa1150/followers",
+      "following_url": "https://api.github.com/users/cristianowa1150/following{/other_user}",
+      "gists_url": "https://api.github.com/users/cristianowa1150/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/cristianowa1150/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/cristianowa1150/subscriptions",
+      "organizations_url": "https://api.github.com/users/cristianowa1150/orgs",
+      "repos_url": "https://api.github.com/users/cristianowa1150/repos",
+      "events_url": "https://api.github.com/users/cristianowa1150/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/cristianowa1150/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    }
+  }
+]
