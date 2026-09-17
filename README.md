@@ -1,12 +1,11 @@
-<p align="center">
-  <img src="assets/banner.svg" alt="Engenharia de Software Seguro">
-</p>
-
 # Engenharia de Software Seguro
 
 ## Trabalho Final
 
 Trabalho final desenvolvido para a disciplina de **Engenharia de Software Seguro**, abordando conceitos, práticas e estratégias relacionadas ao desenvolvimento seguro de software.
+
+## Link do diagrama da aplicação
+https://cristianowa1150.github.io/Trabalho_final_eng_soft_seguro/Ideia_Site_Artistas.html 
 
 ### Professor
 
@@ -21,8 +20,6 @@ Os integrantes estão apresentados em ordem alfabética:
 2. **Cristiano Silveira Silva**
 3. **Eduardo Nascimento de Souza Rolim**
 4. **Luan Diniz Mazaro Rodovalho**
-
----
 
 ## Objetivos do Trabalho
 
@@ -39,15 +36,12 @@ O trabalho tem como objetivos:
 - <img width="1600" height="843" alt="WhatsApp Image 2026-09-03 at 19 11 34" src="https://github.com/user-attachments/assets/2f786386-9324-4349-830b-a2463935fe0e" />
 
 
----
-
 ## Engenharia de Software Seguro
 
 A Engenharia de Software Seguro busca incorporar segurança durante todo o ciclo de vida do desenvolvimento de software, desde a identificação de ameaças e definição dos requisitos até a implementação, testes, implantação e manutenção.
 
 O trabalho aborda diferentes etapas desse processo, considerando a identificação de vulnerabilidades, a definição de requisitos de segurança, a construção de arquiteturas mais resistentes a ataques e a adoção de práticas de desenvolvimento seguro.
 
----
 
 ## Escopo
 
