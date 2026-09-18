@@ -1,4 +1,7 @@
-# Engenharia de Software Seguro
+# Artifício
+<p align="center">
+  <img src="assets/image.png" alt="Logotipo" width="70%">
+</p>
 
 ## Trabalho Final
 
@@ -79,26 +82,36 @@ Análise do conceito de **DevSecOps**, integrando segurança às práticas de de
 
 ## Estrutura do Trabalho
 
+## 📁 Estrutura do Repositório
+
 ```text
-Engenharia de Software Seguro
+Trabalho_final_eng_soft_seguro/
 │
-├── Requisitos de Segurança
-│   └── Derivação de requisitos a partir de ameaças
+├── .github/
+│   └── Configurações e arquivos relacionados ao GitHub
 │
-├── Vulnerabilidades
-│   └── Mapeamento de vulnerabilidades catalogadas
+├── assets/
+│   └── Imagens, logotipos e recursos visuais do projeto
 │
-├── Arquitetura Segura
-│   └── Projeto de arquitetura orientada à segurança
+├── codigo/
+│   └── Código-fonte da aplicação
 │
-├── Código Seguro
-│   └── Implementação de práticas de desenvolvimento seguro
+├── diagramas/
+│   └── Diagramas de arquitetura, modelagem e segurança
 │
-├── Verificação
-│   └── Identificação e análise de vulnerabilidades
+├── docs/
+│   └── Documentação técnica e acadêmica do projeto
 │
-├── Detecção de Intrusões
-│   └── Identificação de atividades suspeitas
+├── evidencias/
+│   └── Evidências dos testes, análises e atividades realizadas
 │
-└── DevSecOps
-    └── Integração da segurança ao ciclo de desenvolvimento
+├── roteiros/
+│   └── Roteiros, procedimentos e materiais de apoio
+│
+├── .gitignore
+│
+├── LICENSE
+│
+├── README.md
+│
+└── contributors.json
