@@ -1,5 +1,7 @@
 # Artíficio
-![Logotipo](assets/image.png)
+<p align="center">
+  <img src="assets/image.png" alt="Logotipo" width="70%">
+</p>
 
 ## Trabalho Final
 
