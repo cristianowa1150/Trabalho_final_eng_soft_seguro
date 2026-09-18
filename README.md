@@ -1,4 +1,4 @@
-# Artíficio
+# Artifício
 <p align="center">
   <img src="assets/image.png" alt="Logotipo" width="70%">
 </p>
