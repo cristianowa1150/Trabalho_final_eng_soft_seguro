@@ -58,3 +58,11 @@ devido à necessidade de preservar sua confidencialidade e integridade; e os reg
 
 O banco de dados, servidor, armazenamento de arquivos e APIs também são ativos críticos, pois sua indisponibilidade ou comprometimento pode afetar diversos usuários simultaneamente.
 Da mesma forma, serviços externos utilizados para autenticação ou pagamentos representam pontos de dependência que devem ser considerados na análise de segurança.
+
+### 8.4 Visão geral da arquitetura ou fluxo
+
+![Diagrama de Contexto](diagramas/Diagrama_Contexto.png)
+
+![Diagrama de Contexto](diagramas/Diagrama_Fluxo_de_Dados.png)
+
+![Diagrama de Contexto](diagramas/Diagrama_de_Componemtes.png)
