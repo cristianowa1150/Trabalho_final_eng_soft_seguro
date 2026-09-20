@@ -1,7 +1,10 @@
 ### 8.1 Identificação do sistema
 Nome do sistema: Artifício
-Integrantes do grupo: Luan Diniz Mazaro Rodovalho, 
+
+Integrantes do grupo:
+
 Endereço do repositório: https://github.com/cristianowa1150/Trabalho_final_eng_soft_seguro
+
 Breve justificativa para a escolha do sistema: O tema foi escolhido devido ao potencial do **Artifício** de ser uma plataforma útil para o meio comercial artístico, facilitando a conexão entre artistas e clientes interessados em contratar serviços e obras personalizadas.  
 Além disso, o sistema apresenta diversos elementos relevantes para o estudo de segurança de software, como autenticação de usuários, controle de acesso, dados pessoais, mensagens privadas, arquivos enviados, avaliações, contratações e possíveis informações financeiras. 
 Dessa forma, o desenvolvimento do Artifício permite aplicar, de maneira prática, os conceitos e técnicas de segurança abordados na disciplina, especialmente na identificação, análise e mitigação de ameaças.
