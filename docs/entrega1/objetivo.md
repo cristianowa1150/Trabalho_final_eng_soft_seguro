@@ -1,3 +1,5 @@
+# 6. Objetivo
+
 ## Breve descrição do sistema
 
 O sistema consiste em uma plataforma web para divulgação e contratação de serviços artísticos. Artistas podem criar perfis, publicar obras em seus portfólios, definir tipos de comissão, preços-base, prazos e condições de trabalho. Clientes podem pesquisar artistas utilizando categorias e filtros, visualizar seus portfólios e enviar solicitações de contratação. A plataforma também permite o gerenciamento das solicitações, negociação das condições e acompanhamento das contratações.
