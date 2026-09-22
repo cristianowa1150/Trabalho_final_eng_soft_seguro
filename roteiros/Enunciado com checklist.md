@@ -148,7 +148,7 @@ Todos os integrantes deverão verificar se seus commits estão corretamente asso
 
 | Etapa | Entregável | Status |
 |---|---|:---:|
-| 1 | Casos de Abuso e Modelagem de Ameaças com STRIDE | 🟢 Em andamento |
+| 1 | Casos de Abuso e Modelagem de Ameaças com STRIDE | 🟢 Concluído |
 | 2 | Análise, Priorização e Tratamento de Riscos com NIST CSF | ⚪ Em andamento |
 | 3 | Projeto de uma Arquitetura Segura | ⚪ Em andamento |
 | 4 | Código Seguro e Testes de Segurança | ⚪ Em andamento |
@@ -166,7 +166,7 @@ Todos os integrantes deverão verificar se seus commits estão corretamente asso
 
 > Marque `- [🟢]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
 
-- [ ] 6. Objetivo
+- [🟢] 6. Objetivo
 - [🟢] 7. Escolha do sistema
 - [🟢] 8.1 Identificação do sistema
 - [🟢] 8.2 Descrição do sistema
