@@ -143,12 +143,12 @@ Todos os integrantes deverão verificar se seus commits estão corretamente asso
 
 # 📊 Controle de andamento do grupo
 
-> **Como utilizar:** marque cada item com `- [x]` quando estiver concluído.  
+> **Como utilizar:** marque cada item com `- [🟢]` quando estiver concluído.  
 > O texto do enunciado foi preservado; os checklists abaixo são apenas um controle operacional do grupo.
 
 | Etapa | Entregável | Status |
 |---|---|:---:|
-| 1 | Casos de Abuso e Modelagem de Ameaças com STRIDE | ⚪ Em andamento |
+| 1 | Casos de Abuso e Modelagem de Ameaças com STRIDE | 🟢 Em andamento |
 | 2 | Análise, Priorização e Tratamento de Riscos com NIST CSF | ⚪ Em andamento |
 | 3 | Projeto de uma Arquitetura Segura | ⚪ Em andamento |
 | 4 | Código Seguro e Testes de Segurança | ⚪ Em andamento |
@@ -172,10 +172,10 @@ Todos os integrantes deverão verificar se seus commits estão corretamente asso
 - [🟢] 8.2 Descrição do sistema
 - [🟢] 8.3 Usuários, ativos e pontos de interação
 - [ ] 8.4 Visão geral da arquitetura ou fluxo
-- [ ] 8.5 Modelagem de ameaças com STRIDE
-- [ ] 8.6 Casos de abuso
-- [ ] 8.7 Considerações finais
-- [ ] 9. Critérios de avaliação
+- [🟢] 8.5 Modelagem de ameaças com STRIDE
+- [🟢] 8.6 Casos de abuso
+- [🟢] 8.7 Considerações finais
+- [🟢] 9. Critérios de avaliação
 
 
 ## 6\. Objetivo
