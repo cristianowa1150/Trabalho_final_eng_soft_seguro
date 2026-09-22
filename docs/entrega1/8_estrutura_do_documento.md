@@ -64,12 +64,12 @@ Da mesma forma, serviços externos utilizados para autenticação ou pagamentos 
 
 ### 8.4 Visão geral da arquitetura ou fluxo
 
-![Diagrama de Contexto](diagramas/Diagrama_Contexto.png)
+![Diagrama de Contexto](../../diagramas/Diagrama_Contexto.png)
 
-![Diagrama de FLuxo de Dados](diagramas/Diagrama_Fluxo_de_Dados.png)
+![Diagrama de Fluxo de Dados](../../diagramas/Diagrama_Fluxo_de_Dados.png)
 
-![Diagrama de Componentes](diagramas/Diagrama_de_Componentes.png)
+![Diagrama de Componentes](../../diagramas/Diagrama_de_Componentes.png)
 
-![Diagrama de Casos de Uso](diagramas/Diagrama_de_casos_de_uso.png)
+![Diagrama de Casos de Uso](../../diagramas/Diagrama_de_casos_de_uso.png)
 
-![Representação dos usuários, serviços e bancos de dados](diagramas/Representação.png)
+![Representação dos usuários, serviços e bancos de dados](../../diagramas/Representação.png)
