@@ -171,7 +171,7 @@ Todos os integrantes deverão verificar se seus commits estão corretamente asso
 - [🟢] 8.1 Identificação do sistema
 - [🟢] 8.2 Descrição do sistema
 - [🟢] 8.3 Usuários, ativos e pontos de interação
-- [ ] 8.4 Visão geral da arquitetura ou fluxo
+- [🟢] 8.4 Visão geral da arquitetura ou fluxo
 - [🟢] 8.5 Modelagem de ameaças com STRIDE
 - [🟢] 8.6 Casos de abuso
 - [🟢] 8.7 Considerações finais
