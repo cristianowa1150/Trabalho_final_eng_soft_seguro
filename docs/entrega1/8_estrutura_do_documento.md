@@ -1,7 +1,7 @@
 ### 8.1 Identificação do sistema
 Nome do sistema: Artifício
 
-Integrantes do grupo:
+Integrantes do grupo: Anna Letycia Fernandes Reis, Cristiano Silveira Silva, Eduardo Nascimento de Souza Rolim, Luan Diniz Mazaro Rodovalho
 
 Endereço do repositório: https://github.com/cristianowa1150/Trabalho_final_eng_soft_seguro
 
