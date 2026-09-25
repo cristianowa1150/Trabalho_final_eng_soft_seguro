@@ -229,3 +229,62 @@ A estrutura utilizada será:
 | **Classificação** | Baixa, Média-baixa, Média-alta ou Alta. |
 | **Justificativa** | Explicação objetiva das condições de ocorrência, considerando exposição, acesso necessário, complexidade, vulnerabilidades, possibilidade de automação e controles existentes. |
 
+### 13.2 Critérios de impacto
+
+
+### 13.3 Cálculo e classificação dos riscos
+
+
+### 13.4 Registro de riscos
+
+
+### 13.5 Justificativas das avaliações
+
+
+### 13.6 Priorização dos riscos
+
+
+## 14. Tratamento dos riscos com o NIST CSF 2.0
+
+### 14.1 Estratégias de tratamento
+
+Para cada risco analisado, é necessário definir a estratégia de resposta mais adequada. Conforme as diretrizes da disciplina e as boas práticas de gestão de riscos, foram adotadas quatro estratégias principais no contexto do **Artifício**:
+
+| Estratégia | Descrição | Aplicação no Sistema Artifício | Casos de Abuso Relacionados |
+|---|---|---|---|
+| **Reduzir (Mitigar)** | Implementar medidas e controles técnicos ou operacionais para diminuir a probabilidade de ocorrência ou atenuar o impacto do evento. | **Estratégia predominante no projeto.** Aplicação de validações de regras e preços no backend, controle rigoroso de permissões por perfil, proteção de sessões e recuperação de conta, limite de requisições contra ataques de força bruta (*rate limiting*), proteção de logs e integridade de uploads de imagens. | `CA02`, `CA05`, `CA06`, `CA07`, `CA09`, `CA18`, `CA19`, `CA22`, `CA23`, `CA24` |
+| **Compartilhar (Transferir)** | Atribuir parte da operação, da custódia de dados críticos ou das consequências a um terceiro especializado. | **Operações de pagamento e autenticação externa.** Delegação do processamento de pagamentos para gateways especializados em conformidade com normas de segurança e utilização de provedores de identidade consolidados para autenticação externa, transferindo a custódia das credenciais primárias. | `CA03`, `CA21` |
+| **Evitar** | Eliminar a atividade, funcionalidade ou condição de arquitetura que dá origem ao risco. | **Decisões de escopo e arquitetura.** Restrição estrita de tipos de arquivo aceitos no upload, rejeitando categoricamente executáveis ou scripts e aceitando somente imagens; e recusa arquitetural em armazenar números de cartões de crédito na base própria da aplicação. | `CA05` |
+| **Aceitar** | Reconhecer conscientemente a existência do risco e mantê-lo sob observação, quando seu impacto for muito reduzido ou o custo de eliminação for desproporcional. | **Riscos residuais toleráveis.** Exposição controlada de informações que são inerentemente públicas para a finalidade da plataforma, como visualização do portfólio e consultas públicas no catálogo de artistas por visitantes, mantendo apenas monitoramento básico sem bloquear o uso legítimo. | `CA17` |
+
+#### Critérios para escolha e formalização da aceitação
+
+Para assegurar uma tomada de decisão fundamentada:
+
+- **Riscos Críticos e Altos:** Não podem ser aceitos sob nenhuma hipótese. Devem ser tratados obrigatoriamente pelas estratégias de **Reduzir**, **Compartilhar** ou **Evitar**.
+- **Riscos Médios:** A prioridade é a **redução** por meio de controles de desenvolvimento. Caso algum aspecto não possa ser corrigido de imediato, deve ser acompanhado de perto.
+- **Condições para Aceitação de Riscos:**
+  - **Motivo da decisão:** Justificativa clara demonstrando que o risco possui impacto insignificante ou que o controle geraria impacto inaceitável na usabilidade.
+  - **Aprovação:** Qualquer decisão de aceitação deve ser formalmente registrada e acordada pela equipe de segurança e desenvolvimento do projeto.
+  - **Condições e revisão:** Todo risco aceito permanece registrado no inventário de riscos e deve ser reavaliado periodicamente ou sempre que houver grandes alterações na arquitetura da plataforma.
+
+### 14.2 Funções do NIST CSF 2.0
+
+
+### 14.3 Mapeamento dos riscos para o NIST CSF
+
+
+### 14.4 Plano de tratamento
+
+
+### 14.5 Ordem inicial de implementação
+
+
+### 14.6 Estimativa do risco residual
+
+
+## 15. Considerações finais
+
+
+## 16. Critérios de avaliação da Etapa 2
+
