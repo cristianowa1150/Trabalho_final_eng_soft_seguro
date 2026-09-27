@@ -270,6 +270,20 @@ Para assegurar uma tomada de decisão fundamentada:
 
 ### 14.2 Funções do NIST CSF 2.0
 
+O NIST Cybersecurity Framework (CSF) 2.0 organiza a gestão e a mitigação de riscos de segurança da informação em seis funções nucleares: **Govern (Governança)**, **Identify (Identificação)**, **Protect (Proteção)**, **Detect (Detecção)**, **Respond (Resposta)** e **Recover (Recuperação)**.
+
+No contexto do **Artifício**, essas funções não devem ser tratadas como controles isolados ou ferramentas prontas. Elas funcionam como uma taxonomia estruturada de objetivos: a função estabelece a área estratégica de atuação, o resultado esperado (*outcome*) define o objetivo defensivo no fluxo da aplicação, e o controle técnico representa a salvaguarda concreta implementada em código, arquitetura ou processo operacional.
+
+A distinção clara entre esses três níveis orienta o planejamento de segurança:
+
+| Função | Finalidade Estrutural | Resultado Esperado no Artifício | Exemplo de Controle Técnico |
+|---|---|---|---|
+| **Govern (GV)** | Estabelecer a estratégia de segurança, políticas, limites operacionais e critérios de responsabilidade da plataforma. | Definir formalmente os limites de acesso dos moderadores, políticas de retenção de histórico para disputas e termos de uso que coíbam abusos contratuais. | Política de autorização contextual para administradores e matriz formal de responsabilidades sobre dados transacionais. |
+| **Identify (ID)** | Conhecer e catalogar ativos, fluxos de dados, dependências externas e superfícies vulneráveis do sistema. | Mapear quais tabelas, rotas de API e arquivos de portfólio concentram informações sensíveis, dados pessoais ou valor comercial. | Inventário de ativos de dados (banco relacional, buckets de armazenamento, provedores OAuth) e mapeamento do ciclo de vida das credenciais. |
+| **Protect (PR)** | Aplicar salvaguardas técnicas preventivas para assegurar a continuidade dos serviços e conter ameaças na origem. | Impedir que falhas de autorização permitam adulteração de propostas, sequestro de sessões ou injeção de arquivos maliciosos nos portfólios. | Validação estrita de autorização e recálculo de preços no backend, sanitização de cabeçalhos de imagens, tokens de sessão com flags seguras e MFA para contas com acesso administrativo. |
+| **Detect (DE)** | Monitorar a atividade da aplicação para identificar eventos anômalos, ataques automatizados e falhas de integridade. | Sinalizar em tempo hábil tentativas de força bruta em autenticação, varreduras abusivas no catálogo de artistas e alterações inesperadas em registros. | Registro de logs estruturados de auditoria, alarmes para falhas reiteradas de autenticação e limitação de taxa (*rate limiting*) com monitoramento de requisições anômalas. |
+| **Respond (RS)** | Conter incidentes em andamento, mitigar prejuízos operacionais e executar ações corretivas imediatas. | Interromper rapidamente o abuso de contas comprometidas ou congelar negociações sob suspeita de fraude antes do fechamento financeiro. | Mecanismo de revogação imediata de sessões ativas, bloqueio operacional de contas denunciadas e isolamento de arquivos suspeitos para perícia. |
+| **Recover (RC)** | Restaurar serviços e recompor a integridade de dados afetados por incidentes, falhas lógicas ou indisponibilidade. | Reconstituir portfólios danificados e recompor a cadeia de eventos de contratações a partir de registros íntegros. | Rotinas automatizadas de backup externo com validação periódica de restauração e conciliação de estado entre eventos de contratação. |
 
 ### 14.3 Mapeamento dos riscos para o NIST CSF
 
