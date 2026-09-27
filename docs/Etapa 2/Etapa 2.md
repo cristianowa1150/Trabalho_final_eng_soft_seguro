@@ -285,6 +285,29 @@ A distinção clara entre esses três níveis orienta o planejamento de seguran�
 | **Respond (RS)** | Conter incidentes em andamento, mitigar prejuízos operacionais e executar ações corretivas imediatas. | Interromper rapidamente o abuso de contas comprometidas ou congelar negociações sob suspeita de fraude antes do fechamento financeiro. | Mecanismo de revogação imediata de sessões ativas, bloqueio operacional de contas denunciadas e isolamento de arquivos suspeitos para perícia. |
 | **Recover (RC)** | Restaurar serviços e recompor a integridade de dados afetados por incidentes, falhas lógicas ou indisponibilidade. | Reconstituir portfólios danificados e recompor a cadeia de eventos de contratações a partir de registros íntegros. | Rotinas automatizadas de backup externo com validação periódica de restauração e conciliação de estado entre eventos de contratação. |
 
+#### Aplicação contextualizada ao ciclo de vida do Artifício
+
+##### 1. Govern (Governança)
+A inclusão explícita da função *Govern* no NIST CSF 2.0 reconhece que medidas técnicas falham quando desprovidas de sustentação política e organizacional. No Artifício, a governança estabelece a segregação estrita de papéis (cliente, artista e administrador). Define os critérios sob os quais um moderador tem prerrogativa para auditar comunicações privadas em disputas, além de formalizar os prazos de retenção de registros exigidos para resolução jurídica de conflitos sobre comissões.
+
+##### 2. Identify (Identificação)
+A proteção efetiva exige conhecer os ativos do sistema e os vetores de exposição. No Artifício, os ativos públicos (catálogo, portfólios e perfis) exigem garantias de integridade e disponibilidade, enquanto os ativos restritos (mensagens de negociação, propostas comerciais, dados cadastrais e credenciais) exigem proteção rigorosa de confidencialidade. A função *Identify* assegura que os esforços de segurança foquem nas superfícies onde uma brecha causaria dano desproporcional à reputação e à subsistência dos criadores.
+
+##### 3. Protect (Proteção)
+Concentra a implementação prática das defesas de desenvolvimento seguro na aplicação. Compreende três eixos principais:
+- **Identidade e Autorização:** Autenticação resistente, hashes de senha atualizados (Argon2 ou bcrypt), invalidação de sessões em eventos críticos e verificação contínua de permissões no backend (impedindo que a alteração de parâmetros em URLs conceda acesso a obras ou pedidos alheios).
+- **Integridade das Contratações:** Validação no servidor de que preços, prazos e condições acordadas não possam ser adulterados pelo cliente no frontend durante o envio da proposta.
+- **Higiene no Upload:** Rejeição categórica de extensões executáveis, validação de tipos MIME reais e remoção de metadados EXIF que possam expor geolocalização e rotina de artistas.
+
+##### 4. Detect (Detecção)
+A camada preventiva não elimina a necessidade de visibilidade operacional. A detecção no Artifício fundamenta-se em logs de auditoria centralizados e com proteção contra adulteração. O objetivo central é fornecer telemetria para diferenciar picos legítimos de visitas de ataques automatizados de força bruta ou varreduras de extração em massa de dados (*scraping*).
+
+##### 5. Respond (Resposta)
+Define as capacidades operacionais para neutralizar incidentes em curso. O sistema deve disponibilizar ferramentas administrativas de contenção pontual, como o cancelamento seletivo de sessões ativas de uma conta sob ataque, sem exigir a exclusão do usuário do banco, preservando o histórico para análise e possibilitando a recuperação legítima da titularidade.
+
+##### 6. Recover (Recuperação)
+Trata da restauração de estados íntegros. Envolve políticas de recuperação rápida de arquivos de imagem e dados relacionais em caso de incidentes em provedores de armazenamento ou falhas em operações concorrentes, assegurando que artistas e clientes não sofram perda irreversível de entregas ou comprovações de pagamento.
+
 ### 14.3 Mapeamento dos riscos para o NIST CSF
 
 
