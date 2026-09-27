@@ -248,7 +248,7 @@ A estrutura utilizada será:
 
 ### 14.1 Estratégias de tratamento
 
-Para cada risco analisado, é necessário definir a estratégia de resposta mais adequada. Conforme as diretrizes da disciplina e as boas práticas de gestão de riscos, foram adotadas quatro estratégias principais no contexto do **Artifício**:
+A resposta aos riscos identificados no **Artifício** estrutura-se em quatro estratégias: Reduzir, Compartilhar, Evitar e Aceitar.
 
 | Estratégia | Descrição | Aplicação no Sistema Artifício | Casos de Abuso Relacionados |
 |---|---|---|---|
@@ -259,10 +259,10 @@ Para cada risco analisado, é necessário definir a estratégia de resposta mais
 
 #### Critérios para escolha e formalização da aceitação
 
-Para assegurar uma tomada de decisão fundamentada:
+A formalização de limites para aceitação segue critérios objetivos:
 
 - **Riscos Críticos e Altos:** Não podem ser aceitos sob nenhuma hipótese. Devem ser tratados obrigatoriamente pelas estratégias de **Reduzir**, **Compartilhar** ou **Evitar**.
-- **Riscos Médios:** A prioridade é a **redução** por meio de controles de desenvolvimento. Caso algum aspecto não possa ser corrigido de imediato, deve ser acompanhado de perto.
+- **Riscos Médios:** A prioridade é a **redução** via controles na aplicação. Quando a remediação imediata não for viável, devem ser estabelecidos controles compensatórios e prazos formais de resolução.
 - **Condições para Aceitação de Riscos:**
   - **Motivo da decisão:** Justificativa clara demonstrando que o risco possui impacto insignificante ou que o controle geraria impacto inaceitável na usabilidade.
   - **Aprovação:** Qualquer decisão de aceitação deve ser formalmente registrada e acordada pela equipe de segurança e desenvolvimento do projeto.
