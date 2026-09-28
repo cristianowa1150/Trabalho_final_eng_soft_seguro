@@ -231,14 +231,411 @@ A estrutura utilizada será:
 
 ### 13.2 Critérios de impacto
 
+O impacto representa a gravidade das consequências caso o evento de risco se concretize no Artifício. Sua avaliação considera os clientes, artistas e administradores, assim como contas, portfólios, mensagens, contratações, dados privados, registros de auditoria e infraestrutura.
+
+Será utilizada a escala estabelecida no enunciado:
+
+| Valor | Classificação | Critério |
+|---:|---|---|
+| 1 | Baixo | Causa pequeno transtorno e pode ser corrigido rapidamente. |
+| 2 | Moderado | Causa interrupção ou inconsistência limitada, com possibilidade de recuperação. |
+| 3 | Alto | Causa prejuízo relevante aos usuários, ao negócio, à administração ou à privacidade. |
+| 4 | Muito alto | Pode afetar muitos usuários, comprometer operações críticas ou causar prejuízo grave. |
+
+Para aplicar essa escala ao sistema, serão consideradas as seguintes dimensões:
+
+| Dimensão | Aplicação ao Artifício |
+|---|---|
+| Prejuízo aos usuários e às contratações | Perda de remuneração, trabalho não reconhecido, condições alteradas, contratação fraudulenta e dificuldade de resolver disputas. |
+| Confidencialidade e privacidade | Exposição de credenciais, mensagens, dados cadastrais, arquivos privados, localização e hábitos dos usuários. |
+| Integridade | Alteração de obras, propostas, preços, prazos, avaliações, permissões ou evidências. |
+| Disponibilidade | Impedimento de autenticar, pesquisar artistas, negociar, publicar ou entregar obras; extensão e duração da interrupção. |
+| Alcance | Número e tipo de usuários, registros e componentes afetados; possibilidade de propagação entre contas. |
+| Recuperação e confiança | Possibilidade de restaurar dados e reconstruir acordos, permanência de cópias vazadas e prejuízo à reputação dos artistas e da plataforma. |
+
+Para definir o impacto, será considerada a consequência mais grave que possa ser justificada para cada risco, sem somar ou fazer a média das dimensões afetadas. A quantidade de usuários atingidos será um dos fatores da avaliação, mas um dano grave a uma única pessoa também poderá receber impacto 4. Da mesma forma, o fato de uma funcionalidade ser pública não significa, por si só, que seu comprometimento terá impacto máximo.
+
+No Artifício, uma inconsistência em um pedido que possa ser corrigida com a conferência das informações pode receber impacto 2. Já a exposição de mensagens privadas ou uma fraude que cause prejuízo relevante em uma contratação pode receber impacto 3. Situações como comprometimento do servidor, vazamento de dados privados de muitos usuários ou acesso indevido a amplas funções administrativas podem receber impacto 4. O impacto 1 será usado para pequenos transtornos, de correção rápida e sem prejuízo relevante.
+
+Cada avaliação levará em conta as consequências do cenário descrito. Quando ainda faltarem definições sobre o alcance do problema ou a possibilidade de recuperação, a justificativa indicará o que foi considerado para atribuir a nota.
 
 ### 13.3 Cálculo e classificação dos riscos
 
+A pontuação é obtida pela multiplicação dos valores de probabilidade e impacto:
+
+**Pontuação = Probabilidade × Impacto**
+
+A probabilidade segue a seção 13.1, e o impacto segue a seção 13.2. A classificação utiliza as faixas exigidas no enunciado:
+
+| Pontuação | Nível do risco |
+|---:|---|
+| 1 a 3 | Baixo |
+| 4 a 7 | Médio |
+| 8 a 11 | Alto |
+| 12 a 16 | Crítico |
+
+A matriz resultante é:
+
+| Probabilidade ↓ / Impacto → | 1 - Baixo | 2 - Moderado | 3 - Alto | 4 - Muito alto |
+|---|---|---|---|---|
+| 1 - Baixa | 1 - Baixo | 2 - Baixo | 3 - Baixo | 4 - Médio |
+| 2 - Média-baixa | 2 - Baixo | 4 - Médio | 6 - Médio | 8 - Alto |
+| 3 - Média-alta | 3 - Baixo | 6 - Médio | 9 - Alto | 12 - Crítico |
+| 4 - Alta | 4 - Médio | 8 - Alto | 12 - Crítico | 16 - Crítico |
+
+Por exemplo, R01 recebe probabilidade 3 e impacto 3: **3 × 3 = 9, nível Alto**. R28 recebe probabilidade 2 e impacto 4: **2 × 4 = 8, nível Alto**. Embora ambos sejam altos, o segundo envolve funções administrativas e poderá exigir prioridade diferenciada na seção 13.6.
+
+A matriz segue os critérios definidos no enunciado do trabalho e auxilia na comparação dos riscos. A pontuação deve ser analisada junto com as consequências de cada cenário para orientar a priorização.
 
 ### 13.4 Registro de riscos
 
+O registro apresenta a avaliação inicial dos riscos com base nas ameaças e nos casos de abuso da Etapa 1. As notas consideram os cenários descritos e os controles ainda como propostas, sem pressupor que as vulnerabilidades tenham sido confirmadas por testes. A seção 14.6 apresentará a estimativa do risco residual esperado após os tratamentos.
+
+Os riscos R01 a R33 correspondem, respectivamente, às ameaças T01 a T33. R34 a R37 detalham situações dos casos de abuso CA04, CA15, CA16 e CA27, mantendo os identificadores originais da Etapa 1.
+
+Os riscos R04 e R27 se aplicam caso o sistema utilize autenticação externa, e R26, caso ofereça a funcionalidade de reserva/carrinho.
+
+Na coluna de casos de abuso, “-” indica que não há um caso específico equivalente à ameaça. Já “Relacionado” indica que o caso aborda uma situação próxima, mas não exatamente o mesmo evento.
+
+| ID | Origem STRIDE | Caso de abuso | Evento de risco | Vulnerabilidade ou condição | Probabilidade | Impacto | Pontuação | Nível |
+|---|---|---|---|---|---:|---:|---:|---|
+| R01 | T01 - Spoofing | CA02 | Tomada da conta de um artista, com acesso a negociações e atuação fraudulenta em seu nome. | Credenciais comprometidas ou recuperação de senha vulnerável. | 3 | 3 | 9 | Alto |
+| R02 | T02 - Spoofing | CA01 | Clientes contratam um perfil que utiliza indevidamente a identidade ou as obras de outro artista. | Cadastro sem verificação suficiente de identidade ou autoria. | 3 | 3 | 9 | Alto |
+| R03 | T03 - Spoofing | CA02 | Reutilização de sessão comprometida para executar operações como outro usuário. | Captura de token válido e possibilidade de reutilização sem revogação eficaz. | 2 | 3 | 6 | Médio |
+| R04 | T04 - Spoofing | CA03 | Acesso indevido a uma conta vinculada a um provedor de autenticação externa. | Uso dessa integração e comprometimento de credencial ou token aceito pelo provedor/aplicação. | 2 | 3 | 6 | Médio |
+| R05 | T05 - Tampering | - | Registro de solicitação com preço-base ou prazo adulterado antes do envio. | Servidor confia em valores enviados pelo navegador sem validar as regras do artista. | 2 | 3 | 6 | Médio |
+| R06 | T06 - Tampering | CA07 | Alteração unilateral das condições de uma contratação já aceita. | Ausência de proteção do estado aceito e de validação da concordância das partes. | 2 | 3 | 6 | Médio |
+| R07 | T07 - Tampering | CA08 | Manipulação da reputação por avaliações falsas ou remoção de avaliações legítimas. | Avaliações sem vínculo válido com contratação ou sem autorização adequada para alteração. | 3 | 3 | 9 | Alto |
+| R08 | T08 - Tampering | CA05 | Arquivo malicioso enviado ao portfólio compromete o servidor ou sobrescreve conteúdo. | Validação insuficiente de arquivos combinada com processamento ou armazenamento inseguro. | 2 | 4 | 8 | Alto |
+| R09 | T09 - Tampering | - | Atualizações simultâneas sobrescrevem condições ou deixam um pedido em estado inconsistente. | Ausência de transações, controle de versão ou validação do estado durante atualizações concorrentes. | 2 | 2 | 4 | Médio |
+| R10 | T10 - Repudiation | CA10 | Uma parte nega aceite, recusa ou alteração de proposta e impede a comprovação do acordo. | Histórico insuficiente para associar ação, autor, horário e condições vigentes. | 3 | 3 | 9 | Alto |
+| R11 | T11 - Repudiation | CA10 | Disputa sobre entrega de comissão não pode ser esclarecida por falta de evidências. | Ausência de registro confiável de disponibilização, versão do arquivo e eventos de acesso. | 3 | 3 | 9 | Alto |
+| R12 | T12 - Repudiation | CA09, CA10 | Condições negociadas em mensagens são negadas e não podem ser reconstruídas. | Histórico incompleto, alterável ou sem identificação confiável de autoria e sequência. | 3 | 3 | 9 | Alto |
+| R13 | T13 - Repudiation | CA09 | Agente privilegiado apaga ou adultera auditoria para ocultar ações indevidas. | Permissão de alteração ou exclusão de logs sem proteção independente. | 2 | 4 | 8 | Alto |
+| R14 | T14 - Repudiation | CA11 | Exclusão de conta elimina evidências de uma fraude ou disputa. | Processo de exclusão remove registros relacionados sem avaliar necessidade de preservação. | 2 | 3 | 6 | Médio |
+| R15 | T15 - Information Disclosure | CA12 | Publicação de imagem revela metadados privados do artista. | Disponibilização do original com localização ou outros metadados desnecessários. | 3 | 3 | 9 | Alto |
+| R16 | T16 - Information Disclosure | CA13 | Usuário não autorizado consulta dados cadastrais, mensagens ou informações privadas de terceiros. | Falha de autorização ou exposição excessiva de dados nas respostas da aplicação. | 2 | 3 | 6 | Médio |
+| R17 | T17 - Information Disclosure | CA14 | Terceiro baixa ou compartilha arquivo ou relatório privado por seu endereço. | URL acessível sem autorização adequada ou link com validade e escopo inadequados. | 2 | 3 | 6 | Médio |
+| R18 | T18 - Information Disclosure | CA16 (relacionado) | Exploração de consultas permite extrair em massa dados privados do banco. | Construção insegura de consultas e permissões de acesso à base excessivas. | 2 | 4 | 8 | Alto |
+| R19 | T19 - Information Disclosure | CA13 | Administrador consulta conversas ou arquivos fora de uma finalidade autorizada. | Privilégios amplos sem restrição contextual e supervisão dos acessos. | 2 | 3 | 6 | Médio |
+| R20 | T20 - Information Disclosure | CA17 | Terceiro infere a rotina de um artista a partir de indicadores de atividade. | Exposição de status e horários detalhados sem restrição adequada de visibilidade. | 3 | 3 | 9 | Alto |
+| R21 | T21 - Denial of Service | CA18 | Volume automatizado de login ou recuperação degrada a autenticação de usuários legítimos. | Limites de frequência e proteção de recursos insuficientes para a carga recebida. | 4 | 3 | 12 | Crítico |
+| R22 | T22 - Denial of Service | CA19; CA16 (sobrecarga) | Buscas repetidas e custosas degradam o catálogo e o atendimento a outras requisições. | Consultas sem limites adequados de custo, frequência, paginação ou concorrência. | 4 | 3 | 12 | Crítico |
+| R23 | T23 - Denial of Service | CA05, CA20 | Uploads volumosos ou simultâneos esgotam recursos e interrompem entregas ou publicação. | Ausência de cotas e limites adequados de tamanho, quantidade e concorrência. | 3 | 3 | 9 | Alto |
+| R24 | T24 - Denial of Service | CA06, CA20 | Processamento de imagens grandes ou malformadas torna o serviço indisponível. | Processamento sem limites de dimensões, tempo, memória ou isolamento de recursos. | 3 | 3 | 9 | Alto |
+| R25 | T25 - Denial of Service | CA19 | Solicitações automatizadas inundam a conta de um artista e impedem atender pedidos legítimos. | Ausência de limites de envio e de mecanismos para conter solicitações abusivas. | 4 | 3 | 12 | Crítico |
+| R26 | T26 - Denial of Service | - | Reservas artificiais tornam obras ou serviços indisponíveis para clientes legítimos. | Existência de reserva/carrinho sem expiração eficaz ou limites contra retenção abusiva. | 2 | 3 | 6 | Médio |
+| R27 | T27 - Denial of Service | CA21 | Indisponibilidade do provedor externo impede temporariamente o login pelo método afetado. | Dependência do provedor e ausência de alternativa utilizável para os usuários afetados. | 2 | 2 | 4 | Médio |
+| R28 | T28 - Elevation of Privilege | CA22 | Usuário comum executa funções administrativas por acesso direto às interfaces do servidor. | Ausência de verificação de autenticação e autorização nas operações administrativas. | 2 | 4 | 8 | Alto |
+| R29 | T29 - Elevation of Privilege | CA23 | Usuário atribui a si próprio papel administrativo e passa a operar com privilégios elevados. | Aceitação de parâmetros de permissão enviados pelo cliente ou escrita indevida no cadastro de papéis. | 2 | 4 | 8 | Alto |
+| R30 | T30 - Elevation of Privilege | CA24 | Usuário consulta conteúdo restrito, altera ou exclui obra de outro artista ao trocar seu identificador. | Servidor não verifica autorização sobre o recurso solicitado. | 2 | 3 | 6 | Médio |
+| R31 | T31 - Elevation of Privilege | CA25 | Conta bloqueada continua a executar ações por uma sessão previamente válida. | Bloqueio não verificado nas operações ou sessão não revogada de forma eficaz. | 2 | 3 | 6 | Médio |
+| R32 | T32 - Elevation of Privilege | CA25 | Ex-integrante da equipe mantém acesso a dados e funções administrativas. | Desligamento sem revogação efetiva de permissões, credenciais e sessões. | 2 | 4 | 8 | Alto |
+| R33 | T33 - Elevation of Privilege | CA26 | Usuário com papéis de cliente e artista aprova ação que exigiria autorização independente. | Validação apenas do papel, sem verificar a parte representada e o contexto da contratação. | 2 | 3 | 6 | Médio |
+| R34 | T01, T02 (relacionadas) - Spoofing / Repudiation | CA04 | Transferência informal de conta permite que terceiro negocie usando reputação e histórico do titular. | Compartilhamento de credenciais e falta de procedimento confiável para mudança de titularidade. | 3 | 3 | 9 | Alto |
+| R35 | T03, T16 (relacionadas) - Information Disclosure / Spoofing | CA15 | Inspeção de tráfego expõe mensagens, credenciais ou dados de contratação. | Canal sem proteção adequada e possibilidade de observação do tráfego pelo atacante. | 2 | 3 | 6 | Médio |
+| R36 | T18, T22 (relacionadas) - Information Disclosure / Denial of Service | CA16 | Coleta automatizada pela busca acumula informações privadas indevidamente presentes nos resultados. | Busca retorna campos restritos e permite enumeração e coleta sem limites suficientes. | 3 | 4 | 12 | Crítico |
+| R37 | T06, T13 (relacionadas) - Tampering / Repudiation | CA27 | Administrador altera condições de contratação sem justificativa e sem histórico confiável. | Privilégios excessivos para alteração de contratos e auditoria insuficiente. | 2 | 3 | 6 | Médio |
 
 ### 13.5 Justificativas das avaliações
+
+As justificativas explicam como cada risco pode ocorrer, quem ou o que pode ser afetado e por que ele recebeu aquela classificação. A probabilidade 2 indica situações que dependem de uma falha ou condição específica. A probabilidade 3 se aplica a abusos que podem ocorrer em situações comuns de uso ou ataque. Já a probabilidade 4 foi atribuída aos casos em que a falta de limites adequados facilita a repetição automatizada de ações. A avaliação considera a possibilidade de o ataque causar o dano descrito, pois uma tentativa nem sempre resulta em sucesso.
+
+#### R01 - Tomada da conta de um artista
+
+**Probabilidade 3:** O login e a recuperação de senha estão disponíveis pela aplicação e podem ser alvo de ataques comuns. Para assumir a conta, o atacante precisa obter uma credencial válida ou explorar uma falha na recuperação.
+
+**Impacto 3:** Pode expor mensagens, permitir propostas fraudulentas e prejudicar o artista e seus clientes. A avaliação considera os danos causados pelo comprometimento de uma conta.
+
+**Classificação:** 3 × 3 = **9 - Alto**.
+
+#### R02 - Criação de perfil com identidade ou obras de outro artista
+
+**Probabilidade 3:** Um usuário comum pode criar um perfil e copiar informações ou obras públicas de outro artista. Para realizar a fraude, ainda precisa convencer clientes a contratar seus serviços.
+
+**Impacto 3:** Pode prejudicar a reputação do artista verdadeiro e causar perdas financeiras aos clientes enganados. A exclusão do perfil falso não desfaz os prejuízos já causados.
+
+**Classificação:** 3 × 3 = **9 - Alto**.
+
+#### R03 - Uso de sessão comprometida para acessar a conta de outra pessoa
+
+**Probabilidade 2:** Depende de o atacante obter um token de sessão que ainda seja válido e possa ser reutilizado. Estar na mesma rede do usuário não basta quando a comunicação está protegida.
+
+**Impacto 3:** Permite acessar mensagens, consultar contratações e fazer alterações em nome do titular, prejudicando sua privacidade e o controle sobre a conta.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
+
+#### R04 - Acesso indevido por autenticação externa
+
+**Probabilidade 2:** Depende do uso de autenticação externa e de uma credencial ou token comprometido. Isso não significa que todo o provedor tenha sido afetado.
+
+**Impacto 3:** Pode expor informações privadas e permitir fraudes na conta vinculada. A avaliação considera o impacto sobre essa conta, sem presumir que outras contas sejam afetadas.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
+
+#### R05 - Alteração de preço ou prazo antes do envio da solicitação
+
+**Probabilidade 2:** Alterar os dados enviados pelo navegador é simples, mas o problema só ocorre se o servidor aceitar valores que não seguem as regras da contratação.
+
+**Impacto 3:** Pode prejudicar o pagamento e o planejamento do artista, levando a uma contratação com preço ou prazo incorretos.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
+
+#### R06 - Alteração das condições de uma contratação sem concordância da outra parte
+
+**Probabilidade 2:** Depende de uma contratação já aceita e de uma falha que permita alterar suas condições sem a autorização da outra parte.
+
+**Impacto 3:** Pode modificar preço, prazo e quantidade de revisões combinados, causando trabalho não remunerado, descumprimento do acordo e conflitos entre cliente e artista.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
+
+#### R07 - Manipulação de avaliações
+
+**Probabilidade 3:** Se o sistema não verificar adequadamente as avaliações, usuários comuns podem publicar avaliações falsas ou tentar remover avaliações legítimas para favorecer um perfil.
+
+**Impacto 3:** Pode distorcer a reputação dos artistas e influenciar a escolha dos clientes, levando a contratações baseadas em informações falsas.
+
+**Classificação:** 3 × 3 = **9 - Alto**.
+
+#### R08 - Envio de arquivo malicioso que compromete o servidor ou altera conteúdo
+
+**Probabilidade 2:** Além do envio do arquivo, é necessária uma falha no processamento ou no armazenamento que permita executar conteúdo malicioso ou substituir arquivos.
+
+**Impacto 4:** Se o servidor for comprometido, o ataque pode atingir a aplicação, os arquivos e os dados de vários usuários, prejudicando funções importantes da plataforma.
+
+**Classificação:** 2 × 4 = **8 - Alto**.
+
+#### R09 - Alterações simultâneas deixam um pedido com informações inconsistentes
+
+**Probabilidade 2:** Depende de duas operações alterarem o mesmo registro ao mesmo tempo e de o sistema não controlar corretamente essas alterações.
+
+**Impacto 2:** A avaliação considera um problema limitado a um pedido, que possa ser corrigido pela conferência das informações com as partes. Se houver perdas graves ou outros registros forem afetados, o impacto deverá ser revisto.
+
+**Classificação:** 2 × 2 = **4 - Médio**.
+
+#### R10 - Usuário nega ter aceitado, recusado ou alterado uma proposta
+
+**Probabilidade 3:** Essas ações fazem parte do uso comum da plataforma e podem ser negadas por qualquer participante. A falta de registros confiáveis dificulta comprovar o que aconteceu.
+
+**Impacto 3:** Pode dificultar a resolução de disputas e a identificação das responsabilidades de clientes e artistas, causando perdas financeiras e retrabalho.
+
+**Classificação:** 3 × 3 = **9 - Alto**.
+
+#### R11 - Falta de registros impede esclarecer uma disputa sobre a entrega
+
+**Probabilidade 3:** Um artista pode afirmar que entregou a obra, enquanto o cliente nega o recebimento. Sem registros suficientes, essa situação pode ser difícil de esclarecer.
+
+**Impacto 3:** Pode prejudicar o pagamento do artista, o acesso do cliente à obra e a resolução do conflito. O registro de download ajuda a verificar o acesso ao arquivo, mas não comprova que o cliente aceitou a entrega.
+
+**Classificação:** 3 × 3 = **9 - Alto**.
+
+#### R12 - Usuário nega condições combinadas por mensagem
+
+**Probabilidade 3:** A negociação por mensagens faz parte do funcionamento da plataforma. Se o histórico não for preservado adequadamente, uma das partes pode negar o que foi combinado.
+
+**Impacto 3:** Pode dificultar a comprovação de preços, prazos e características da obra, causando conflitos e prejuízos para clientes e artistas.
+
+**Classificação:** 3 × 3 = **9 - Alto**.
+
+#### R13 - Usuário privilegiado altera ou apaga registros para esconder ações indevidas
+
+**Probabilidade 2:** Depende de acesso privilegiado aos registros e de falhas na proteção contra alterações ou exclusões.
+
+**Impacto 4:** Pode eliminar provas de ações realizadas em várias contas e funções administrativas, dificultando investigações e permitindo que fraudes continuem.
+
+**Classificação:** 2 × 4 = **8 - Alto**.
+
+#### R14 - Exclusão de conta apaga provas de fraude ou disputa
+
+**Probabilidade 2:** Ocorre se a exclusão de uma conta também apagar registros necessários para esclarecer uma fraude ou disputa.
+
+**Impacto 3:** Pode impedir a recuperação do histórico da contratação e dificultar a identificação dos responsáveis. A perda desses registros pode ser definitiva.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
+
+#### R15 - Imagem publicada revela informações privadas do artista
+
+**Probabilidade 3:** O envio de imagens é uma atividade comum na plataforma. Se os metadados não forem removidos, terceiros podem consultar informações presentes no arquivo, como a localização onde a imagem foi produzida.
+
+**Impacto 3:** Pode revelar locais privados e prejudicar a segurança e a privacidade do artista. Excluir a imagem da plataforma não elimina as cópias já obtidas por outras pessoas.
+
+**Classificação:** 3 × 3 = **9 - Alto**.
+
+#### R16 - Acesso indevido a dados e mensagens de outros usuários
+
+**Probabilidade 2:** Depende de uma falha no controle de acesso que permita consultar informações privadas sem autorização.
+
+**Impacto 3:** Pode expor dados pessoais, mensagens e detalhes de negociações. A avaliação considera uma exposição limitada; o vazamento de toda a base é tratado em R18.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
+
+#### R17 - Acesso a arquivo privado por um link desprotegido
+
+**Probabilidade 2:** Depende de alguém obter o endereço do arquivo e conseguir acessá-lo sem que o sistema verifique sua autorização.
+
+**Impacto 3:** Pode expor arquivos e informações de vendas ou contratações. Mesmo após a proteção do link, cópias já baixadas podem continuar circulando.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
+
+#### R18 - Falha nas consultas permite retirar dados privados do banco em grande quantidade
+
+**Probabilidade 2:** Depende de uma falha nas consultas ao banco que permita acessar dados sem autorização. Fazer buscas públicas de forma automática não é suficiente para esse ataque.
+
+**Impacto 4:** Pode expor informações privadas de muitos clientes e artistas. Corrigir a falha não desfaz o vazamento dos dados já obtidos.
+
+**Classificação:** 2 × 4 = **8 - Alto**.
+
+#### R19 - Administrador acessa conversas ou arquivos sem necessidade autorizada
+
+**Probabilidade 2:** Depende de uma pessoa com acesso administrativo e de restrições insuficientes sobre o que ela pode consultar nas atividades de suporte ou moderação.
+
+**Impacto 3:** Prejudica a privacidade dos envolvidos e a confiança na administração. A avaliação considera acessos a casos específicos; uma exposição de muitos usuários exigiria rever o impacto.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
+
+#### R20 - Monitoramento da rotina de um artista
+
+**Probabilidade 3:** Se o status e os horários de atividade forem públicos, qualquer pessoa pode acompanhá-los e registrar padrões ao longo do tempo.
+
+**Impacto 3:** Pode revelar hábitos do artista e facilitar assédio, prejudicando sua privacidade.
+
+**Classificação:** 3 × 3 = **9 - Alto**.
+
+#### R21 - Tentativas automáticas de login ou recuperação de senha sobrecarregam o serviço
+
+**Probabilidade 4:** Se não houver limites adequados, um robô pode repetir muitas tentativas com facilidade e consumir os recursos do serviço. A nota considera essa facilidade, e não um histórico de ataques já ocorridos.
+
+**Impacto 3:** Pode impedir temporariamente o acesso de clientes e artistas e interromper negociações. A avaliação considera uma interrupção relevante, sem perda de dados ou paralisação prolongada de toda a plataforma.
+
+**Classificação:** 4 × 3 = **12 - Crítico**.
+
+#### R22 - Buscas automáticas sobrecarregam a plataforma
+
+**Probabilidade 4:** Sem limites adequados, um robô pode repetir buscas que exigem muitos recursos, sem precisar de acesso administrativo.
+
+**Impacto 3:** Pode causar lentidão ou indisponibilidade, dificultando a busca por artistas e novas contratações. O cenário considera que o serviço possa ser recuperado após controlar a sobrecarga.
+
+**Classificação:** 4 × 3 = **12 - Crítico**.
+
+#### R23 - Excesso de uploads interrompe publicações ou entregas
+
+**Probabilidade 3:** Um usuário pode enviar arquivos repetidamente ou em grande quantidade. A sobrecarga depende dos limites de envio e da capacidade disponível no servidor.
+
+**Impacto 3:** Pode impedir a publicação de obras e a entrega de arquivos aos clientes. A avaliação considera uma interrupção relevante, sem perda de dados ou comprometimento de todo o servidor.
+
+**Classificação:** 3 × 3 = **9 - Alto**.
+
+#### R24 - Processamento de imagens grandes ou malformadas interrompe o serviço
+
+**Probabilidade 3:** Como o envio de imagens faz parte do uso comum, arquivos que exigem muitos recursos podem chegar ao servidor. Sem limites adequados, seu processamento pode sobrecarregar o sistema.
+
+**Impacto 3:** Pode interromper a publicação de portfólios e prejudicar outras funções da plataforma. A avaliação considera uma indisponibilidade temporária, sem perda permanente de dados.
+
+**Classificação:** 3 × 3 = **9 - Alto**.
+
+#### R25 - Excesso de solicitações impede o artista de atender pedidos legítimos
+
+**Probabilidade 4:** Se não houver limites eficazes, um robô pode enviar muitas solicitações para o mesmo artista com facilidade.
+
+**Impacto 3:** Pode desorganizar a fila de pedidos, dificultar o atendimento e prejudicar a renda do artista. Mesmo atingindo uma única pessoa, o dano à sua atividade pode ser relevante.
+
+**Classificação:** 4 × 3 = **12 - Crítico**.
+
+#### R26 - Reservas abusivas bloqueiam obras ou serviços
+
+**Probabilidade 2:** Depende de o sistema oferecer reservas e de suas regras permitirem manter obras ou serviços bloqueados de forma abusiva. A implementação dessa funcionalidade ainda não está confirmada.
+
+**Impacto 3:** Pode impedir contratações legítimas e causar perda de receita aos artistas, mesmo que o restante do site continue funcionando.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
+
+#### R27 - Falha no provedor externo impede o login
+
+**Probabilidade 2:** Depende de uma falha no serviço externo de autenticação. Não há dados sobre sua disponibilidade que permitam considerar essas falhas frequentes.
+
+**Impacto 2:** A avaliação considera uma interrupção temporária para os usuários daquele método de login, sem perda de dados. Se todos dependerem do provedor ou a interrupção durar muito tempo, o impacto será maior.
+
+**Classificação:** 2 × 2 = **4 - Médio**.
+
+#### R28 - Usuário comum acessa funções administrativas
+
+**Probabilidade 2:** Depende de uma falha na verificação de permissões pelo servidor. Conhecer o endereço de uma função administrativa não deveria ser suficiente para utilizá-la.
+
+**Impacto 4:** Pode permitir alterações em configurações, ações de moderação e bloqueios de vários usuários, comprometendo a administração da plataforma.
+
+**Classificação:** 2 × 4 = **8 - Alto**.
+
+#### R29 - Usuário altera suas permissões para se tornar administrador
+
+**Probabilidade 2:** Depende de uma falha que permita ao usuário modificar suas próprias permissões e obter acesso administrativo.
+
+**Impacto 4:** Pode dar acesso contínuo a funções importantes, permitindo expor dados e alterar várias contas, com prejuízos graves para a plataforma.
+
+**Classificação:** 2 × 4 = **8 - Alto**.
+
+#### R30 - Usuário acessa, altera ou exclui obra de outro artista
+
+**Probabilidade 2:** Trocar o identificador de uma obra na requisição é simples, mas o acesso indevido depende de o servidor não verificar a permissão do usuário sobre ela.
+
+**Impacto 3:** Pode permitir a alteração ou exclusão de obras e o acesso a arquivos privados de outro artista. A visualização normal de um portfólio público não faz parte desse risco.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
+
+#### R31 - Usuário bloqueado continua usando uma sessão ativa
+
+**Probabilidade 2:** Depende de o usuário já estar conectado quando for bloqueado e de o sistema não aplicar o bloqueio à sessão existente.
+
+**Impacto 3:** Pode permitir que o usuário continue praticando a fraude ou o abuso que motivou o bloqueio, prejudicando outras pessoas e a atuação da moderação.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
+
+#### R32 - Ex-integrante da equipe mantém acesso administrativo
+
+**Probabilidade 2:** Depende de uma pessoa que já tinha acesso administrativo continuar com permissões ou sessões válidas após sair da equipe.
+
+**Impacto 4:** Pode permitir o acesso, a alteração ou a exclusão de dados de vários usuários, além do uso indevido de funções importantes da plataforma.
+
+**Classificação:** 2 × 4 = **8 - Alto**.
+
+#### R33 - Usuário com os papéis de cliente e artista aprova ações sem autorização da outra parte
+
+**Probabilidade 2:** Depende de o usuário possuir os dois papéis e de o sistema não verificar qual parte ele representa naquela contratação.
+
+**Impacto 3:** Pode permitir aprovações indevidas e vantagens financeiras ou de reputação, sem a concordância da outra parte, dificultando comprovar quem autorizou a ação.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
+
+#### R34 - Transferência de conta permite usar a reputação de outro artista
+
+**Probabilidade 3:** O titular pode compartilhar suas credenciais voluntariamente. Se a identidade de quem usa a conta não for verificada, outra pessoa pode continuar negociando pelo mesmo perfil.
+
+**Impacto 3:** Pode enganar clientes que confiam no histórico do artista e atribuir ao titular ações realizadas por terceiros. Neste caso, há compartilhamento voluntário da conta, diferente da tomada de conta tratada em R01.
+
+**Classificação:** 3 × 3 = **9 - Alto**.
+
+#### R35 - Interceptação da comunicação expõe informações privadas
+
+**Probabilidade 2:** Depende de o atacante conseguir observar a comunicação e de haver falhas em sua proteção. Estar na mesma rede não permite, por si só, ler dados protegidos por TLS.
+
+**Impacto 3:** Pode expor mensagens, dados de contratação e credenciais, permitindo seu uso indevido. A avaliação considera os usuários cuja comunicação foi interceptada.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
+
+#### R36 - Busca automatizada coleta informações privadas exibidas indevidamente
+
+**Probabilidade 3:** Se a busca mostrar dados privados que deveriam estar protegidos, um robô pode coletá-los por meio de consultas comuns. Neste caso, não é necessário explorar uma falha nas consultas ao banco, como em R18.
+
+**Impacto 4:** Pode expor informações privadas de muitos usuários, que podem continuar circulando após a correção. A coleta de informações publicadas intencionalmente para consulta pública não recebe essa mesma avaliação.
+
+**Classificação:** 3 × 4 = **12 - Crítico**.
+
+#### R37 - Administrador altera uma contratação sem justificativa ou registro adequado
+
+**Probabilidade 2:** Depende de acesso administrativo e da falta de controles que limitem as alterações e registrem o que foi feito.
+
+**Impacto 3:** Pode modificar preços, prazos e condições combinadas, causando prejuízo às partes e dificultando a contestação. A avaliação considera alterações em uma contratação, sem presumir comprometimento de toda a administração.
+
+**Classificação:** 2 × 3 = **6 - Médio**.
 
 
 ### 13.6 Priorização dos riscos
