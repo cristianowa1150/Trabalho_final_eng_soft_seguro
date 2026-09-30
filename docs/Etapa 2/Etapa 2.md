@@ -709,16 +709,135 @@ Trata da restauração de estados íntegros. Envolve políticas de recuperação
 
 
 ### 14.4 Plano de tratamento
+O plano de tratamento foi elaborado a partir dos riscos identificados na seção 13.4 e das estratégias definidas na seção 14.1. Os controles propostos têm como objetivo reduzir a probabilidade de ocorrência dos eventos ou limitar seus impactos sobre os usuários, dados e componentes do Artifício.
 
+A estratégia predominante é "Reduzir", uma vez que a maioria dos riscos está relacionada a funcionalidades necessárias ao funcionamento da plataforma e, portanto, não pode ser simplesmente eliminada. A estratégia "Compartilhar" será utilizada principalmente quando houver dependência de serviços externos, enquanto "Evitar" será aplicada a funcionalidades ou condições que possam ser retiradas da arquitetura. A aceitação será restrita a riscos residuais considerados compatíveis com o funcionamento do sistema.
+
+
+| Risco | Estratégia | Controles propostos | Funções do NIST | Responsáveis | Evidências e verificação |
+|---|---|---|---|---|---|
+| **R01 – Tomada da conta de um artista** | Reduzir | Armazenamento seguro de senhas; recuperação de senha protegida; limitação de tentativas de login; proteção de sessões; invalidação de sessões após eventos críticos; MFA para contas administrativas. | Protect, Detect, Respond | Desenvolvimento e infraestrutura | Testes de login e recuperação de senha; testes de sessão; verificação dos logs de autenticação; simulação de comprometimento de conta. |
+| **R02 – Perfil falso utilizando identidade ou obras de outro artista** | Reduzir | Denúncia de perfis; registro da criação e alteração de perfis; mecanismos de moderação; possibilidade de remoção de conteúdo comprovadamente fraudulento; preservação de evidências para investigação. | Govern, Protect, Detect, Respond | Administração e desenvolvimento | Testes do fluxo de denúncia; registros de moderação; auditoria de alterações de perfil. |
+| **R03 – Reutilização de sessão comprometida** | Reduzir | Tokens de sessão com validade limitada; cookies `HttpOnly`, `Secure` e `SameSite`; invalidação de sessões após logout, bloqueio ou alteração sensível; proteção contra reutilização indevida. | Protect, Detect, Respond | Desenvolvimento | Testes de expiração e revogação; tentativa de utilização de sessão invalidada; inspeção das configurações dos cookies. |
+| **R04 – Acesso indevido por autenticação externa** | Compartilhar | Utilização de provedor de identidade especializado; uso de OAuth 2.0/OpenID Connect quando aplicável; validação de tokens; não armazenamento das credenciais primárias do provedor. | Govern, Protect, Detect, Respond | Desenvolvimento e infraestrutura | Testes de autenticação; validação de tokens; documentação da integração; testes de revogação. |
+| **R05 – Alteração de preço ou prazo antes da solicitação** | Reduzir | Validação dos preços, prazos e condições no backend; não confiar nos valores enviados pelo frontend; recuperação das regras armazenadas para o artista; registro dos dados utilizados na solicitação. | Protect, Detect | Desenvolvimento | Testes alterando parâmetros no navegador; comparação entre dados enviados e valores aceitos pelo servidor. |
+| **R06 – Alteração de contratação sem concordância da outra parte** | Reduzir | Controle de estados da contratação; validação da autorização de cada parte; registro das alterações; confirmação das condições antes da alteração; controle de concorrência. | Protect, Detect, Respond | Desenvolvimento | Testes de alteração sem autorização; testes concorrentes; auditoria do histórico da contratação. |
+| **R07 – Manipulação de avaliações** | Reduzir | Permitir avaliação somente após contratação válida; vincular avaliação ao usuário e à contratação; restringir alterações e exclusões; registrar operações de moderação. | Protect, Detect, Respond | Desenvolvimento e administração | Testes tentando avaliar sem contratação; testes de alteração/exclusão; auditoria das avaliações. |
+| **R08 – Arquivo malicioso compromete servidor ou conteúdo** | Evitar/Reduzir | Restringir formatos aceitos; validar conteúdo real do arquivo; rejeitar executáveis e scripts; armazenar arquivos fora de diretórios executáveis; isolar processamento; aplicar limites de tamanho. | Protect, Detect | Desenvolvimento e infraestrutura | Testes com extensões falsas, arquivos inválidos e conteúdo não permitido; inspeção do armazenamento. |
+| **R09 – Atualizações simultâneas geram inconsistência** | Reduzir | Uso de transações; controle de concorrência; validação do estado atual antes da alteração; controle de versão quando necessário. | Protect, Detect, Recover | Desenvolvimento | Testes com requisições simultâneas; verificação da consistência dos registros após concorrência. |
+| **R10 – Negação de aceite, recusa ou alteração de proposta** | Reduzir | Registro de ações com usuário, data, hora, proposta e estado; preservação do histórico das alterações; proteção dos registros contra adulteração. | Protect, Detect, Respond | Desenvolvimento | Inspeção do histórico; testes de aceite/recusa; verificação dos registros gerados. |
+| **R11 – Falta de evidências sobre a entrega da comissão** | Reduzir | Registro da disponibilização da obra; identificação da versão do arquivo; registro de acesso/download; armazenamento das informações de entrega. | Protect, Detect, Recover | Desenvolvimento e infraestrutura | Testes de entrega; verificação dos registros de acesso; recuperação do histórico de uma entrega. |
+| **R12 – Negação de condições combinadas por mensagem** | Reduzir | Preservação do histórico de mensagens; identificação de remetente e horário; proteção contra alteração retroativa; associação entre mensagens e contratação. | Protect, Detect, Respond | Desenvolvimento | Testes de mensagens; auditoria do histórico; tentativa de alteração de mensagens já registradas. |
+| **R13 – Alteração ou exclusão de logs por usuário privilegiado** | Reduzir | Restrição de acesso aos logs; armazenamento separado; controle de permissões; registro de acesso aos próprios logs; cópias protegidas contra alteração. | Govern, Protect, Detect, Recover | Infraestrutura e administração | Testes de permissões; tentativa de alteração de logs; verificação da integridade e existência de cópias. |
+| **R14 – Exclusão de conta elimina evidências** | Reduzir | Política de retenção; separação entre exclusão da conta e preservação de registros necessários; anonimização quando aplicável; preservação de evidências relacionadas a disputas. | Govern, Protect, Recover | Administração e desenvolvimento | Testes de exclusão; verificação dos registros preservados; documentação da política de retenção. |
+| **R15 – Metadados privados expostos em imagens** | Reduzir | Remoção de metadados EXIF desnecessários das cópias públicas; processamento das imagens antes da disponibilização; preservação do original somente quando necessário e protegido. | Protect, Detect | Desenvolvimento | Upload de imagens com GPS/EXIF; inspeção do arquivo disponibilizado publicamente. |
+| **R16 – Acesso indevido a dados e mensagens** | Reduzir | Autorização no backend; separação entre dados públicos e privados; controle de acesso por usuário e recurso; minimização dos dados retornados pela API. | Protect, Detect | Desenvolvimento | Testes de acesso horizontal e vertical; testes de API; tentativa de acessar mensagens e dados de terceiros. |
+| **R17 – Acesso a arquivo privado por link desprotegido** | Reduzir | URLs não públicas; autorização antes do download; links temporários quando necessários; validação do usuário e do recurso solicitado. | Protect, Detect | Desenvolvimento e infraestrutura | Testes com URL compartilhada; tentativa de acesso após expiração; tentativa de acesso por outro usuário. |
+| **R18 – Extração em massa de dados privados do banco** | Reduzir | Consultas parametrizadas; princípio do menor privilégio para o banco; validação das consultas; separação entre dados públicos e privados; monitoramento de consultas anômalas. | Identify, Protect, Detect, Respond | Desenvolvimento e infraestrutura | Testes de consulta; análise de permissões do banco; testes de extração indevida; monitoramento de consultas. |
+| **R19 – Administrador acessa dados sem necessidade autorizada** | Reduzir | Privilégio mínimo; autorização contextual; registro de acessos administrativos; revisão periódica de permissões; necessidade de justificativa para acessos sensíveis. | Govern, Protect, Detect | Administração e desenvolvimento | Auditoria de acessos administrativos; revisão de permissões; testes de acesso sem autorização contextual. |
+| **R20 – Monitoramento da rotina de artista** | Reduzir | Não disponibilizar status detalhado desnecessariamente; permitir configuração de visibilidade; reduzir precisão de horários; não expor informações de atividade que não sejam necessárias. | Govern, Protect | Desenvolvimento e administração | Testes de visibilidade; verificação dos dados retornados pela API; revisão das configurações de privacidade. |
+| **R21 – Sobrecarga por login ou recuperação automatizada** | Reduzir | Rate limiting; limitação progressiva de tentativas; mecanismos contra automação; monitoramento de tentativas; proteção específica para recuperação de senha. | Protect, Detect, Respond, Recover | Infraestrutura e desenvolvimento | Testes de carga; simulação de tentativas automatizadas; métricas de requisições; verificação dos bloqueios. |
+| **R22 – Buscas automáticas sobrecarregam a plataforma** | Reduzir | Paginação; limites de frequência; controle de custo das consultas; limites de resultados; cache quando adequado; monitoramento de consultas custosas. | Protect, Detect, Respond | Desenvolvimento e infraestrutura | Testes de carga sobre busca; métricas de tempo de resposta; verificação do rate limiting. |
+| **R23 – Excesso de uploads interrompe publicações ou entregas** | Reduzir | Limite de tamanho; limite de quantidade; cotas por usuário; controle de concorrência; armazenamento separado; fila para processamento pesado. | Protect, Detect, Recover | Desenvolvimento e infraestrutura | Testes de múltiplos uploads; monitoramento de armazenamento; verificação das cotas e limites. |
+| **R24 – Imagens grandes ou malformadas interrompem o serviço** | Reduzir | Limites de dimensões; limite de memória e tempo de processamento; validação antes do processamento; isolamento de workers; rejeição de arquivos excessivamente complexos. | Protect, Detect, Respond | Desenvolvimento e infraestrutura | Testes com imagens de grandes dimensões e arquivos malformados; monitoramento de CPU e memória. |
+| **R25 – Solicitações automatizadas inundam artista** | Reduzir | Limite de solicitações por usuário; limitação por período; detecção de comportamento automatizado; bloqueio temporário; ferramentas para denunciar abuso. | Protect, Detect, Respond | Desenvolvimento e administração | Testes de envio repetitivo; registros de bloqueio; métricas de solicitações por usuário. |
+| **R26 – Reservas abusivas bloqueiam obras ou serviços** | Evitar/Reduzir | Caso a funcionalidade seja implementada, utilizar expiração automática das reservas, limite de reservas simultâneas e liberação automática dos itens. Caso a funcionalidade não seja implementada, o risco é evitado. | Govern, Protect | Desenvolvimento | Testes de expiração; testes de múltiplas reservas; verificação da liberação automática. |
+| **R27 – Indisponibilidade de provedor externo de autenticação** | Compartilhar/Reduzir | Utilização de provedor especializado; tratamento adequado de falhas; manutenção de método alternativo de autenticação quando aplicável; monitoramento da disponibilidade do serviço externo. | Govern, Protect, Recover | Infraestrutura e desenvolvimento | Testes de indisponibilidade do provedor; verificação do comportamento da aplicação durante a falha. |
+| **R28 – Usuário comum acessa funções administrativas** | Reduzir | Autenticação e autorização no backend para todas as operações administrativas; controle de acesso baseado em papéis; negação por padrão; testes de acesso direto às rotas administrativas. | Govern, Protect, Detect | Desenvolvimento e administração | Testes de acesso direto; testes com conta comum; logs de tentativas negadas. |
+| **R29 – Usuário altera suas próprias permissões** | Reduzir | Permissões definidas exclusivamente no servidor; separação entre dados de perfil e papéis; proibição de alteração de privilégios pelo próprio usuário; controle de acesso administrativo. | Govern, Protect, Detect | Desenvolvimento e administração | Testes alterando parâmetros de papel; inspeção das regras de autorização; auditoria de alterações de permissões. |
+| **R30 – Acesso a obra de outro artista** | Reduzir | Verificação de propriedade do recurso no backend; autorização para cada operação de leitura, alteração e exclusão; não confiar no identificador enviado pelo cliente. | Protect, Detect | Desenvolvimento | Testes alterando IDs de obras; testes de acesso entre diferentes contas; logs de acesso negado. |
+| **R31 – Conta bloqueada continua usando sessão ativa** | Reduzir | Revogação de sessões no bloqueio; verificação do estado da conta em operações sensíveis; invalidação de tokens; mecanismo administrativo para encerramento das sessões. | Protect, Detect, Respond | Desenvolvimento e administração | Testes bloqueando conta com sessão ativa; tentativa de realizar operações após bloqueio. |
+| **R32 – Ex-integrante mantém acesso administrativo** | Reduzir | Processo de desligamento com revogação de credenciais; encerramento de sessões; revisão de permissões; princípio do menor privilégio; inventário de contas administrativas. | Govern, Protect, Detect | Administração e infraestrutura | Simulação de desligamento; verificação de revogação; auditoria das contas administrativas. |
+| **R33 – Usuário com dois papéis aprova ação indevidamente** | Reduzir | Verificação do contexto da contratação; identificação da parte representada; separação das autorizações do cliente e do artista; validação independente das operações sensíveis. | Govern, Protect, Detect | Desenvolvimento | Testes com usuário possuindo múltiplos papéis; tentativa de aprovação em nome da outra parte. |
+| **R34 – Transferência informal de conta** | Evitar/Reduzir | Definir conta como pessoal e intransferível; proibir compartilhamento de credenciais; procedimento administrativo para situações excepcionais; registro de alterações relevantes da conta. | Govern, Protect, Detect | Administração e desenvolvimento | Testes do fluxo de alteração de titularidade; auditoria das alterações; documentação dos termos de uso. |
+| **R35 – Interceptação de comunicação** | Reduzir | HTTPS/TLS em toda comunicação; proteção de cookies e sessões; não transmitir informações sensíveis em canais inseguros; configuração adequada dos certificados. | Protect, Detect | Infraestrutura e desenvolvimento | Testes de conexão; inspeção de certificados; análise de tráfego; tentativa de comunicação sem TLS. |
+| **R36 – Busca automatizada coleta informações privadas** | Reduzir | Separação entre campos públicos e privados; filtragem dos resultados da busca; autorização no backend; paginação; rate limiting; monitoramento de consultas automatizadas. | Identify, Protect, Detect, Respond | Desenvolvimento e infraestrutura | Testes de busca com diferentes usuários; inspeção das respostas da API; testes automatizados de enumeração. |
+| **R37 – Administrador altera contratação sem justificativa ou histórico** | Reduzir | Limitação das alterações administrativas; autorização contextual; registro obrigatório de justificativa; auditoria das alterações; preservação do estado anterior da contratação. | Govern, Protect, Detect, Respond | Administração e desenvolvimento | Testes de alterações administrativas; auditoria dos registros; verificação da justificativa e do histórico anterior. |
 
 ### 14.5 Ordem inicial de implementação
+
+A ordem inicial de implementação considera a pontuação dos riscos, a extensão das consequências e as dependências entre os controles. Dessa forma, a ordem não é determinada exclusivamente pela pontuação: controles estruturais que servem de base para diversas funcionalidades devem ser implementados antes de controles mais específicos.
+
+| Ordem | Riscos relacionados | Controles prioritários | Justificativa |
+|---:|---|---|---|
+| **1** | R28, R29, R30, R31, R32, R33 | Autenticação, autorização no backend, controle de papéis e revogação de permissões | O controle de acesso é uma dependência de praticamente todas as funcionalidades sensíveis. |
+| **2** | R01, R03, R04, R34, R35 | Proteção de contas, sessões, recuperação e comunicação | Protege a identidade dos usuários e reduz riscos de tomada de contas e exposição de credenciais. |
+| **3** | R21, R22, R25 | Rate limiting, proteção contra automação e limites de recursos | São riscos críticos e podem afetar diretamente a disponibilidade do sistema. |
+| **4** | R36, R16, R17, R18, R19, R20 | Separação de dados públicos/privados, autorização e proteção de arquivos | Reduz riscos de exposição de dados pessoais, mensagens, arquivos e informações privadas. |
+| **5** | R05, R06, R09, R37 | Validação de contratações, controle de concorrência e auditoria | Protege a integridade de preços, prazos e condições negociadas. |
+| **6** | R07, R10, R11, R12, R13, R14 | Auditoria, histórico e preservação de evidências | Permite reconstruir eventos, resolver disputas e investigar alterações indevidas. |
+| **7** | R08, R15, R23, R24 | Segurança de uploads e processamento de imagens | Protege o servidor, o armazenamento e os dados presentes nos arquivos. |
+| **8** | R02 | Moderação e mecanismos contra falsificação de identidade | Reduz fraudes relacionadas à identidade e à reputação dos artistas. |
+| **9** | R26, R27 | Expiração de reservas e tratamento de dependências externas | R26 depende da existência da funcionalidade de reserva; R27 depende da utilização de autenticação externa. |
+
+A primeira prioridade é estabelecer a **base de autenticação e autorização**, pois outros controles dependem de saber corretamente quem é o usuário e quais recursos ele pode acessar. Em seguida, devem ser tratados os riscos críticos relacionados à disponibilidade e à exposição de informações. Os demais controles podem ser implementados progressivamente, acompanhando a implementação das respectivas funcionalidades.
+
 
 
 ### 14.6 Estimativa do risco residual
 
+O risco residual apresentado nesta seção representa uma **estimativa esperada após a implementação e validação dos controles propostos**. Os valores não representam resultados já obtidos, pois os controles ainda não foram implementados e testados.
+
+A estimativa considera que os controles sejam implementados corretamente e que as evidências previstas na seção 14.4 confirmem seu funcionamento.
+
+| Risco | Nível inicial | Nível residual esperado | Condição para aceitar o residual |
+|---|---|---|---|
+| **R01** | Alto | Médio | Proteção de autenticação, recuperação de conta e sessões implementada e testada. |
+| **R02** | Alto | Médio | Mecanismos de denúncia, moderação e preservação de evidências implementados. |
+| **R03** | Médio | Baixo | Sessões com expiração, revogação e proteção contra reutilização implementadas. |
+| **R04** | Médio | Baixo | Integração externa utilizar tokens adequadamente validados e escopos apropriados. |
+| **R05** | Médio | Baixo | Valores de preço e prazo forem sempre validados no backend. |
+| **R06** | Médio | Baixo | Alterações exigirem autorização e concordância adequadas. |
+| **R07** | Alto | Médio | Avaliações estiverem vinculadas a contratações e protegidas contra alterações indevidas. |
+| **R08** | Alto | Baixo | Uploads forem validados, isolados e processados com limites de recursos. |
+| **R09** | Médio | Baixo | Operações concorrentes utilizarem transações ou controle de versão. |
+| **R10** | Alto | Baixo | Histórico das propostas for preservado e protegido contra adulteração. |
+| **R11** | Alto | Baixo | Eventos de entrega e acesso forem registrados adequadamente. |
+| **R12** | Alto | Baixo | Histórico das mensagens for preservado e protegido contra alterações retroativas. |
+| **R13** | Alto | Médio | Logs forem armazenados com controle de acesso e proteção contra adulteração. |
+| **R14** | Médio | Baixo | Exclusão de contas preservar registros necessários para disputas e investigação. |
+| **R15** | Alto | Baixo | Metadados desnecessários forem removidos das imagens públicas. |
+| **R16** | Médio | Baixo | Autorização for aplicada em todas as operações sobre dados privados. |
+| **R17** | Médio | Baixo | Arquivos privados exigirem autorização e links possuírem escopo adequado. |
+| **R18** | Alto | Médio | Consultas e permissões do banco forem restringidas e monitoradas. |
+| **R19** | Médio | Baixo | Acessos administrativos forem limitados, registrados e revisados. |
+| **R20** | Alto | Baixo | Informações de atividade não essenciais deixarem de ser expostas publicamente. |
+| **R21** | Crítico | Médio | Rate limiting e proteção contra automação forem testados sob carga. |
+| **R22** | Crítico | Médio | Consultas de busca possuírem limites de frequência, custo e concorrência. |
+| **R23** | Alto | Médio | Uploads possuírem cotas, limites de tamanho e controle de concorrência. |
+| **R24** | Alto | Médio | Processamento de imagens possuir limites de memória, tempo e dimensões. |
+| **R25** | Crítico | Médio | Limites de solicitações e mecanismos de detecção de abuso forem implementados. |
+| **R26** | Médio | Baixo | Caso a funcionalidade exista, reservas possuírem expiração e limites; caso contrário, o risco é evitado. |
+| **R27** | Médio | Baixo | Houver tratamento adequado de falhas do provedor e método alternativo quando aplicável. |
+| **R28** | Alto | Baixo | Todas as funções administrativas realizarem autorização no backend. |
+| **R29** | Alto | Baixo | Papéis e permissões forem controlados exclusivamente pelo servidor. |
+| **R30** | Médio | Baixo | Cada operação verificar a propriedade ou autorização sobre o recurso. |
+| **R31** | Médio | Baixo | Bloqueios revogarem imediatamente as sessões existentes. |
+| **R32** | Alto | Baixo | Desligamentos provocarem revogação de permissões, credenciais e sessões. |
+| **R33** | Médio | Baixo | O contexto da contratação for validado independentemente do papel do usuário. |
+| **R34** | Alto | Médio | Contas forem pessoais e procedimentos excepcionais de titularidade forem controlados. |
+| **R35** | Médio | Baixo | Toda comunicação sensível utilizar TLS adequadamente configurado. |
+| **R36** | Crítico | Médio | Resultados de busca forem limitados aos dados públicos e houver proteção contra automação. |
+| **R37** | Médio | Baixo | Alterações administrativas exigirem autorização, justificativa e registro de auditoria. |
+
+A redução estimada não significa que os riscos serão eliminados. Mesmo após a implementação dos controles, podem permanecer ameaças decorrentes de falhas humanas, vulnerabilidades desconhecidas, indisponibilidade de serviços externos, novas formas de abuso ou erros de configuração. Por isso, os riscos residuais deverão ser reavaliados após a realização dos testes.
+
 
 ## 15. Considerações finais
 
+A análise realizada nesta etapa transformou as ameaças e os casos de abuso identificados na Etapa 1 em **37 riscos de segurança**, mantendo a rastreabilidade entre as ameaças STRIDE, os casos de abuso e os eventos de risco. A avaliação considerou a probabilidade e o impacto de cada cenário, permitindo classificar os riscos em níveis baixo, médio, alto e crítico.
+
+Os riscos críticos identificados foram **R21, R22, R25 e R36**. Os três primeiros estão relacionados principalmente à disponibilidade da plataforma diante de automação e sobrecarga, enquanto R36 está relacionado à exposição de informações privadas por meio da funcionalidade de busca. Esses cenários exigem atenção devido à facilidade de automação ou ao potencial de atingir informações e funcionalidades utilizadas por diversos usuários.
+
+Entre os riscos altos, destacam-se também aqueles relacionados ao comprometimento de contas, manipulação de avaliações, integridade de arquivos e contratações, ausência de evidências, exposição de metadados, monitoramento da atividade de artistas e acesso indevido a funções administrativas. Esses riscos demonstram que a segurança do Artifício não depende de um único mecanismo, sendo necessário combinar controles de autenticação, autorização, proteção de dados, auditoria, validação de arquivos e mecanismos de disponibilidade.
+
+A estratégia de tratamento predominante é **Reduzir**, utilizando controles técnicos e administrativos para diminuir a probabilidade ou o impacto dos eventos. A estratégia **Compartilhar** é aplicável principalmente a dependências externas, como provedores de autenticação e processamento de pagamentos. A estratégia **Evitar** pode ser utilizada quando uma funcionalidade ou condição arquitetural não for necessária ao sistema, enquanto a **Aceitação** deve ser limitada a situações de risco residual compatíveis com o objetivo da plataforma e acompanhada de revisão periódica.
+
+As funções do **NIST CSF 2.0** foram utilizadas para organizar o tratamento ao longo do ciclo de segurança. A função **Govern** estabelece responsabilidades, políticas e limites de acesso; **Identify** permite conhecer os ativos, dados e dependências; **Protect** concentra os controles preventivos; **Detect** fornece visibilidade sobre comportamentos anômalos; **Respond** define ações de contenção; e **Recover** permite restaurar dados e serviços após incidentes.
+
+A ordem inicial de implementação prioriza primeiro os mecanismos estruturais de **autenticação, autorização e gerenciamento de sessões**, pois esses controles são dependências para várias outras funcionalidades. Em seguida, são priorizados os mecanismos de proteção contra sobrecarga, exposição de dados, manipulação de contratações, perda de evidências e problemas relacionados a arquivos.
+
+Por fim, os níveis de risco residual apresentados são **estimativas**, pois os controles ainda não foram implementados nem validados. A efetividade das medidas deverá ser confirmada posteriormente por meio de testes, inspeções, registros de auditoria, testes de carga e procedimentos de recuperação. Dessa forma, a avaliação poderá ser revisada conforme novos resultados forem obtidos ou conforme a arquitetura e as funcionalidades do Artifício evoluírem.
 
 ## 16. Critérios de avaliação da Etapa 2
 
