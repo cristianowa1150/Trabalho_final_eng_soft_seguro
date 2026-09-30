@@ -32,25 +32,26 @@ Dessa forma, os principais recursos que precisam ser protegidos são as contas d
 
 Os principais usuários e elementos envolvidos no sistema são:
 
-| Elemento | Descrição | Ativo importante? |
+| Elemento | Descrição | Criticidade |
 |---|---|---|
-| **Cliente** | Usuário que pesquisa artistas, visualiza portfólios, solicita comissões e acompanha suas contratações. | Sim |
-| **Artista** | Usuário que oferece serviços artísticos, gerencia seu perfil, portfólio, preços e solicitações. | Sim |
-| **Administrador** | Responsável pela administração, moderação, tratamento de denúncias e gerenciamento da plataforma. | Sim |
-| **Conta de usuário** | Contém informações de identificação, configurações e permissões de cada usuário. | Sim |
-| **Credenciais** | Senhas, tokens de sessão e demais mecanismos utilizados para autenticação. | Sim |
-| **Perfil do artista** | Informações públicas e configurações utilizadas para apresentar o artista na plataforma. | Sim |
-| **Portfólio e obras** | Imagens e outros arquivos publicados pelos artistas para apresentar seus trabalhos. | Sim |
-| **Solicitações e contratações** | Dados relacionados aos pedidos de comissão, propostas, preços, prazos e condições acordadas. | Sim |
-| **Mensagens** | Comunicação privada entre clientes e artistas durante negociações e contratações. | Sim |
-| **Avaliações** | Registros da experiência dos usuários após uma contratação, utilizados na reputação dos artistas. | Sim |
-| **Dados financeiros** | Informações relacionadas a pagamentos. | Sim |
-| **Logs e registros de auditoria** | Registros de ações relevantes realizadas no sistema, utilizados para segurança e investigação de incidentes. | Sim |
-| **Banco de dados** | Armazena as informações de usuários, obras, contratações, mensagens, avaliações e demais dados da aplicação. | Sim |
-| **Servidor da aplicação** | Executa as funcionalidades do sistema e processa as requisições dos usuários. | Sim |
-| **Armazenamento de arquivos** | Responsável por armazenar imagens e demais arquivos enviados pelos usuários. | Sim |
-| **APIs** | Interfaces utilizadas para comunicação entre o frontend, backend e possíveis serviços externos. | Sim |
-| **Serviços externos** | Serviços utilizados para funcionalidades como autenticação, pagamentos, hospedagem, aramazenamento. | Sim |
+| **Cliente** | Usuário que pesquisa artistas, visualiza portfólios, solicita comissões e acompanha suas contratações. | Médio |
+| **Artista** | Usuário que oferece serviços artísticos, gerencia seu perfil, portfólio, preços e solicitações. | Alto |
+| **Administrador** | Responsável pela administração, moderação, tratamento de denúncias e gerenciamento da plataforma. | Crítico |
+| **Conta de usuário** | Contém informações de identificação, configurações e permissões de cada usuário. | Alto |
+| **Credenciais** | Senhas, tokens de sessão e demais mecanismos utilizados para autenticação. | Crítico |
+| **Perfil do artista** | Informações públicas e configurações utilizadas para apresentar o artista na plataforma. | Médio |
+| **Portfólio e obras** | Imagens e outros arquivos publicados pelos artistas para apresentar seus trabalhos. | Alto |
+| **Solicitações e contratações** | Dados relacionados aos pedidos de comissão, propostas, preços, prazos e condições acordadas. | Crítico |
+| **Mensagens** | Comunicação privada entre clientes e artistas durante negociações e contratações. | Alto |
+| **Avaliações** | Registros da experiência dos usuários após uma contratação, utilizados na reputação dos artistas. | Médio |
+| **Dados financeiros** | Informações relacionadas a pagamentos. | Crítico |
+| **Logs e registros de auditoria** | Registros de ações relevantes realizadas no sistema, utilizados para segurança e investigação de incidentes. | Alto |
+| **Banco de dados** | Armazena as informações de usuários, obras, contratações, mensagens, avaliações e demais dados da aplicação. | Crítico |
+| **Servidor da aplicação** | Executa as funcionalidades do sistema e processa as requisições dos usuários. | Crítico |
+| **Armazenamento de arquivos** | Responsável por armazenar imagens e demais arquivos enviados pelos usuários. | Alto |
+| **APIs** | Interfaces utilizadas para comunicação entre o frontend, backend e possíveis serviços externos. | Alto |
+| **Serviços externos** | Serviços utilizados para funcionalidades como autenticação, pagamentos, hospedagem e armazenamento. | Alto |
+
 
 Os principais pontos de interação do sistema são o navegador utilizado pelo cliente ou artista, a aplicação web, as APIs do backend, o banco de dados, o armazenamento de arquivos e eventuais serviços externos. O fluxo básico ocorre quando o usuário acessa a plataforma pelo navegador, 
 realiza uma operação por meio da interface, e a aplicação processa a requisição, consulta ou altera os dados necessários e retorna o resultado ao usuário.
