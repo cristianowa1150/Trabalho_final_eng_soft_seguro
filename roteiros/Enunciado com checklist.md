@@ -149,7 +149,7 @@ Todos os integrantes deverão verificar se seus commits estão corretamente asso
 | Etapa | Entregável | Status |
 |---|---|:---:|
 | 1 | Casos de Abuso e Modelagem de Ameaças com STRIDE | 🟢 Concluído |
-| 2 | Análise, Priorização e Tratamento de Riscos com NIST CSF | ⚪ Em andamento |
+| 2 | Análise, Priorização e Tratamento de Riscos com NIST CSF | 🟢 Concluído |
 | 3 | Projeto de uma Arquitetura Segura | ⚪ Em andamento |
 | 4 | Código Seguro e Testes de Segurança | ⚪ Em andamento |
 | 5 | Verificação de Vulnerabilidades | ⚪ Em andamento |
@@ -368,25 +368,25 @@ Serão considerados:
 
 ## 📋 Checklist de execução — Etapa 2
 
-> Marque `- [x]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
+> Marque `- [🟢]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
 
-- [ ] 10. Objetivo
-- [ ] 11. Continuidade do projeto
-- [ ] 12. Estrutura mínima da Etapa 2
-- [ ] 13.1 Critérios de probabilidade
-- [ ] 13.2 Critérios de impacto
-- [ ] 13.3 Cálculo e classificação
-- [ ] 13.4 Registro de riscos
-- [ ] 13.5 Justificativas
-- [ ] 13.6 Priorização
-- [ ] 14.1 Estratégias de tratamento
-- [ ] 14.2 Funções do NIST CSF 2.0
-- [ ] 14.3 Mapeamento dos riscos para o NIST CSF
-- [ ] 14.4 Plano de tratamento
-- [ ] 14.5 Ordem inicial de implementação
-- [ ] 14.6 Estimativa do risco residual
-- [ ] 15. Considerações finais
-- [ ] 16. Critérios de avaliação da Etapa 2
+- [🟢] 10. Objetivo
+- [🟢] 11. Continuidade do projeto
+- [🟢] 12. Estrutura mínima da Etapa 2
+- [🟢] 13.1 Critérios de probabilidade
+- [🟢] 13.2 Critérios de impacto
+- [🟢] 13.3 Cálculo e classificação
+- [🟢] 13.4 Registro de riscos
+- [🟢] 13.5 Justificativas
+- [🟢] 13.6 Priorização
+- [🟢] 14.1 Estratégias de tratamento
+- [🟢] 14.2 Funções do NIST CSF 2.0
+- [🟢] 14.3 Mapeamento dos riscos para o NIST CSF
+- [🟢] 14.4 Plano de tratamento
+- [🟢] 14.5 Ordem inicial de implementação
+- [🟢] 14.6 Estimativa do risco residual
+- [🟢] 15. Considerações finais
+- [🟢] 16. Critérios de avaliação da Etapa 2
 
 
 ## 10\. Objetivo
