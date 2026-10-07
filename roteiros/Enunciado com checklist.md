@@ -722,15 +722,15 @@ As duas possibilidades serão aceitas. A avaliação considerará principalmente
 
 ## 📋 Checklist de execução — Etapa 3
 
-> Marque `- [x]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
+> Marque `- [🟢]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
 
-- [ ] 17. Objetivo
-- [ ] 18. Entregável mínimo
+- [🟢] 17. Objetivo
+- [🟢] 18. Entregável mínimo
 - [ ] 18.1 Três requisitos de segurança derivados dos riscos prioritários
 - [ ] 18.2 Mapeamento de três vulnerabilidades catalogadas
-- [ ] 18.3 Diagrama da arquitetura segura
-- [ ] 18.4 Três decisões de arquitetura
-- [ ] 19. Critérios de avaliação da Etapa 3
+- [🟢] 18.3 Diagrama da arquitetura segura
+- [🟢] 18.4 Três decisões de arquitetura
+- [🟢] 19. Critérios de avaliação da Etapa 3
 
 
 ## 17\. Objetivo
