@@ -726,8 +726,8 @@ As duas possibilidades serão aceitas. A avaliação considerará principalmente
 
 - [🟢] 17. Objetivo
 - [🟢] 18. Entregável mínimo
-- [ ] 18.1 Três requisitos de segurança derivados dos riscos prioritários
-- [ ] 18.2 Mapeamento de três vulnerabilidades catalogadas
+- [🟢] 18.1 Três requisitos de segurança derivados dos riscos prioritários
+- [🟢] 18.2 Mapeamento de três vulnerabilidades catalogadas
 - [🟢] 18.3 Diagrama da arquitetura segura
 - [🟢] 18.4 Três decisões de arquitetura
 - [🟢] 19. Critérios de avaliação da Etapa 3
