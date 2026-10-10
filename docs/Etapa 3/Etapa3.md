@@ -24,7 +24,7 @@ A estruturação dos componentes apresentada na seção anterior responde direta
 
 ## 18.3 Diagrama da arquitetura segura
 
-![Arquitetura Segura](../../diagramas/arquitetura_segura)
+![Arquitetura Segura](../../diagramas/arquitetura_segura.png)
 
 - Serviço de Autenticação: identifica o usuário e mantém o controle da sessão.
 - Rate Limiting: limita tentativas excessivas de autenticação e outras operações suscetíveis a automação.
