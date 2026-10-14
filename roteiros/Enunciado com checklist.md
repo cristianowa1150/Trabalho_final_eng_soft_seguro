@@ -150,7 +150,7 @@ Todos os integrantes deverão verificar se seus commits estão corretamente asso
 |---|---|:---:|
 | 1 | Casos de Abuso e Modelagem de Ameaças com STRIDE | 🟢 Concluído |
 | 2 | Análise, Priorização e Tratamento de Riscos com NIST CSF | 🟢 Concluído |
-| 3 | Projeto de uma Arquitetura Segura | ⚪ Em andamento |
+| 3 | Projeto de uma Arquitetura Segura | 🟢 Concluído |
 | 4 | Código Seguro e Testes de Segurança | ⚪ Em andamento |
 | 5 | Verificação de Vulnerabilidades | ⚪ Em andamento |
 | 6 | Monitoramento e Detecção de Intrusões | ⚪ Em andamento |
@@ -827,9 +827,9 @@ Serão considerados:
 
 ## 📋 Checklist de execução — Etapa 4
 
-> Marque `- [x]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
+> Marque `- [🟢]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
 
-- [ ] 20. Objetivo
+- [🟢] 20. Objetivo
 - [ ] 21. Entregável mínimo
 - [ ] Selecionar duas práticas de código seguro
 - [ ] Relacionar cada prática aos riscos e requisitos anteriores
@@ -839,7 +839,7 @@ Serão considerados:
 - [ ] Registrar a referência da OWASP utilizada
 - [ ] 21.1 Testes antes da implementação
 - [ ] 21.2 Forma de realização
-- [ ] 22. Critérios de avaliação da Etapa 4
+- [🟢] 22. Critérios de avaliação da Etapa 4
 
 
 ## 20\. Objetivo
