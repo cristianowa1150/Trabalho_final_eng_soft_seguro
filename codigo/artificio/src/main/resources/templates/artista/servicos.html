@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::#conteudo})}">
+<head>
+    <title>Meus Serviços & Comissões - Artifício</title>
+</head>
+<body>
+<div id="conteudo">
+    <div style="margin-bottom: 20px;">
+        <h1 style="font-size: 18px; font-weight: bold;">Minhas Modalidades de Comissão</h1>
+        <p style="color: #666666; font-size: 13px;">Defina preços base, prazos estimados e formatos disponíveis para os clientes</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start;">
+        <!-- Formulário de Novo Tipo de Serviço -->
+        <div class="card">
+            <h3 style="margin-bottom: 12px; font-size: 14px; font-weight: bold;">Nova Modalidade</h3>
+
+            <form th:action="@{/painel/artista/servicos/novo}" th:object="${novoTipoDto}" method="post">
+                <div class="form-group">
+                    <label for="titulo" class="form-label">Título do Pacote</label>
+                    <input type="text" id="titulo" th:field="*{titulo}" class="form-control" placeholder="Ex: Ilustração Completa com Fundo" required />
+                    <div th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}" class="form-error">Erro</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="categoria" class="form-label">Categoria</label>
+                    <input type="text" id="categoria" th:field="*{categoria}" class="form-control" placeholder="Ex: Pintura Digital, Concept Art" required />
+                    <div th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}" class="form-error">Erro</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="precoBase" class="form-label">Preço Base (R$)</label>
+                    <input type="number" step="0.01" min="0" id="precoBase" th:field="*{precoBase}" class="form-control" placeholder="150.00" required />
+                    <div th:if="${#fields.hasErrors('precoBase')}" th:errors="*{precoBase}" class="form-error">Erro</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="prazoEstimadoDias" class="form-label">Prazo Estimado (Dias)</label>
+                    <input type="number" min="1" id="prazoEstimadoDias" th:field="*{prazoEstimadoDias}" class="form-control" placeholder="7" required />
+                    <div th:if="${#fields.hasErrors('prazoEstimadoDias')}" th:errors="*{prazoEstimadoDias}" class="form-error">Erro</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="descricao" class="form-label">Detalhes da Entrega</label>
+                    <textarea id="descricao" th:field="*{descricao}" class="form-control" rows="3" placeholder="Resolução, revisões inclusas, formatos de arquivo..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                    Cadastrar Modalidade
+                </button>
+            </form>
+        </div>
+
+        <!-- Tabela de Serviços Atuais -->
+        <div class="card">
+            <h3 style="margin-bottom: 12px; font-size: 14px; font-weight: bold;">Serviços Disponíveis</h3>
+
+            <div th:if="${servicos.isEmpty()}" style="text-align: center; padding: 20px; color: #666666;">
+                Nenhuma modalidade de comissão cadastrada ainda.
+            </div>
+
+            <div class="table-responsive" th:unless="${servicos.isEmpty()}">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Modalidade</th>
+                            <th>Categoria</th>
+                            <th>Preço Base</th>
+                            <th>Prazo</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="servico : ${servicos}">
+                            <td>
+                                <strong th:text="${servico.titulo}">Título</strong>
+                                <div style="font-size: 11px; color: #666666;" th:text="${servico.descricao}">Descrição</div>
+                            </td>
+                            <td th:text="${servico.categoria}">Categoria</td>
+                            <td><strong style="color: #155724;" th:text="'R$ ' + ${#numbers.formatDecimal(servico.precoBase, 1, 'POINT', 2, 'COMMA')}">R$ 150,00</strong></td>
+                            <td th:text="${servico.prazoEstimadoDias} + ' dias'">7 dias</td>
+                            <td>
+                                <span th:if="${servico.ativo}" class="badge badge-concluida">Ativo</span>
+                                <span th:unless="${servico.ativo}" class="badge badge-recusada">Pausado</span>
+                            </td>
+                            <td>
+                                <form th:action="@{'/painel/artista/servicos/' + ${servico.id} + '/toggle'}" method="post">
+                                    <button type="submit" class="btn btn-secondary btn-sm" th:text="${servico.ativo} ? 'Pausar' : 'Ativar'">
+                                        Alternar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
