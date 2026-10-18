@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::#conteudo})}">
+<head>
+    <title>Pagamento Seguro PIX - Artifício</title>
+</head>
+<body>
+<div id="conteudo" style="max-width: 520px; margin: 0 auto;">
+    <div class="card" style="text-align: center;">
+        <h1 style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">Simulador de Pagamento PIX</h1>
+        <p style="color: #666666; font-size: 12px; margin-bottom: 15px;">
+            Demonstração funcional do fluxo de pagamento (Engenharia de Software Seguro)
+        </p>
+
+        <!-- Resumo do Pedido -->
+        <div style="background-color: #f8f8f8; border: 1px solid #dddddd; border-radius: 3px; padding: 12px; text-align: left; margin-bottom: 15px; font-size: 13px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span style="color: #666666;">Pedido:</span>
+                <strong th:text="'#' + ${pedido.id} + ' — ' + ${pedido.tipoComissao.titulo}">#1</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span style="color: #666666;">Artista:</span>
+                <strong th:text="${pedido.artista.nome}">Artista</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span style="color: #666666;">Chave PIX:</span>
+                <span style="font-family: monospace; color: #0066cc;" th:text="${pedido.artista.chavePix != null and !pedido.artista.chavePix.isBlank()} ? ${pedido.artista.chavePix} : 'chave-pix-padrao@artificio.local'">chave</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid #dddddd; font-size: 14px;">
+                <strong>Valor a Pagar:</strong>
+                <strong style="color: #155724;" th:text="'R$ ' + ${#numbers.formatDecimal(pedido.valorFinal, 1, 'POINT', 2, 'COMMA')}">R$ 150,00</strong>
+            </div>
+        </div>
+
+        <!-- QR Code Visual Simulado (SVG) -->
+        <div style="background-color: #ffffff; padding: 10px; border: 1px solid #cccccc; border-radius: 3px; display: inline-block; margin-bottom: 15px;">
+            <svg width="160" height="160" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="100" fill="#ffffff"/>
+                <!-- Marcadores de canto -->
+                <rect x="5" y="5" width="25" height="25" fill="#222222" rx="2"/>
+                <rect x="9" y="9" width="17" height="17" fill="#ffffff" rx="1"/>
+                <rect x="13" y="13" width="9" height="9" fill="#0066cc"/>
+
+                <rect x="70" y="5" width="25" height="25" fill="#222222" rx="2"/>
+                <rect x="74" y="9" width="17" height="17" fill="#ffffff" rx="1"/>
+                <rect x="78" y="13" width="9" height="9" fill="#0066cc"/>
+
+                <rect x="5" y="70" width="25" height="25" fill="#222222" rx="2"/>
+                <rect x="9" y="74" width="17" height="17" fill="#ffffff" rx="1"/>
+                <rect x="13" y="78" width="9" height="9" fill="#0066cc"/>
+
+                <!-- Blocos simulados -->
+                <rect x="35" y="10" width="6" height="6" fill="#222222"/>
+                <rect x="45" y="10" width="6" height="6" fill="#222222"/>
+                <rect x="55" y="10" width="6" height="6" fill="#222222"/>
+
+                <rect x="10" y="40" width="6" height="6" fill="#222222"/>
+                <rect x="25" y="40" width="6" height="6" fill="#222222"/>
+                <circle cx="50" cy="50" r="10" fill="#0066cc"/>
+                <text x="50" y="54" font-size="9" font-family="sans-serif" font-weight="bold" fill="#ffffff" text-anchor="middle">PIX</text>
+
+                <rect x="70" y="40" width="6" height="6" fill="#222222"/>
+                <rect x="85" y="40" width="6" height="6" fill="#222222"/>
+
+                <rect x="35" y="75" width="6" height="6" fill="#222222"/>
+                <rect x="45" y="75" width="6" height="6" fill="#222222"/>
+                <rect x="55" y="75" width="6" height="6" fill="#222222"/>
+                <rect x="75" y="75" width="6" height="6" fill="#222222"/>
+            </svg>
+        </div>
+
+        <!-- Código Copia e Cola -->
+        <div style="margin-bottom: 15px; text-align: left;">
+            <label class="form-label">Código PIX Copia e Cola:</label>
+            <input type="text" readonly class="form-control" style="font-family: monospace; font-size: 11px; background-color: #f8f8f8;"
+                   th:value="${pedido.codigoPixSimulado != null} ? ${pedido.codigoPixSimulado} : '00020126580014BR.GOV.BCB.PIX0136artificio-simulado'" />
+        </div>
+
+        <!-- Formulário de Confirmação do Pagamento -->
+        <form th:action="@{'/comissoes/' + ${pedido.id} + '/confirmar-pagamento'}" method="post">
+            <button type="submit" class="btn btn-success" style="width: 100%; padding: 8px;">
+                Confirmar Pagamento Simulado
+            </button>
+        </form>
+
+        <div style="margin-top: 10px;">
+            <a th:href="@{/painel/cliente/pedidos}" class="btn btn-secondary btn-sm">
+                Voltar para Minhas Encomendas
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
