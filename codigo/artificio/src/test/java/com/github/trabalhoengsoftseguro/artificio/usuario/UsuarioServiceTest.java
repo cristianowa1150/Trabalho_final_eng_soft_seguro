@@ -84,6 +84,20 @@ class UsuarioServiceTest {
     }
 
     @Test
+    @DisplayName("Deve carregar UserDetails pelo email para o Spring Security")
+    void deveCarregarUserDetailsPeloEmail() {
+        Usuario usuario = new Usuario("Carlos", "carlos@artificio.local", "$2a$10$hash", Role.ROLE_ARTISTA, "Bio", "pix");
+        when(usuarioRepository.findByEmail("carlos@artificio.local")).thenReturn(Optional.of(usuario));
+
+        var userDetails = service.loadUserByUsername("carlos@artificio.local");
+
+        assertNotNull(userDetails);
+        assertEquals("carlos@artificio.local", userDetails.getUsername());
+        assertEquals("$2a$10$hash", userDetails.getPassword());
+        assertTrue(userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ARTISTA")));
+    }
+
+    @Test
     @DisplayName("Deve lancar excecao ao buscar id inexistente")
     void deveLancarExcecaoParaIdInexistente() {
         when(usuarioRepository.findById(999L)).thenReturn(Optional.empty());
