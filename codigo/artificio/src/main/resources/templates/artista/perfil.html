@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::#conteudo})}">
+<head>
+    <title th:text="${perfil.artista.nome} + ' - Portfólio e Comissões | Artifício'">Artista - Artifício</title>
+</head>
+<body>
+<div id="conteudo">
+    <!-- Header do Artista -->
+    <div class="card" style="margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div class="artist-avatar" th:text="${#strings.substring(perfil.artista.nome, 0, 1)}">
+                A
+            </div>
+            <div>
+                <h1 style="font-size: 18px; margin-bottom: 4px;" th:text="${perfil.artista.nome}">Nome do Artista</h1>
+                <div style="font-size: 12px; color: #666666;">
+                    <span>Nota: <strong th:text="${#numbers.formatDecimal(perfil.mediaAvaliacoes, 1, 1)}">5.0</strong>/5</span>
+                    <span>•</span>
+                    <span th:text="${perfil.totalAvaliacoes} + ' avaliação(ões)'">0 avaliações</span>
+                </div>
+            </div>
+        </div>
+        <p style="color: #555555; font-size: 13px; margin-top: 10px;"
+           th:text="${perfil.artista.bio != null and !perfil.artista.bio.isBlank()} ? ${perfil.artista.bio} : 'Artista cadastrado na plataforma Artifício.'">
+            Biografia do artista...
+        </p>
+    </div>
+
+    <!-- Seção de Portfólio -->
+    <section style="margin-bottom: 25px;">
+        <div class="card-header">
+            <h2>Galeria & Portfólio</h2>
+            <span style="color: #666666; font-size: 12px;" th:text="${perfil.obras.size()} + ' obra(s)'">2 obras</span>
+        </div>
+
+        <div th:if="${perfil.obras.isEmpty()}" class="card" style="text-align: center; padding: 20px;">
+            <p style="color: #666666;">Este artista ainda não publicou obras no portfólio.</p>
+        </div>
+
+        <div class="grid-artworks" th:unless="${perfil.obras.isEmpty()}">
+            <div th:each="obra : ${perfil.obras}" class="artwork-card">
+                <div class="artwork-img-wrapper">
+                    <img th:src="@{'/imagens/' + ${obra.imagemId}}" th:alt="${obra.titulo}" loading="lazy" />
+                </div>
+                <div class="artwork-body">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <h3 class="artwork-title" th:text="${obra.titulo}">Título da Obra</h3>
+                        <span class="badge" th:text="${obra.categoria}">Pixel Art</span>
+                    </div>
+                    <p style="color: #666666; font-size: 12px;" th:text="${obra.descricao}">Descrição da obra...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Modalidades de Encomenda / Comissões -->
+    <section>
+        <div class="card-header">
+            <h2>Tabela de Comissões Disponíveis</h2>
+            <span style="color: #666666; font-size: 12px;" th:text="${perfil.tiposComissao.size()} + ' modalidade(s)'">1 modalidade</span>
+        </div>
+
+        <div th:if="${perfil.tiposComissao.isEmpty()}" class="card" style="text-align: center; padding: 20px;">
+            <p style="color: #666666;">O artista não possui encomendas abertas no momento.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;" th:unless="${perfil.tiposComissao.isEmpty()}">
+            <div th:each="tipo : ${perfil.tiposComissao}" class="card" style="display: flex; flex-direction: column;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <div>
+                        <h3 style="font-size: 14px; font-weight: bold;" th:text="${tipo.titulo}">Nome da Modalidade</h3>
+                        <span class="badge badge-em_andamento" style="margin-top: 3px;" th:text="${tipo.categoria}">Categoria</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 14px; font-weight: bold; color: #155724;" th:text="'R$ ' + ${#numbers.formatDecimal(tipo.precoBase, 1, 'POINT', 2, 'COMMA')}">R$ 150,00</span>
+                        <div style="font-size: 11px; color: #777777;" th:text="'Prazo: ~' + ${tipo.prazoEstimadoDias} + ' dias'">Prazo: ~7 dias</div>
+                    </div>
+                </div>
+
+                <p style="color: #666666; font-size: 12px; margin-bottom: 12px; flex: 1;" th:text="${tipo.descricao}">
+                    Descrição do formato.
+                </p>
+
+                <a th:href="@{'/comissoes/solicitar/' + ${tipo.id}}" class="btn btn-primary btn-sm" style="width: 100%; text-align: center;">
+                    Solicitar Encomenda
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

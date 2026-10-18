@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::#conteudo})}">
+<head>
+    <title>Gestão do Portfólio - Artifício</title>
+</head>
+<body>
+<div id="conteudo">
+    <div style="margin-bottom: 20px;">
+        <h1 style="font-size: 18px; font-weight: bold;">Meu Portfólio Artístico</h1>
+        <p style="color: #666666; font-size: 13px;">Publique e gerencie os trabalhos exibidos na sua vitrine pública</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; align-items: start;">
+        <!-- Formulário de Nova Obra -->
+        <div class="card">
+            <h3 style="margin-bottom: 12px; font-size: 14px; font-weight: bold;">Publicar Nova Obra</h3>
+
+            <form th:action="@{/painel/artista/portfolio/novo}" th:object="${novaObraDto}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="titulo" class="form-label">Título da Obra</label>
+                    <input type="text" id="titulo" th:field="*{titulo}" class="form-control" placeholder="Ex: Guerreira Cyberpunk" required />
+                    <div th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}" class="form-error">Erro</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="categoria" class="form-label">Categoria / Técnica</label>
+                    <input type="text" id="categoria" th:field="*{categoria}" class="form-control" placeholder="Ex: Pixel Art, Conceito, 3D" required />
+                    <div th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}" class="form-error">Erro</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="descricao" class="form-label">Descrição da Arte</label>
+                    <textarea id="descricao" th:field="*{descricao}" class="form-control" rows="3" placeholder="Softwares utilizados, inspiração ou resolução..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="arquivo" class="form-label">Arquivo de Imagem (PNG, JPG, SVG, WebP)</label>
+                    <input type="file" id="arquivo" name="arquivo" class="form-control" accept="image/*" required />
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                    Publicar Obra
+                </button>
+            </form>
+        </div>
+
+        <!-- Lista de Obras Publicadas -->
+        <div>
+            <div th:if="${obras.isEmpty()}" class="card" style="text-align: center; padding: 25px;">
+                <p style="color: #666666;">Você ainda não tem obras cadastradas. Use o formulário ao lado para fazer upload da primeira!</p>
+            </div>
+
+            <div class="grid-artworks" th:unless="${obras.isEmpty()}">
+                <div th:each="obra : ${obras}" class="artwork-card">
+                    <div class="artwork-img-wrapper">
+                        <img th:src="@{'/imagens/' + ${obra.imagemId}}" th:alt="${obra.titulo}" />
+                    </div>
+                    <div class="artwork-body">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <h4 class="artwork-title" th:text="${obra.titulo}">Título</h4>
+                            <span class="badge" th:text="${obra.categoria}">Tag</span>
+                        </div>
+                        <p style="color: #666666; font-size: 12px; margin-bottom: 10px;" th:text="${obra.descricao}">Descrição...</p>
+
+                        <form th:action="@{'/painel/artista/portfolio/' + ${obra.id} + '/remover'}" method="post" onsubmit="return confirm('Deseja remover esta obra do portfólio?');">
+                            <button type="submit" class="btn btn-danger btn-sm" style="width: 100%;">
+                                Remover Obra
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
