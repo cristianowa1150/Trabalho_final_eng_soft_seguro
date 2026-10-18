@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="layout(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:replace="${title}">Artifício - Plataforma Segura de Arte</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-container">
+            <a th:href="@{/}" class="brand-logo">
+                <span>Artifício</span>
+            </a>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a th:href="@{/}" class="nav-link">Catálogo</a></li>
+
+                    <!-- Menu Artista -->
+                    <li sec:authorize="hasRole('ARTISTA')">
+                        <a th:href="@{/painel/artista/pedidos}" class="nav-link">Pedidos Recebidos</a>
+                    </li>
+                    <li sec:authorize="hasRole('ARTISTA')">
+                        <a th:href="@{/painel/artista/portfolio}" class="nav-link">Meu Portfólio</a>
+                    </li>
+                    <li sec:authorize="hasRole('ARTISTA')">
+                        <a th:href="@{/painel/artista/servicos}" class="nav-link">Meus Serviços</a>
+                    </li>
+
+                    <!-- Menu Cliente -->
+                    <li sec:authorize="hasRole('CLIENTE')">
+                        <a th:href="@{/painel/cliente/pedidos}" class="nav-link">Minhas Encomendas</a>
+                    </li>
+
+                    <!-- Menu Administrador -->
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/admin/usuarios}" class="nav-link">Usuários & Moderação</a>
+                    </li>
+
+                    <!-- Não Autenticado -->
+                    <li sec:authorize="isAnonymous()">
+                        <a th:href="@{/login}" class="nav-link">Entrar</a>
+                    </li>
+                    <li sec:authorize="isAnonymous()">
+                        <a th:href="@{/cadastro}" class="btn btn-primary btn-sm">Cadastrar-se</a>
+                    </li>
+
+                    <!-- Autenticado: Informações e Logout -->
+                    <li sec:authorize="isAuthenticated()" class="user-badge">
+                        <span sec:authentication="name">usuario@artificio.local</span>
+                        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 0.5rem;">
+                            <button type="submit" class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.5rem;">Sair</button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Notificações Flash de Sucesso / Erro -->
+        <div th:if="${sucesso}" class="alert alert-success">
+            <span>✅</span>
+            <span th:text="${sucesso}">Operação realizada com sucesso!</span>
+        </div>
+        <div th:if="${erro}" class="alert alert-danger">
+            <span>⚠️</span>
+            <span th:text="${erro}">Ocorreu um erro ao processar sua solicitação.</span>
+        </div>
+
+        <!-- Conteúdo Injetado pela Página -->
+        <div th:replace="${content}"></div>
+    </main>
+
+    <footer class="footer">
+        <p>Artifício &copy; 2026 — Plataforma Segura para Comissões e Portfólios de Arte.</p>
+        <p style="margin-top: 0.3rem; opacity: 0.7;">Desenvolvido para a disciplina de <strong>Engenharia de Software Seguro</strong> (PPGCO/UFU).</p>
+    </footer>
+</body>
+</html>
