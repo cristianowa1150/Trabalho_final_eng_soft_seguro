@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::#conteudo})}">
+<head>
+    <title>Minhas Encomendas - Artifício</title>
+</head>
+<body>
+<div id="conteudo">
+    <div style="margin-bottom: 15px; border-bottom: 1px solid #eeeeee; padding-bottom: 8px;">
+        <h1 style="font-size: 18px; font-weight: bold;">Minhas Encomendas de Arte</h1>
+        <p style="color: #666666; font-size: 12px;">Acompanhe o andamento das suas comissões, realize pagamentos e aprove entregas</p>
+    </div>
+
+    <div th:if="${pedidos.isEmpty()}" class="card" style="text-align: center; padding: 25px;">
+        <p style="color: #666666; margin-bottom: 10px;">Você ainda não solicitou nenhuma comissão.</p>
+        <a th:href="@{/}" class="btn btn-primary btn-sm">Explorar Catálogo de Artistas</a>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 15px;" th:unless="${pedidos.isEmpty()}">
+        <div th:each="pedido : ${pedidos}" class="card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <h3 style="font-size: 14px; font-weight: bold;" th:text="'Pedido #' + ${pedido.id} + ' — ' + ${pedido.tipoComissao.titulo}">Pedido #1</h3>
+                        <span class="badge"
+                              th:classappend="'badge-' + ${#strings.toLowerCase(pedido.status)}"
+                              th:text="${pedido.status}">SOLICITADA</span>
+                    </div>
+                    <div style="color: #666666; font-size: 12px; margin-top: 3px;">
+                        Artista: <strong th:text="${pedido.artista.nome}">Nome do Artista</strong> •
+                        Solicitado em: <span th:text="${#temporals.format(pedido.dataSolicitacao, 'dd/MM/yyyy HH:mm')}">16/10/2026</span>
+                    </div>
+                </div>
+
+                <div style="text-align: right;">
+                    <div style="font-size: 14px; font-weight: bold; color: #155724;" th:text="'R$ ' + ${#numbers.formatDecimal(pedido.valorFinal, 1, 'POINT', 2, 'COMMA')}">R$ 180,00</div>
+                    <div style="font-size: 11px; color: #777777;" th:text="'Prazo: ' + ${pedido.prazoDias} + ' dias'">Prazo: 7 dias</div>
+                </div>
+            </div>
+
+            <!-- Briefing -->
+            <div style="background-color: #f8f8f8; border: 1px solid #e5e5e5; border-radius: 3px; padding: 8px 10px; margin-bottom: 10px;">
+                <strong style="display: block; font-size: 12px; color: #555555; margin-bottom: 3px;">Meu Briefing:</strong>
+                <p style="font-size: 13px; white-space: pre-wrap;" th:text="${pedido.briefing}">Detalhes da encomenda...</p>
+            </div>
+
+            <!-- Entrega do Artista (se entregue ou concluída) -->
+            <div th:if="${pedido.linkEntrega != null}" style="margin-bottom: 10px; padding: 6px 10px; background-color: #e8f4fd; border: 1px solid #b8daff; border-radius: 3px; font-size: 12px;">
+                <strong>Arte Entregue pelo Artista:</strong>
+                <a th:href="${pedido.linkEntrega}" target="_blank" rel="noopener noreferrer" style="color: #0066cc; margin-left: 5px; word-break: break-all;" th:text="${pedido.linkEntrega}">https://...</a>
+            </div>
+
+            <!-- Ações do Cliente -->
+            <div style="display: flex; gap: 8px; align-items: center; justify-content: flex-end; flex-wrap: wrap;">
+                <!-- Quando AGUARDANDO_PAGAMENTO: Botão para pagar -->
+                <div th:if="${pedido.status.name() == 'AGUARDANDO_PAGAMENTO'}" style="display: flex; gap: 6px;">
+                    <a th:href="@{'/comissoes/' + ${pedido.id} + '/pagamento'}" class="btn btn-primary btn-sm">
+                        Simular Pagamento PIX →
+                    </a>
+                    <form th:action="@{'/comissoes/' + ${pedido.id} + '/cancelar'}" method="post" onsubmit="return confirm('Deseja realmente cancelar este pedido?');">
+                        <button type="submit" class="btn btn-secondary btn-sm">Cancelar Pedido</button>
+                    </form>
+                </div>
+
+                <!-- Quando SOLICITADA: Opção de cancelar -->
+                <div th:if="${pedido.status.name() == 'SOLICITADA'}">
+                    <form th:action="@{'/comissoes/' + ${pedido.id} + '/cancelar'}" method="post" onsubmit="return confirm('Deseja realmente cancelar esta solicitação?');">
+                        <button type="submit" class="btn btn-secondary btn-sm">Cancelar Solicitação</button>
+                    </form>
+                </div>
+
+                <!-- Quando ENTREGUE: Aprovar ou Solicitar Revisão -->
+                <div th:if="${pedido.status.name() == 'ENTREGUE'}" style="display: flex; gap: 6px;">
+                    <form th:action="@{'/comissoes/' + ${pedido.id} + '/aprovar'}" method="post">
+                        <button type="submit" class="btn btn-success btn-sm">Aprovar & Concluir</button>
+                    </form>
+                    <form th:action="@{'/comissoes/' + ${pedido.id} + '/revisao'}" method="post">
+                        <button type="submit" class="btn btn-secondary btn-sm">Pedir Ajuste / Revisão</button>
+                    </form>
+                </div>
+
+                <!-- Quando CONCLUIDA: Botão para Avaliar -->
+                <div th:if="${pedido.status.name() == 'CONCLUIDA'}">
+                    <a th:href="@{'/comissoes/' + ${pedido.id} + '/avaliar'}" class="btn btn-primary btn-sm">
+                        Avaliar Artista
+                    </a>
+                </div>
+
+                <!-- Quando AVALIADA -->
+                <div th:if="${pedido.status.name() == 'AVALIADA'}">
+                    <span style="font-size: 12px; color: #155724; font-weight: bold;">Pedido Concluído e Avaliado!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
