@@ -1,0 +1,59 @@
+package com.github.trabalhoengsoftseguro.artificio.artista;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.hamcrest.Matchers.containsString;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+class ArtistaPublicControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    @DisplayName("Deve carregar perfil publico de artista com avaliacoes e comissoes (Anna Letycia)")
+    void deveCarregarPerfilPublicoArtistaComAvaliacoes() throws Exception {
+        mockMvc.perform(get("/artistas/2"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("artista/perfil"))
+                .andExpect(model().attributeExists("perfil"))
+                .andExpect(content().string(containsString("Anna Letycia")))
+                .andExpect(content().string(containsString("Galeria & Portfólio")))
+                .andExpect(content().string(containsString("Tabela de Comissões Disponíveis")))
+                .andExpect(content().string(containsString("Nota:")));
+    }
+
+    @Test
+    @DisplayName("Deve carregar perfil publico de artista sem avaliacoes com formatacao segura (Cristiano)")
+    void deveCarregarPerfilPublicoArtistaSemAvaliacoes() throws Exception {
+        mockMvc.perform(get("/artistas/3"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("artista/perfil"))
+                .andExpect(model().attributeExists("perfil"))
+                .andExpect(content().string(containsString("Cristiano Silveira")))
+                .andExpect(content().string(containsString("Sem avaliações ainda")));
+    }
+
+    @Test
+    @DisplayName("Deve retornar 404 Not Found ao buscar ID de artista inexistente")
+    void deveRetornar404ParaArtistaInexistente() throws Exception {
+        mockMvc.perform(get("/artistas/999"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 404 Not Found se o usuario existir mas nao possuir papel de artista")
+    void deveRetornar404ParaUsuarioNaoArtista() throws Exception {
+        // ID 5 pertence ao cliente Eduardo Rolim (ROLE_CLIENTE)
+        mockMvc.perform(get("/artistas/5"))
+                .andExpect(status().isNotFound());
+    }
+}
