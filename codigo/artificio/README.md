@@ -113,14 +113,17 @@ java -jar target/artificio-0.0.1-SNAPSHOT.jar
 
 Durante a inicialização em modo de desenvolvimento, o sistema cria as seguintes contas para permitir a avaliação de todos os papéis de acesso:
 
-| Papel / Perfil | E-mail | Senha | Funcionalidades Disponíveis |
-| :--- | :--- | :--- | :--- |
-| **Administrador** | `admin@artificio.local` | `senha123` | Painel de moderação (`/admin/usuarios`), auditoria de contas e promoção de clientes a artistas. |
-| **Artista (Aquarela)** | `beatriz@artificio.local` | `senha123` | Painel do artista, upload de obras no portfólio, gestão de modalidades de preço e aceite de pedidos. |
-| **Artista (Pixel Art)** | `carlos@artificio.local` | `senha123` | Vitrine pública, portfólio, envio de links de entrega final de encomendas. |
-| **Cliente** | `lucas@artificio.local` | `senha123` | Solicitação de encomendas, briefing, simulação de pagamento PIX e avaliação com estrelas. |
+| Papel / Perfil | Nome | E-mail | Senha | Funcionalidades / Escopo |
+| :--- | :--- | :--- | :--- | :--- |
+| **Administrador** | Administrador da Plataforma | `admin@artificio.local` | `Admin#2026` | Supervisão (`/admin/usuarios`), auditoria de contas e promoção de clientes a artistas. |
+| **Artista (Aquarela)** | Anna Letycia Fernandes Reis | `anna@artificio.local` | `Anna@Arte2026` | Painel do artista, portfólio botânico/aquarela, gestão de modalidades e aceite de pedidos. |
+| **Artista (Pixel Art)** | Cristiano Silveira Silva | `cristiano@artificio.local` | `Cris#Pixel2026` | Vitrine de pixel art, retrogaming, sprites e envio de links de entrega final. |
+| **Artista (Vetor)** | Marina Duarte *(Artista Extra)* | `marina@artificio.local` | `Marina*Vetor2026` | Portfólio vetorial, design de personagens e capas. |
+| **Cliente** | Eduardo Rolim | `eduardo@artificio.local` | `Eduardo&Cliente2026` | Solicitação de encomendas, briefing, simulação de pagamento PIX e avaliação com estrelas. |
+| **Cliente** | Luan Diniz | `luan@artificio.local` | `Luan$Cliente2026` | Contratação de comissões, acompanhamento de pedidos e aprovação de entregas. |
 
-> 💡 **Dica de usabilidade:** No modo de desenvolvimento, há um botão flutuante **`🔑 Contas de Teste`** no canto inferior da tela e botões de **`Preencher`** na tela de login (`/login`) para carregar as credenciais com 1 clique.
+> 💡 **Dica de usabilidade:** No modo de desenvolvimento, há um botão flutuante **`🔑 Contas de Teste`** no canto inferior da tela e botões de **`Preencher`** na tela de login (`/login`) para carregar instantaneamente usuário e senha sem precisar digitar.
+
 
 ---
 
