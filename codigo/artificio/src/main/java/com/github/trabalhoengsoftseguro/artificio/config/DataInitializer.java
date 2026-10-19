@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 
 /**
  * Carga inicial de demonstração (seed) para o MVP da plataforma Artifício.
+ * Configura os integrantes do trabalho como artistas e clientes, com senhas distintas.
  */
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -59,91 +60,119 @@ public class DataInitializer implements CommandLineRunner {
             return;
         }
 
-        String senhaPadrao = passwordEncoder.encode("senha123");
-
-        // 1. Administrador
+        // 1. Administrador da Plataforma
         Usuario admin = new Usuario(
                 "Administrador da Plataforma",
                 "admin@artificio.local",
-                senhaPadrao,
+                passwordEncoder.encode("Admin#2026"),
                 Role.ROLE_ADMIN,
                 "Equipe de moderação e governança da plataforma Artifício.",
                 null
         );
         usuarioRepository.save(admin);
 
-        // 2. Artista 1 - Beatriz Aquarela
-        Usuario beatriz = new Usuario(
-                "Beatriz Silveira",
-                "beatriz@artificio.local",
-                senhaPadrao,
+        // 2. Artista 1 - Anna Letycia Fernandes Reis (Aquarela e Botânica)
+        Usuario anna = new Usuario(
+                "Anna Letycia Fernandes Reis",
+                "anna@artificio.local",
+                passwordEncoder.encode("Anna@Arte2026"),
                 Role.ROLE_ARTISTA,
-                "Ilustradora botânica e aquarista profissional há 6 anos. Especializada em flora e fauna.",
-                "beatriz@pix.local"
+                "Ilustradora e artista visual. Especializada em pintura digital botânica, flora e aquarela estilizada.",
+                "anna@pix.local"
         );
-        beatriz = usuarioRepository.save(beatriz);
+        anna = usuarioRepository.save(anna);
 
         String svgFlor = gerarSvgDemo("Jardim de Magnólias", "#e87a90", "#2d3748");
         String imgFlorId = imagemService.salvar(svgFlor.getBytes(StandardCharsets.UTF_8), "magnolias.svg", "image/svg+xml");
-        ObraPortfolio obraFlor = new ObraPortfolio("Jardim de Magnólias", "Pintura botânica tradicional digitalizada", "Aquarela", imgFlorId, beatriz);
+        ObraPortfolio obraFlor = new ObraPortfolio("Jardim de Magnólias", "Pintura botânica tradicional digitalizada", "Aquarela", imgFlorId, anna);
         obraPortfolioRepository.save(obraFlor);
 
         String svgRaposa = gerarSvgDemo("Raposa da Floresta", "#dd6b20", "#1a202c");
         String imgRaposaId = imagemService.salvar(svgRaposa.getBytes(StandardCharsets.UTF_8), "raposa.svg", "image/svg+xml");
-        ObraPortfolio obraRaposa = new ObraPortfolio("Raposa da Floresta", "Ilustração infantil aquarelada", "Aquarela", imgRaposaId, beatriz);
+        ObraPortfolio obraRaposa = new ObraPortfolio("Raposa da Floresta", "Ilustração infantil aquarelada", "Aquarela", imgRaposaId, anna);
         obraPortfolioRepository.save(obraRaposa);
 
-        TipoComissao tcBotanica = new TipoComissao("Retrato Botânico Personalizado", "Pintura detalhada de flores, plantas e folhagens", "Aquarela", new BigDecimal("180.00"), 5, beatriz);
+        TipoComissao tcBotanica = new TipoComissao("Retrato Botânico Personalizado", "Pintura detalhada de flores, plantas e folhagens", "Aquarela", new BigDecimal("180.00"), 5, anna);
         tipoComissaoRepository.save(tcBotanica);
 
-        TipoComissao tcPet = new TipoComissao("Retrato Aquarelado de Pet", "Seu cão ou gato imortalizado em aquarela estilizada", "Aquarela", new BigDecimal("150.00"), 4, beatriz);
+        TipoComissao tcPet = new TipoComissao("Retrato Aquarelado de Pet", "Seu cão ou gato imortalizado em aquarela estilizada", "Aquarela", new BigDecimal("150.00"), 4, anna);
         tipoComissaoRepository.save(tcPet);
 
-        // 3. Artista 2 - Carlos Pixel
-        Usuario carlos = new Usuario(
-                "Carlos Pixel",
-                "carlos@artificio.local",
-                senhaPadrao,
+        // 3. Artista 2 - Cristiano Silveira Silva (Pixel Art)
+        Usuario cristiano = new Usuario(
+                "Cristiano Silveira Silva",
+                "cristiano@artificio.local",
+                passwordEncoder.encode("Cris#Pixel2026"),
                 Role.ROLE_ARTISTA,
-                "Pixel artist veterano focado em estética cyberpunk, retrogaming e assets para jogos indie.",
-                "carlos@pix.local"
+                "Pixel artist e designer de jogos. Focado em retrogaming, estética cyberpunk e animação 16-bits.",
+                "cristiano@pix.local"
         );
-        carlos = usuarioRepository.save(carlos);
+        cristiano = usuarioRepository.save(cristiano);
 
         String svgCyber = gerarSvgDemo("Cyber City 2099", "#805ad5", "#0f172a");
         String imgCyberId = imagemService.salvar(svgCyber.getBytes(StandardCharsets.UTF_8), "cyber_city.svg", "image/svg+xml");
-        ObraPortfolio obraCyber = new ObraPortfolio("Cyber City 2099", "Cenário noturno futurista em pixel art", "Pixel Art", imgCyberId, carlos);
+        ObraPortfolio obraCyber = new ObraPortfolio("Cyber City 2099", "Cenário noturno futurista em pixel art", "Pixel Art", imgCyberId, cristiano);
         obraPortfolioRepository.save(obraCyber);
 
         String svgKnight = gerarSvgDemo("Cavaleiro Rúnico", "#319795", "#111827");
         String imgKnightId = imagemService.salvar(svgKnight.getBytes(StandardCharsets.UTF_8), "cavaleiro.svg", "image/svg+xml");
-        ObraPortfolio obraKnight = new ObraPortfolio("Cavaleiro Rúnico", "Sprite de combate animado em 16-bits", "Pixel Art", imgKnightId, carlos);
+        ObraPortfolio obraKnight = new ObraPortfolio("Cavaleiro Rúnico", "Sprite de combate animado em 16-bits", "Pixel Art", imgKnightId, cristiano);
         obraPortfolioRepository.save(obraKnight);
 
-        TipoComissao tcSprite = new TipoComissao("Sprite de Personagem (32x32)", "Criação de spritesheets estáticos ou com poses básicas", "Pixel Art", new BigDecimal("95.00"), 3, carlos);
+        TipoComissao tcSprite = new TipoComissao("Sprite de Personagem (32x32)", "Criação de spritesheets estáticos ou com poses básicas", "Pixel Art", new BigDecimal("95.00"), 3, cristiano);
         tipoComissaoRepository.save(tcSprite);
 
-        TipoComissao tcCenario = new TipoComissao("Cenário Completo Pixel Art", "Background detalhado para streams, wallpapers ou jogos", "Pixel Art", new BigDecimal("260.00"), 7, carlos);
+        TipoComissao tcCenario = new TipoComissao("Cenário Completo Pixel Art", "Background detalhado para streams, wallpapers ou jogos", "Pixel Art", new BigDecimal("260.00"), 7, cristiano);
         tipoComissaoRepository.save(tcCenario);
 
-        // 4. Cliente - Lucas
-        Usuario lucas = new Usuario(
-                "Lucas Cliente",
-                "lucas@artificio.local",
-                senhaPadrao,
+        // 4. Artista 3 - Artista Extra: Marina Duarte (Ilustração Vetorial)
+        Usuario marina = new Usuario(
+                "Marina Duarte",
+                "marina@artificio.local",
+                passwordEncoder.encode("Marina*Vetor2026"),
+                Role.ROLE_ARTISTA,
+                "Ilustradora vetorial e designer de personagens para mídias digitais e capas autorais.",
+                "marina@pix.local"
+        );
+        marina = usuarioRepository.save(marina);
+
+        String svgSolar = gerarSvgDemo("Guerreira Solar", "#d69e2e", "#171923");
+        String imgSolarId = imagemService.salvar(svgSolar.getBytes(StandardCharsets.UTF_8), "guerreira_solar.svg", "image/svg+xml");
+        ObraPortfolio obraSolar = new ObraPortfolio("Guerreira Solar", "Ilustração vetorial de personagem em alta definição", "Arte Vetorial", imgSolarId, marina);
+        obraPortfolioRepository.save(obraSolar);
+
+        TipoComissao tcVetor = new TipoComissao("Ilustração Vetorial de Personagem", "Arte vetorial limpa com linhas suaves e paleta vibrante", "Arte Vetorial", new BigDecimal("130.00"), 4, marina);
+        tipoComissaoRepository.save(tcVetor);
+
+        // 5. Cliente 1 - Eduardo Rolim
+        Usuario eduardo = new Usuario(
+                "Eduardo Rolim",
+                "eduardo@artificio.local",
+                passwordEncoder.encode("Eduardo&Cliente2026"),
                 Role.ROLE_CLIENTE,
-                "Entusiasta de jogos e colecionador de ilustrações personalizadas.",
+                "Entusiasta de arte digital, desenvolvimento seguro e encomendas autorais personalizadas.",
                 null
         );
-        lucas = usuarioRepository.save(lucas);
+        eduardo = usuarioRepository.save(eduardo);
 
-        // 5. Pedido concluído e com avaliação para inicialização de métricas da vitrine
+        // 6. Cliente 2 - Luan Diniz
+        Usuario luan = new Usuario(
+                "Luan Diniz",
+                "luan@artificio.local",
+                passwordEncoder.encode("Luan$Cliente2026"),
+                Role.ROLE_CLIENTE,
+                "Colecionador de ilustrações autorais e apoiador de artistas independentes.",
+                null
+        );
+        luan = usuarioRepository.save(luan);
+
+        // 7. Pedido concluído e avaliado para inicialização de métricas da vitrine
         PedidoComissao pedidoExemplo = new PedidoComissao(
                 "Quero um arranjo de orquídeas azuis com um beija-flor em voo.",
                 tcBotanica.getPrecoBase(),
                 tcBotanica.getPrazoEstimadoDias(),
-                lucas,
-                beatriz,
+                eduardo,
+                anna,
                 tcBotanica
         );
         pedidoExemplo.setStatus(StatusComissao.AVALIADA);
@@ -155,8 +184,8 @@ public class DataInitializer implements CommandLineRunner {
                 5,
                 "A arte ficou maravilhosa! Cores vivas, detalhes impressionantes e entrega antes do prazo.",
                 pedidoExemplo,
-                lucas,
-                beatriz
+                eduardo,
+                anna
         );
         avaliacaoRepository.save(avaliacaoExemplo);
     }
