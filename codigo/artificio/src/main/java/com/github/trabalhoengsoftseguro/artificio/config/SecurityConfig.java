@@ -51,6 +51,7 @@ public class SecurityConfig {
                                 "/cadastro",
                                 "/css/**",
                                 "/js/**",
+                                "/error",
                                 "/h2-console/**"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
