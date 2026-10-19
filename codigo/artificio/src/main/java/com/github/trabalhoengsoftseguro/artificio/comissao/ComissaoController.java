@@ -27,15 +27,18 @@ public class ComissaoController {
     private final AvaliacaoService avaliacaoService;
     private final UsuarioService usuarioService;
     private final TipoComissaoRepository tipoComissaoRepository;
+    private final PedidoComissaoRepository pedidoComissaoRepository;
 
     public ComissaoController(ComissaoService comissaoService,
                               AvaliacaoService avaliacaoService,
                               UsuarioService usuarioService,
-                              TipoComissaoRepository tipoComissaoRepository) {
+                              TipoComissaoRepository tipoComissaoRepository,
+                              PedidoComissaoRepository pedidoComissaoRepository) {
         this.comissaoService = comissaoService;
         this.avaliacaoService = avaliacaoService;
         this.usuarioService = usuarioService;
         this.tipoComissaoRepository = tipoComissaoRepository;
+        this.pedidoComissaoRepository = pedidoComissaoRepository;
     }
 
     @GetMapping("/painel/cliente/pedidos")
@@ -64,8 +67,18 @@ public class ComissaoController {
                                       RedirectAttributes redirectAttributes) {
         Usuario cliente = usuarioService.buscarPorEmail(principal.getName());
 
+        if (dto.tipoComissaoId() == null) {
+            redirectAttributes.addFlashAttribute("erro", "Modalidade de serviço inválida ou não especificada.");
+            return "redirect:/";
+        }
+
+        TipoComissao tipo = tipoComissaoRepository.findById(dto.tipoComissaoId()).orElse(null);
+        if (tipo == null) {
+            redirectAttributes.addFlashAttribute("erro", "Modalidade de serviço não encontrada.");
+            return "redirect:/";
+        }
+
         if (bindingResult.hasErrors()) {
-            TipoComissao tipo = tipoComissaoRepository.findById(dto.tipoComissaoId()).orElse(null);
             model.addAttribute("tipo", tipo);
             return "cliente/solicitar";
         }
@@ -207,15 +220,27 @@ public class ComissaoController {
     }
 
     @PostMapping("/comissoes/{id}/avaliar")
-    public String submeterAvaliacao(@Valid @ModelAttribute("novaAvaliacaoDto") NovaAvaliacaoDto dto,
+    public String submeterAvaliacao(@PathVariable("id") Long id,
+                                    @Valid @ModelAttribute("novaAvaliacaoDto") NovaAvaliacaoDto dto,
                                     BindingResult bindingResult,
                                     Principal principal,
                                     Model model,
                                     RedirectAttributes redirectAttributes) {
         Usuario cliente = usuarioService.buscarPorEmail(principal.getName());
 
+        Long pedidoId = (id != null) ? id : (dto != null ? dto.pedidoId() : null);
+        if (pedidoId == null) {
+            redirectAttributes.addFlashAttribute("erro", "Pedido de comissão inválido ou não especificado.");
+            return "redirect:/painel/cliente/pedidos";
+        }
+
+        PedidoComissao pedido = pedidoComissaoRepository.findById(pedidoId).orElse(null);
+        if (pedido == null || !pedido.getCliente().getId().equals(cliente.getId())) {
+            redirectAttributes.addFlashAttribute("erro", "Pedido de comissão não encontrado ou acesso não autorizado.");
+            return "redirect:/painel/cliente/pedidos";
+        }
+
         if (bindingResult.hasErrors()) {
-            PedidoComissao pedido = comissaoService.buscarPorId(dto.pedidoId());
             model.addAttribute("pedido", pedido);
             return "cliente/avaliar";
         }
