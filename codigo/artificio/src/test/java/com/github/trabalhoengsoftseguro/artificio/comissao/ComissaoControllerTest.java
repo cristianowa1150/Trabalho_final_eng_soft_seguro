@@ -28,7 +28,7 @@ class ComissaoControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "lucas@artificio.local", roles = {"CLIENTE"})
+    @WithMockUser(username = "eduardo@artificio.local", roles = {"CLIENTE"})
     @DisplayName("Deve permitir cliente autenticado acessar suas encomendas")
     void devePermitirClienteAcessarEncomendas() throws Exception {
         mockMvc.perform(get("/painel/cliente/pedidos"))
@@ -39,7 +39,7 @@ class ComissaoControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "lucas@artificio.local", roles = {"CLIENTE"})
+    @WithMockUser(username = "eduardo@artificio.local", roles = {"CLIENTE"})
     @DisplayName("Deve carregar tela de solicitacao de comissao para modalidade existente")
     void deveCarregarFormularioDeSolicitacao() throws Exception {
         mockMvc.perform(get("/comissoes/solicitar/1"))
