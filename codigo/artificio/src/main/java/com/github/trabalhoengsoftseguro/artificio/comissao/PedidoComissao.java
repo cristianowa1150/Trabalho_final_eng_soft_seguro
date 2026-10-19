@@ -34,6 +34,9 @@ public class PedidoComissao {
     @Column(nullable = false, length = 35)
     private StatusComissao status;
 
+    @Version
+    private Long versao;
+
     @Column(name = "codigo_pix_simulado", length = 255)
     private String codigoPixSimulado;
 
