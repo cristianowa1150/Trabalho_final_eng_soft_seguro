@@ -142,6 +142,9 @@ public class ComissaoService {
         if (linkEntrega == null || linkEntrega.isBlank()) {
             throw new IllegalArgumentException("O link ou endereço do arquivo de entrega é obrigatório");
         }
+        if (linkEntrega.trim().length() > 1000) {
+            throw new IllegalArgumentException("O link de entrega deve conter no máximo 1000 caracteres");
+        }
 
         PedidoComissao pedido = buscarPorId(pedidoId);
 

@@ -15,17 +15,20 @@ public record CadastroDto(
 
         @NotBlank(message = "O e-mail é obrigatório")
         @Email(message = "Formato de e-mail inválido")
+        @Size(max = 180, message = "O e-mail deve ter no máximo 180 caracteres")
         String email,
 
         @NotBlank(message = "A senha é obrigatória")
-        @Size(min = 6, message = "A senha deve conter no mínimo 6 caracteres")
+        @Size(min = 6, max = 100, message = "A senha deve ter entre 6 e 100 caracteres")
         String senha,
 
         @NotNull(message = "O papel é obrigatório")
         Role role,
 
+        @Size(max = 2000, message = "A biografia deve ter no máximo 2000 caracteres")
         String bio,
 
+        @Size(max = 100, message = "A chave PIX deve ter no máximo 100 caracteres")
         String chavePix
 ) {
 }
