@@ -13,6 +13,9 @@ import com.github.trabalhoengsoftseguro.artificio.imagem.ImagemService;
 import com.github.trabalhoengsoftseguro.artificio.usuario.Role;
 import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
 import com.github.trabalhoengsoftseguro.artificio.usuario.UsuarioRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -25,8 +28,12 @@ import java.time.LocalDateTime;
 /**
  * Carga inicial de demonstração (seed) para o MVP da plataforma Artifício.
  * Configura os integrantes do trabalho como artistas e clientes, com senhas distintas.
+ * Ativo exclusivamente em ambiente de desenvolvimento/avaliação (!prod).
  */
 @Component
+@Order(2)
+@Profile("!prod")
+@ConditionalOnProperty(name = "artificio.seed.enabled", havingValue = "true", matchIfMissing = true)
 public class DataInitializer implements CommandLineRunner {
 
     private final UsuarioRepository usuarioRepository;
@@ -56,22 +63,11 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        if (usuarioRepository.count() > 0) {
+        if (usuarioRepository.existsByEmail("anna@artificio.local")) {
             return;
         }
 
-        // 1. Administrador da Plataforma
-        Usuario admin = new Usuario(
-                "Administrador da Plataforma",
-                "admin@artificio.local",
-                passwordEncoder.encode("Admin#2026"),
-                Role.ROLE_ADMIN,
-                "Equipe de moderação e governança da plataforma Artifício.",
-                null
-        );
-        usuarioRepository.save(admin);
-
-        // 2. Artista 1 - Anna Letycia Fernandes Reis (Aquarela e Botânica)
+        // 1. Artista 1 - Anna Letycia Fernandes Reis (Aquarela e Botânica)
         Usuario anna = new Usuario(
                 "Anna Letycia Fernandes Reis",
                 "anna@artificio.local",

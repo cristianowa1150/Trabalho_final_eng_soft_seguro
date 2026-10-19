@@ -26,4 +26,9 @@ public class GlobalModelAdvice {
     public boolean getExibirCredenciaisDemo() {
         return exibirCredenciaisDemo;
     }
+
+    @ModelAttribute("senhaAdminDemo")
+    public String getSenhaAdminDemo() {
+        return AdminInitializer.getSenhaAdminGerada();
+    }
 }

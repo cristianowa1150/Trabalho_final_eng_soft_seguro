@@ -50,7 +50,8 @@
                 <div>
                     <strong>Admin:</strong> <code>admin@artificio.local</code>
                 </div>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('admin@artificio.local', 'Admin#2026')">
+                <button type="button" class="btn btn-secondary btn-sm"
+                        th:attr="onclick=|preencherFormLogin('admin@artificio.local', '${senhaAdminDemo != null ? senhaAdminDemo : 'Admin#2026'}')|">
                     Preencher
                 </button>
             </div>

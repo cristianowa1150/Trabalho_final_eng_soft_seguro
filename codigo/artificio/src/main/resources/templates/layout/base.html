@@ -119,10 +119,10 @@
                             <strong style="font-size: 13px;">Administrador da Plataforma</strong>
                             <span class="badge badge-recusada" style="margin-left: 5px;">ROLE_ADMIN</span>
                             <div style="color: #555555; font-size: 11px; margin-top: 2px;">
-                                <code>admin@artificio.local</code> • senha: <code>Admin#2026</code>
+                                <code>admin@artificio.local</code> • senha: <code th:text="${senhaAdminDemo != null ? senhaAdminDemo : 'Admin#2026'}">Admin#2026</code>
                             </div>
                         </div>
-                        <a th:href="@{/login(email='admin@artificio.local', senha='Admin#2026')}" class="btn btn-primary btn-sm">Usar Conta</a>
+                        <a th:href="@{/login(email='admin@artificio.local', senha=${senhaAdminDemo != null ? senhaAdminDemo : 'Admin#2026'})}" class="btn btn-primary btn-sm">Usar Conta</a>
                     </div>
 
                     <!-- Artista 1 - Anna Letycia -->
