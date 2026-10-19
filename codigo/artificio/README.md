@@ -1,117 +1,135 @@
-# Artifício - Guia de Execução e Procedimentos do Ambiente
+# Artifício - Aplicação Spring Boot
 
-Este documento descreve os procedimentos de ambiente, pré-requisitos, comandos de compilação, execução, testes e rotinas de limpeza para o projeto **Artifício** (Spring Boot 4.x / Java 26).
-
----
-
-## 1. Pré-requisitos de Ambiente
-
-- **Sistema Operacional:** Linux, macOS ou Windows
-- **JDK:** OpenJDK Eclipse Temurin (Adoptium) - Java 25 ou superior (JDK 26 recomendado)
-- **Maven:** Utilizar o Maven Wrapper (`./mvnw`) fornecido na raiz do projeto.
+Aplicação web desenvolvida para o trabalho final da disciplina de **Engenharia de Software Seguro** (PPGCO/UFU). O sistema implementa uma plataforma para catálogo de artistas, portfólios e gestão do ciclo completo de encomendas de arte (comissões).
 
 ---
 
-## 2. Inicialização do Projeto (Spring Initializr)
+## 🛠️ Tecnologias e Pré-requisitos
 
-O projeto foi gerado originalmente com as seguintes definições:
+- **Linguagem:** Java 25 / 26 (OpenJDK Eclipse Temurin recomendado)
+- **Framework:** Spring Boot 4.1.1
+- **Módulos:** Spring Web MVC, Spring Security, Spring Data JPA, Bean Validation, Thymeleaf
+- **Banco de Dados:** H2 Database (em memória, autocontido para desenvolvimento e avaliação)
+- **Build Tool:** Maven Wrapper (`./mvnw` já incluído no repositório)
 
-- **Project:** Maven
-- **Language:** Java
-- **Spring Boot:** 4.1.1
-- **Packaging:** Jar
-- **Java Version:** 25/26
-- **Group:** `com.github.trabalhoengsoftseguro`
-- **Artifact:** `artificio`
-- **Dependências Iniciais:**
-  - `spring-boot-starter-webmvc` (Spring Web)
-  - `spring-boot-starter-thymeleaf` (Template Engine)
-  - `spring-boot-starter-security` (Spring Security)
-  - `spring-boot-starter-validation` (Bean Validation)
-  - `spring-boot-starter-data-jpa` (Spring Data JPA)
-  - `h2` (Banco de Dados H2 Runtime)
-  - `spring-boot-h2console` (Console Web H2)
+> **Nota:** Todos os comandos abaixo devem ser executados a partir do diretório raiz da aplicação (`codigo/artificio`):
+> ```bash
+> cd codigo/artificio
+> ```
 
 ---
 
-## 3. Comandos de Download e Compilação
+## 📦 1. Compilação e Empacotamento
 
-Todos os comandos devem ser executados a partir do diretório do projeto (`codigo/artificio`):
-
+### Baixar Dependências
 ```bash
-cd codigo/artificio
-```
-
-### 3.1 Baixar Dependências
-```bash
-# Baixar e resolver todas as dependências do pom.xml
 ./mvnw dependency:resolve
-
-# Baixar dependências e plugins para suporte offline
-./mvnw dependency:go-offline
 ```
 
-### 3.2 Forçar Atualização de Dependências (-U)
-Para forçar a checagem de versões e atualizações remotas:
+### Compilar o Código-Fonte
 ```bash
-./mvnw clean compile -U
+./mvnw clean compile
+```
+
+### Gerar Pacote JAR
+```bash
+# Compilar, rodar testes e gerar o arquivo JAR executável
+./mvnw clean package
+
+# (Opcional) Gerar o JAR sem executar os testes:
+./mvnw clean package -DskipTests
+```
+O artefato gerado estará em `target/artificio-0.0.1-SNAPSHOT.jar`.
+
+---
+
+## 🧪 2. Execução dos Testes Automatizados
+
+A aplicação conta com uma suíte de testes unitários (Mockito) e testes de integração de controllers (MockMvc e Spring Security Test):
+
+```bash
+# Executa todos os testes automatizados
+./mvnw test
+```
+
+Para rodar testes de uma classe ou pacote específico:
+```bash
+# Testes de autenticação e controle de acesso
+./mvnw test -Dtest=AuthControllerTest
+
+# Testes de validação de isolamento do perfil de produção
+./mvnw test -Dtest=GlobalModelAdviceProdTest
 ```
 
 ---
 
-## 4. Execução da Aplicação
+## 🚀 3. Execução da Aplicação
 
-### 4.1 Modo Desenvolvimento (Direto pelo Maven)
+### 3.1 Ambiente de Desenvolvimento / Avaliação (Padrão)
+
+Neste modo, o banco de dados H2 é inicializado e populado automaticamente com massa de dados de teste (artistas, portfólio, modalidades e pedidos), e os facilitadores de login rápido e console H2 ficam ativos.
+
+**Opção A — Executar diretamente pelo Maven:**
 ```bash
 ./mvnw spring-boot:run
 ```
-A aplicação estará disponível em `http://localhost:8080`.
 
-### 4.2 Gerar Pacote JAR e Executar
+**Opção B — Executar a partir do JAR compilado:**
 ```bash
-# Compilar e empacotar (pulando testes)
-./mvnw clean package -DskipTests
+java -jar target/artificio-0.0.1-SNAPSHOT.jar
+```
 
-# Executar o arquivo JAR gerado
+- **URL da Aplicação:** [http://localhost:8080](http://localhost:8080)
+- **Console H2 Web:** [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+  - JDBC URL: `jdbc:h2:mem:artificiodb`
+  - Usuário: `sa`
+  - Senha: *(em branco)*
+
+---
+
+### 3.2 Ambiente de Produção (`prod`)
+
+No perfil de produção, os facilitadores de avaliação são desativados automaticamente por questões de segurança (nenhum modal de teste ou botão de preenchimento de login é renderizado no HTML) e o console H2 é bloqueado.
+
+**Opção A — Executar via Maven com Perfil `prod`:**
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=prod
+```
+
+**Opção B — Executar o JAR com propriedade de sistema:**
+```bash
+java -jar -Dspring.profiles.active=prod target/artificio-0.0.1-SNAPSHOT.jar
+```
+
+**Opção C — Executar via variável de ambiente:**
+```bash
+export SPRING_PROFILES_ACTIVE=prod
 java -jar target/artificio-0.0.1-SNAPSHOT.jar
 ```
 
 ---
 
-## 5. Execução de Testes Automatizados
+## 🔑 4. Contas Pré-configuradas para Testes (Modo Dev)
 
-```bash
-# Rodar todos os testes unitários e de integração
-./mvnw test
+Durante a inicialização em modo de desenvolvimento, o sistema cria as seguintes contas para permitir a avaliação de todos os papéis de acesso:
 
-# Rodar testes gerando relatório detalhado
-./mvnw test -Dtest=*Test
-```
+| Papel / Perfil | E-mail | Senha | Funcionalidades Disponíveis |
+| :--- | :--- | :--- | :--- |
+| **Administrador** | `admin@artificio.local` | `senha123` | Painel de moderação (`/admin/usuarios`), auditoria de contas e promoção de clientes a artistas. |
+| **Artista (Aquarela)** | `beatriz@artificio.local` | `senha123` | Painel do artista, upload de obras no portfólio, gestão de modalidades de preço e aceite de pedidos. |
+| **Artista (Pixel Art)** | `carlos@artificio.local` | `senha123` | Vitrine pública, portfólio, envio de links de entrega final de encomendas. |
+| **Cliente** | `lucas@artificio.local` | `senha123` | Solicitação de encomendas, briefing, simulação de pagamento PIX e avaliação com estrelas. |
+
+> 💡 **Dica de usabilidade:** No modo de desenvolvimento, há um botão flutuante **`🔑 Contas de Teste`** no canto inferior da tela e botões de **`Preencher`** na tela de login (`/login`) para carregar as credenciais com 1 clique.
 
 ---
 
-## 6. Procedimentos de Limpeza
+## 🧹 5. Rotinas de Limpeza
 
-### 6.1 Limpeza do Projeto Local (`target/`)
-Remove os binários compilados e a pasta `target/`:
 ```bash
+# Limpar artefatos de compilação da pasta target/
 ./mvnw clean
+
+# Forçar purga e re-download de dependências do repositório local do Maven
+./mvnw dependency:purge-local-repository
 ```
-
-### 6.2 Limpeza Forçada do Cache Local do Maven (`~/.m2`)
-Se houver corrupção de downloads ou necessidade de limpar artefatos baixados:
-
-- **Limpar apenas os artefatos do projeto Artifício no repositório local:**
-  ```bash
-  rm -rf ~/.m2/repository/com/github/trabalhoengsoftseguro
-  ```
-
-- **Limpeza completa do repositório local Maven (atenção: exigirá novo download de todas as dependências):**
-  ```bash
-  rm -rf ~/.m2/repository/*
-  ```
-
-- **Forçar purga e re-download de dependências pelo próprio Maven:**
-  ```bash
-  ./mvnw dependency:purge-local-repository
-  ```
