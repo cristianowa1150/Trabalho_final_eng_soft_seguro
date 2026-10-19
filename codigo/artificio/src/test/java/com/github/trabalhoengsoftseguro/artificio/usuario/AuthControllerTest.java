@@ -32,6 +32,16 @@ class AuthControllerTest {
     }
 
     @Test
+    @DisplayName("Deve exibir facilitador de credenciais de teste em ambiente padrao de avaliacao")
+    void deveExibirCredenciaisDemoEmAmbientePadrao() throws Exception {
+        mockMvc.perform(get("/login"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("exibirCredenciaisDemo", true))
+                .andExpect(content().string(containsString("Acesso Rápido para Testes")))
+                .andExpect(content().string(containsString("Contas de Teste")));
+    }
+
+    @Test
     @DisplayName("Deve renderizar formulario de cadastro com status 200")
     void deveRenderizarTelaDeCadastro() throws Exception {
         mockMvc.perform(get("/cadastro"))
