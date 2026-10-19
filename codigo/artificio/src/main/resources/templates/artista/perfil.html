@@ -16,8 +16,12 @@
             <div>
                 <h1 style="font-size: 18px; margin-bottom: 4px;" th:text="${perfil.artista.nome}">Nome do Artista</h1>
                 <div style="font-size: 12px; color: #666666;">
-                    <span>Nota: <strong th:text="${#numbers.formatDecimal(perfil.mediaAvaliacoes, 1, 1)}">5.0</strong>/5</span>
-                    <span>•</span>
+                    <span th:if="${perfil.totalAvaliacoes > 0}">
+                        Nota: <strong th:text="${#numbers.formatDecimal(perfil.mediaNotas, 1, 'POINT', 1, 'COMMA')}">5,0</strong>/5 • 
+                    </span>
+                    <span th:unless="${perfil.totalAvaliacoes > 0}">
+                        Sem avaliações ainda • 
+                    </span>
                     <span th:text="${perfil.totalAvaliacoes} + ' avaliação(ões)'">0 avaliações</span>
                 </div>
             </div>
