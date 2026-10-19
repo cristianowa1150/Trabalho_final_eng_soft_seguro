@@ -28,7 +28,7 @@ class PainelArtistaControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "lucas@artificio.local", roles = {"CLIENTE"})
+    @WithMockUser(username = "eduardo@artificio.local", roles = {"CLIENTE"})
     @DisplayName("Deve negar acesso (403) para cliente comum tentando acessar painel do artista")
     void deveNegarAcessoParaClienteComum() throws Exception {
         mockMvc.perform(get("/painel/artista/pedidos"))
@@ -36,7 +36,7 @@ class PainelArtistaControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "carlos@artificio.local", roles = {"ARTISTA"})
+    @WithMockUser(username = "cristiano@artificio.local", roles = {"ARTISTA"})
     @DisplayName("Deve autorizar artista autenticado a visualizar seus pedidos recebidos")
     void deveAutorizarArtistaAcessarPedidos() throws Exception {
         mockMvc.perform(get("/painel/artista/pedidos"))
@@ -47,7 +47,7 @@ class PainelArtistaControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "carlos@artificio.local", roles = {"ARTISTA"})
+    @WithMockUser(username = "cristiano@artificio.local", roles = {"ARTISTA"})
     @DisplayName("Deve renderizar a tela de gerenciamento de portfolio do artista logado")
     void deveRenderizarPortfolioDoArtista() throws Exception {
         mockMvc.perform(get("/painel/artista/portfolio"))

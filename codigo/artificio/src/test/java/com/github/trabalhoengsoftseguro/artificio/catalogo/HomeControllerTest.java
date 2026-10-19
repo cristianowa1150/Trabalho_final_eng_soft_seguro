@@ -26,8 +26,8 @@ class HomeControllerTest {
                 .andExpect(view().name("index"))
                 .andExpect(model().attributeExists("artistas"))
                 .andExpect(model().attributeExists("categorias"))
-                .andExpect(content().string(containsString("Beatriz Silveira")))
-                .andExpect(content().string(containsString("Carlos Pixel")));
+                .andExpect(content().string(containsString("Anna Letycia")))
+                .andExpect(content().string(containsString("Cristiano Silveira")));
     }
 
     @Test
@@ -37,6 +37,6 @@ class HomeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("index"))
                 .andExpect(model().attribute("categoriaSelecionada", "Pixel Art"))
-                .andExpect(content().string(containsString("Carlos Pixel")));
+                .andExpect(content().string(containsString("Cristiano Silveira")));
     }
 }
