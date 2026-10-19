@@ -5,7 +5,7 @@
     <title>Entrar na Plataforma - Artifício</title>
 </head>
 <body>
-<div id="conteudo" style="max-width: 440px; margin: 20px auto;">
+<div id="conteudo" style="max-width: 460px; margin: 20px auto;">
     <div class="card">
         <div style="margin-bottom: 15px; border-bottom: 1px solid #eeeeee; padding-bottom: 8px;">
             <h2 style="font-size: 16px; font-weight: bold;">Acesse sua Conta</h2>
@@ -21,7 +21,7 @@
             <div class="form-group">
                 <label for="senha" class="form-label">Senha</label>
                 <input type="password" id="senha" name="senha" class="form-control" placeholder="••••••••"
-                       th:value="${param.email != null ? 'senha123' : ''}" required />
+                       th:value="${param.senha != null ? param.senha : ''}" required />
             </div>
 
             <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
@@ -50,37 +50,57 @@
                 <div>
                     <strong>Admin:</strong> <code>admin@artificio.local</code>
                 </div>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('admin@artificio.local', 'senha123')">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('admin@artificio.local', 'Admin#2026')">
                     Preencher
                 </button>
             </div>
 
-            <!-- Artista Beatriz -->
+            <!-- Artista Anna Letycia -->
             <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
                 <div>
-                    <strong>Artista (Aquarela):</strong> <code>beatriz@artificio.local</code>
+                    <strong>Artista (Aquarela):</strong> <code>anna@artificio.local</code>
                 </div>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('beatriz@artificio.local', 'senha123')">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('anna@artificio.local', 'Anna@Arte2026')">
                     Preencher
                 </button>
             </div>
 
-            <!-- Artista Carlos -->
+            <!-- Artista Cristiano Silveira -->
             <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
                 <div>
-                    <strong>Artista (Pixel Art):</strong> <code>carlos@artificio.local</code>
+                    <strong>Artista (Pixel Art):</strong> <code>cristiano@artificio.local</code>
                 </div>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('carlos@artificio.local', 'senha123')">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('cristiano@artificio.local', 'Cris#Pixel2026')">
                     Preencher
                 </button>
             </div>
 
-            <!-- Cliente Lucas -->
+            <!-- Artista Extra Marina Duarte -->
             <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
                 <div>
-                    <strong>Cliente (Contratante):</strong> <code>lucas@artificio.local</code>
+                    <strong>Artista Extra (Vetor):</strong> <code>marina@artificio.local</code>
                 </div>
-                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('lucas@artificio.local', 'senha123')">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('marina@artificio.local', 'Marina*Vetor2026')">
+                    Preencher
+                </button>
+            </div>
+
+            <!-- Cliente Eduardo Rolim -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
+                <div>
+                    <strong>Cliente:</strong> <code>eduardo@artificio.local</code>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('eduardo@artificio.local', 'Eduardo&Cliente2026')">
+                    Preencher
+                </button>
+            </div>
+
+            <!-- Cliente Luan Diniz -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
+                <div>
+                    <strong>Cliente:</strong> <code>luan@artificio.local</code>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('luan@artificio.local', 'Luan$Cliente2026')">
                     Preencher
                 </button>
             </div>
