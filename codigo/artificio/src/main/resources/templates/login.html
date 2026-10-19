@@ -5,7 +5,7 @@
     <title>Entrar na Plataforma - Artifício</title>
 </head>
 <body>
-<div id="conteudo" style="max-width: 400px; margin: 30px auto;">
+<div id="conteudo" style="max-width: 440px; margin: 20px auto;">
     <div class="card">
         <div style="margin-bottom: 15px; border-bottom: 1px solid #eeeeee; padding-bottom: 8px;">
             <h2 style="font-size: 16px; font-weight: bold;">Acesse sua Conta</h2>
@@ -14,12 +14,14 @@
         <form th:action="@{/login}" method="post">
             <div class="form-group">
                 <label for="email" class="form-label">E-mail</label>
-                <input type="email" id="email" name="email" class="form-control" placeholder="seu@email.com" required autofocus />
+                <input type="email" id="email" name="email" class="form-control" placeholder="seu@email.com"
+                       th:value="${param.email != null ? param.email : ''}" required autofocus />
             </div>
 
             <div class="form-group">
                 <label for="senha" class="form-label">Senha</label>
-                <input type="password" id="senha" name="senha" class="form-control" placeholder="••••••••" required />
+                <input type="password" id="senha" name="senha" class="form-control" placeholder="••••••••"
+                       th:value="${param.email != null ? 'senha123' : ''}" required />
             </div>
 
             <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
@@ -31,6 +33,69 @@
             Não possui uma conta? <a th:href="@{/cadastro}" style="color: #0066cc;">Cadastre-se aqui</a>
         </div>
     </div>
+
+    <!-- Bloco de Apoio com Credenciais Demo (Ativo apenas em ambiente de desenvolvimento/avaliação) -->
+    <div th:if="${exibirCredenciaisDemo}" class="card" style="margin-top: 15px; background-color: #fafafa; border-color: #e5e7eb;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <strong style="font-size: 13px; color: #333333;">🔑 Acesso Rápido para Testes</strong>
+            <span class="badge badge-em_andamento">Ambiente Acadêmico</span>
+        </div>
+        <p style="font-size: 11px; color: #666666; margin-bottom: 10px;">
+            Clique em <em>Preencher</em> para carregar a conta desejada. Desativado automaticamente no perfil de produção (<code>prod</code>).
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <!-- Admin -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
+                <div>
+                    <strong>Admin:</strong> <code>admin@artificio.local</code>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('admin@artificio.local', 'senha123')">
+                    Preencher
+                </button>
+            </div>
+
+            <!-- Artista Beatriz -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
+                <div>
+                    <strong>Artista (Aquarela):</strong> <code>beatriz@artificio.local</code>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('beatriz@artificio.local', 'senha123')">
+                    Preencher
+                </button>
+            </div>
+
+            <!-- Artista Carlos -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
+                <div>
+                    <strong>Artista (Pixel Art):</strong> <code>carlos@artificio.local</code>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('carlos@artificio.local', 'senha123')">
+                    Preencher
+                </button>
+            </div>
+
+            <!-- Cliente Lucas -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
+                <div>
+                    <strong>Cliente (Contratante):</strong> <code>lucas@artificio.local</code>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('lucas@artificio.local', 'senha123')">
+                    Preencher
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function preencherFormLogin(email, senha) {
+            var inputEmail = document.getElementById('email');
+            var inputSenha = document.getElementById('senha');
+            if (inputEmail) inputEmail.value = email;
+            if (inputSenha) inputSenha.value = senha;
+            if (inputEmail) inputEmail.focus();
+        }
+    </script>
 </div>
 </body>
 </html>

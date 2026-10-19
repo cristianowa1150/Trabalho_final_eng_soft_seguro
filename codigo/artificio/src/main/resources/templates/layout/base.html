@@ -79,5 +79,97 @@
         <p>Artifício &copy; 2026 — Plataforma Segura para Comissões e Portfólios de Arte.</p>
         <p style="margin-top: 0.3rem; opacity: 0.7;">Desenvolvido para a disciplina de <strong>Engenharia de Software Seguro</strong> (PPGCO/UFU).</p>
     </footer>
+
+    <!-- Balão Flutuante e Modal de Contas de Teste (Ativo apenas em ambiente de desenvolvimento/avaliação) -->
+    <div th:if="${exibirCredenciaisDemo}" sec:authorize="isAnonymous()">
+        <button type="button" id="btnCredenciaisDemo" onclick="abrirModalDemo()"
+                style="position: fixed; bottom: 20px; right: 20px; z-index: 999; background: #ffffff; border: 1px solid #cccccc; border-radius: 20px; padding: 7px 14px; font-size: 12px; cursor: pointer; color: #333333; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+            <span>🔑</span>
+            <span>Contas de Teste</span>
+        </button>
+
+        <!-- Modal Simples de Credenciais de Demonstração -->
+        <div id="modalCredenciaisDemo" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 1000; justify-content: center; align-items: center;">
+            <div class="card" style="max-width: 520px; width: 92%; max-height: 90vh; overflow-y: auto; margin: auto; border: 1px solid #999999;">
+                <div class="card-header" style="margin-bottom: 10px;">
+                    <h3 style="font-size: 15px; font-weight: bold; margin: 0;">🔑 Contas de Demonstração & Testes</h3>
+                    <button type="button" onclick="fecharModalDemo()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #555555;">&times;</button>
+                </div>
+
+                <div style="background-color: #fff9db; border: 1px solid #ffe066; border-radius: 3px; padding: 8px 10px; margin-bottom: 12px; font-size: 12px; color: #7f5f00;">
+                    ⚠️ <strong>Aviso Acadêmico:</strong> Este facilitador está ativo exclusivamente para testes e avaliação na disciplina de Engenharia de Software Seguro. Ele é <strong>desativado automaticamente</strong> em perfil de produção (<code>prod</code>).
+                </div>
+
+                <p style="font-size: 12px; color: #555555; margin-bottom: 10px;">
+                    Clique em <strong>Usar Conta</strong> para carregar o formulário de login automaticamente:
+                </p>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Admin -->
+                    <div style="border: 1px solid #dddddd; border-radius: 3px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                        <div>
+                            <strong style="font-size: 13px;">Administrador</strong>
+                            <span class="badge badge-recusada" style="margin-left: 5px;">ROLE_ADMIN</span>
+                            <div style="color: #555555; font-size: 11px; margin-top: 2px;">
+                                <code>admin@artificio.local</code> • senha: <code>senha123</code>
+                            </div>
+                        </div>
+                        <a th:href="@{/login(email='admin@artificio.local')}" class="btn btn-primary btn-sm">Usar Conta</a>
+                    </div>
+
+                    <!-- Artista Beatriz -->
+                    <div style="border: 1px solid #dddddd; border-radius: 3px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                        <div>
+                            <strong style="font-size: 13px;">Beatriz Silveira</strong>
+                            <span class="badge badge-em_andamento" style="margin-left: 5px;">Artista (Aquarela)</span>
+                            <div style="color: #555555; font-size: 11px; margin-top: 2px;">
+                                <code>beatriz@artificio.local</code> • senha: <code>senha123</code>
+                            </div>
+                        </div>
+                        <a th:href="@{/login(email='beatriz@artificio.local')}" class="btn btn-primary btn-sm">Usar Conta</a>
+                    </div>
+
+                    <!-- Artista Carlos -->
+                    <div style="border: 1px solid #dddddd; border-radius: 3px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                        <div>
+                            <strong style="font-size: 13px;">Carlos Pixel</strong>
+                            <span class="badge badge-em_andamento" style="margin-left: 5px;">Artista (Pixel Art)</span>
+                            <div style="color: #555555; font-size: 11px; margin-top: 2px;">
+                                <code>carlos@artificio.local</code> • senha: <code>senha123</code>
+                            </div>
+                        </div>
+                        <a th:href="@{/login(email='carlos@artificio.local')}" class="btn btn-primary btn-sm">Usar Conta</a>
+                    </div>
+
+                    <!-- Cliente Lucas -->
+                    <div style="border: 1px solid #dddddd; border-radius: 3px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                        <div>
+                            <strong style="font-size: 13px;">Lucas Mendes</strong>
+                            <span class="badge badge-solicitada" style="margin-left: 5px;">Cliente Contratante</span>
+                            <div style="color: #555555; font-size: 11px; margin-top: 2px;">
+                                <code>lucas@artificio.local</code> • senha: <code>senha123</code>
+                            </div>
+                        </div>
+                        <a th:href="@{/login(email='lucas@artificio.local')}" class="btn btn-primary btn-sm">Usar Conta</a>
+                    </div>
+                </div>
+
+                <div style="text-align: right; margin-top: 15px; border-top: 1px solid #eeeeee; padding-top: 10px;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="fecharModalDemo()">Fechar</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function abrirModalDemo() {
+                var m = document.getElementById('modalCredenciaisDemo');
+                if (m) { m.style.display = 'flex'; }
+            }
+            function fecharModalDemo() {
+                var m = document.getElementById('modalCredenciaisDemo');
+                if (m) { m.style.display = 'none'; }
+            }
+        </script>
+    </div>
 </body>
 </html>
