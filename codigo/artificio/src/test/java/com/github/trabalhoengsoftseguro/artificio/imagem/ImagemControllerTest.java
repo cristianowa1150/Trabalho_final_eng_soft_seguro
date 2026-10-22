@@ -24,7 +24,7 @@ class ImagemControllerTest {
     private ImagemService imagemService;
 
     @Test
-    @DisplayName("Deve renderizar imagem publica com headers corretos de Content-Type e Cache-Control")
+    @DisplayName("Deve renderizar imagem publica com headers corretos de Content-Type, Cache-Control, CSP e nosniff")
     void deveRenderizarImagemComHeadersCorretos() throws Exception {
         byte[] dados = "<svg></svg>".getBytes(StandardCharsets.UTF_8);
         String imagemId = imagemService.salvar(dados, "arte_teste.svg", "image/svg+xml");
@@ -33,7 +33,23 @@ class ImagemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", containsString("image/svg+xml")))
                 .andExpect(header().string("Cache-Control", containsString("max-age=86400, public")))
+                .andExpect(header().string("Content-Security-Policy", containsString("sandbox")))
+                .andExpect(header().string("X-Content-Type-Options", "nosniff"))
+                .andExpect(header().string("Content-Disposition", containsString("inline")))
                 .andExpect(content().bytes(dados));
+    }
+
+    @Test
+    @DisplayName("Deve aplicar CSP sandbox e nosniff em imagens para isolar execucao de scripts e cookies")
+    void deveAplicarCspSandboxENosniff() throws Exception {
+        byte[] dados = "<svg><script>alert(1)</script></svg>".getBytes(StandardCharsets.UTF_8);
+        String imagemId = imagemService.salvar(dados, "xss.svg", "image/svg+xml");
+
+        mockMvc.perform(get("/imagens/" + imagemId))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Security-Policy", containsString("default-src 'none'")))
+                .andExpect(header().string("Content-Security-Policy", containsString("sandbox")))
+                .andExpect(header().string("X-Content-Type-Options", "nosniff"));
     }
 
     @Test
