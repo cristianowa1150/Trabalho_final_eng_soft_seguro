@@ -89,4 +89,18 @@ class AdminUsuarioControllerTest {
                         .with(csrf()))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    @WithMockUser(username = "admin@artificio.local", roles = {"ADMIN"})
+    @DisplayName("Deve exibir erro ao tentar promover conta administrativa para artista")
+    void deveExibirErroAoPromoverContaAdmin() throws Exception {
+        Usuario admin = new Usuario("Admin Outro", "outro.admin@artificio.local", "Senha#123", Role.ROLE_ADMIN, null, null);
+        admin = usuarioRepository.save(admin);
+
+        mockMvc.perform(post("/admin/usuarios/" + admin.getId() + "/promover")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/usuarios"))
+                .andExpect(flash().attributeExists("erro"));
+    }
 }

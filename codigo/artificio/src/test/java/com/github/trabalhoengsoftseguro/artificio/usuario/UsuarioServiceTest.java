@@ -96,6 +96,21 @@ class UsuarioServiceTest {
     }
 
     @Test
+    @DisplayName("Deve rejeitar promocao a artista quando usuario for administrador ou ja for artista")
+    void deveRejeitarPromocaoParaUsuarioNaoCliente() {
+        Usuario admin = new Usuario("Admin", "admin@artificio.local", "hash", Role.ROLE_ADMIN, null, null);
+        admin.setId(1L);
+
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(admin));
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.promoverParaArtista(1L));
+
+        assertTrue(ex.getMessage().contains("Apenas contas com papel de Cliente"));
+        verify(usuarioRepository, never()).save(any(Usuario.class));
+    }
+
+    @Test
     @DisplayName("Deve carregar UserDetails pelo email para o Spring Security")
     void deveCarregarUserDetailsPeloEmail() {
         Usuario usuario = new Usuario("Carlos", "carlos@artificio.local", "$2a$10$hash", Role.ROLE_ARTISTA, "Bio", "pix");

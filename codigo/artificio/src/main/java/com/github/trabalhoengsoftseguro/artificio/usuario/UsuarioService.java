@@ -101,6 +101,9 @@ public class UsuarioService implements UserDetailsService {
     @Transactional
     public Usuario promoverParaArtista(Long usuarioId) {
         Usuario usuario = buscarPorId(usuarioId);
+        if (usuario.getRole() != Role.ROLE_CLIENTE) {
+            throw new IllegalArgumentException("Apenas contas com papel de Cliente podem ser promovidas a Artista");
+        }
         usuario.setRole(Role.ROLE_ARTISTA);
         return usuarioRepository.save(usuario);
     }
