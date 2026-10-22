@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,7 +26,11 @@ public class UsuarioService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findByEmail(email.trim().toLowerCase(java.util.Locale.ROOT))
+        if (email == null || email.isBlank()) {
+            throw new UsernameNotFoundException("E-mail não pode ser nulo ou vazio");
+        }
+        String emailNormalizado = normalizarEmail(email);
+        Usuario usuario = usuarioRepository.findByEmail(emailNormalizado)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado para o e-mail: " + email));
 
         return User.builder()
@@ -40,7 +45,11 @@ public class UsuarioService implements UserDetailsService {
         if (dto == null) {
             throw new IllegalArgumentException("Dados de cadastro não podem ser nulos");
         }
-        if (usuarioRepository.existsByEmail(dto.email())) {
+        String emailNormalizado = normalizarEmail(dto.email());
+        if (emailNormalizado == null || emailNormalizado.isBlank()) {
+            throw new IllegalArgumentException("O e-mail é obrigatório");
+        }
+        if (usuarioRepository.existsByEmail(emailNormalizado)) {
             throw new IllegalArgumentException("E-mail já cadastrado na plataforma");
         }
         if (dto.role() == Role.ROLE_ADMIN) {
@@ -50,7 +59,7 @@ public class UsuarioService implements UserDetailsService {
         String senhaCriptografada = passwordEncoder.encode(dto.senha());
         Usuario novoUsuario = new Usuario(
                 dto.nome(),
-                dto.email().trim().toLowerCase(),
+                emailNormalizado,
                 senhaCriptografada,
                 dto.role(),
                 dto.bio(),
@@ -61,8 +70,19 @@ public class UsuarioService implements UserDetailsService {
     }
 
     public Usuario buscarPorEmail(String email) {
-        return usuarioRepository.findByEmail(email)
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("E-mail não pode ser nulo ou vazio");
+        }
+        String emailNormalizado = normalizarEmail(email);
+        return usuarioRepository.findByEmail(emailNormalizado)
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado para o e-mail: " + email));
+    }
+
+    private String normalizarEmail(String email) {
+        if (email == null) {
+            return null;
+        }
+        return email.trim().toLowerCase(Locale.ROOT);
     }
 
     public Usuario buscarPorId(Long id) {

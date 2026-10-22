@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -59,6 +60,17 @@ class UsuarioServiceTest {
     }
 
     @Test
+    @DisplayName("Deve normalizar email para minusculo ao verificar duplicidade no cadastro")
+    void deveNormalizarEmailAoVerificarDuplicidadeNoCadastro() {
+        CadastroDto dto = new CadastroDto("Bob", "  Bob@Artificio.Local  ", "senha123", Role.ROLE_ARTISTA, "Bio", "bob@pix");
+        when(usuarioRepository.existsByEmail("bob@artificio.local")).thenReturn(true);
+
+        assertThrows(IllegalArgumentException.class, () -> service.registrarUsuario(dto));
+        verify(usuarioRepository).existsByEmail("bob@artificio.local");
+        verify(usuarioRepository, never()).save(any(Usuario.class));
+    }
+
+    @Test
     @DisplayName("Deve rejeitar atribuicao direta de papel de administrador no cadastro")
     void deveRejeitarCadastroDiretoDeAdmin() {
         CadastroDto dto = new CadastroDto("Hacker", "hacker@artificio.local", "senha123", Role.ROLE_ADMIN, null, null);
@@ -95,6 +107,46 @@ class UsuarioServiceTest {
         assertEquals("carlos@artificio.local", userDetails.getUsername());
         assertEquals("$2a$10$hash", userDetails.getPassword());
         assertTrue(userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ARTISTA")));
+    }
+
+    @Test
+    @DisplayName("Deve carregar UserDetails com email em caixa mista e espacos")
+    void deveCarregarUserDetailsComEmailEmCaixaMistaEEspacos() {
+        Usuario usuario = new Usuario("Carlos", "carlos@artificio.local", "$2a$10$hash", Role.ROLE_ARTISTA, "Bio", "pix");
+        when(usuarioRepository.findByEmail("carlos@artificio.local")).thenReturn(Optional.of(usuario));
+
+        var userDetails = service.loadUserByUsername("  Carlos@Artificio.LOCAL  ");
+
+        assertNotNull(userDetails);
+        assertEquals("carlos@artificio.local", userDetails.getUsername());
+        verify(usuarioRepository).findByEmail("carlos@artificio.local");
+    }
+
+    @Test
+    @DisplayName("Deve lancar UsernameNotFoundException quando email de login for nulo ou vazio")
+    void deveLancarUsernameNotFoundExceptionParaEmailNuloOuVazio() {
+        assertThrows(UsernameNotFoundException.class, () -> service.loadUserByUsername(null));
+        assertThrows(UsernameNotFoundException.class, () -> service.loadUserByUsername("   "));
+    }
+
+    @Test
+    @DisplayName("Deve buscar usuario por email normalizando caixa alta e espacos")
+    void deveBuscarPorEmailComNormalizacao() {
+        Usuario usuario = new Usuario("Carlos", "carlos@artificio.local", "$2a$10$hash", Role.ROLE_ARTISTA, "Bio", "pix");
+        when(usuarioRepository.findByEmail("carlos@artificio.local")).thenReturn(Optional.of(usuario));
+
+        Usuario encontrado = service.buscarPorEmail("  Carlos@Artificio.LOCAL  ");
+
+        assertNotNull(encontrado);
+        assertEquals("carlos@artificio.local", encontrado.getEmail());
+        verify(usuarioRepository).findByEmail("carlos@artificio.local");
+    }
+
+    @Test
+    @DisplayName("Deve lancar excecao ao buscar email nulo ou vazio")
+    void deveLancarExcecaoParaEmailNuloOuVazioNaBusca() {
+        assertThrows(IllegalArgumentException.class, () -> service.buscarPorEmail(null));
+        assertThrows(IllegalArgumentException.class, () -> service.buscarPorEmail("   "));
     }
 
     @Test
