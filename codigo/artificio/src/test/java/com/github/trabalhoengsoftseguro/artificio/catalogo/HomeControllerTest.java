@@ -39,4 +39,24 @@ class HomeControllerTest {
                 .andExpect(model().attribute("categoriaSelecionada", "Pixel Art"))
                 .andExpect(content().string(containsString("Cristiano Silveira")));
     }
+
+    @Test
+    @DisplayName("Deve filtrar artistas por termo de busca no nome ou bio")
+    void deveFiltrarPorTermoDeBusca() throws Exception {
+        mockMvc.perform(get("/").param("busca", "botânica"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("index"))
+                .andExpect(content().string(containsString("Anna Letycia")));
+    }
+
+    @Test
+    @DisplayName("Deve filtrar artistas por categoria e termo de busca combinados")
+    void deveFiltrarPorCategoriaETermoCombinados() throws Exception {
+        mockMvc.perform(get("/")
+                        .param("categoria", "Pixel Art")
+                        .param("busca", "Cyberpunk"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("index"))
+                .andExpect(content().string(containsString("Cristiano Silveira")));
+    }
 }

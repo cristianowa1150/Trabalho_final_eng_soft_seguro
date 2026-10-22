@@ -34,26 +34,10 @@ public class ArtistaService {
     }
 
     public List<Usuario> buscarArtistasComFiltros(String categoria, String termo) {
-        List<Usuario> artistas;
+        String catNorm = (categoria != null && !categoria.isBlank()) ? categoria.trim() : null;
+        String termoNorm = (termo != null && !termo.isBlank()) ? termo.trim() : null;
 
-        if (termo != null && !termo.isBlank()) {
-            artistas = usuarioRepository.buscarArtistasPorTermo(Role.ROLE_ARTISTA, termo.trim());
-        } else {
-            artistas = usuarioRepository.findByRoleOrderByNomeAsc(Role.ROLE_ARTISTA);
-        }
-
-        if (categoria != null && !categoria.isBlank()) {
-            String catNorm = categoria.trim();
-            artistas = artistas.stream().filter(artista -> {
-                boolean temObraNaCategoria = obraPortfolioRepository.findByArtistaIdOrderByDataCriacaoDesc(artista.getId())
-                        .stream().anyMatch(obra -> obra.getCategoria().equalsIgnoreCase(catNorm));
-                boolean temServicoNaCategoria = tipoComissaoRepository.findByArtistaIdAndAtivoTrue(artista.getId())
-                        .stream().anyMatch(tipo -> tipo.getCategoria().equalsIgnoreCase(catNorm));
-                return temObraNaCategoria || temServicoNaCategoria;
-            }).collect(Collectors.toList());
-        }
-
-        return artistas;
+        return usuarioRepository.buscarArtistasFiltrados(Role.ROLE_ARTISTA, catNorm, termoNorm);
     }
 
     public ArtistaPerfilDto obterPerfilCompleto(Long artistaId) {

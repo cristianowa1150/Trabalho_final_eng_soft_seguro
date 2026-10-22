@@ -160,4 +160,30 @@ class ArtistaServiceTest {
         assertEquals(1, perfil.obras().size());
         assertEquals(1, perfil.tiposComissao().size());
     }
+
+    @Test
+    @DisplayName("Deve delegar busca de artistas para repositorio com parametros normalizados")
+    void deveDelegarBuscaComFiltrosNormalizados() {
+        Usuario artista = new Usuario("Renata", "renata@artificio.local", "hash", Role.ROLE_ARTISTA, "Bio", "pix");
+        when(usuarioRepository.buscarArtistasFiltrados(Role.ROLE_ARTISTA, "Pixel Art", "cyber"))
+                .thenReturn(List.of(artista));
+
+        List<Usuario> resultado = service.buscarArtistasComFiltros("  Pixel Art  ", "  cyber  ");
+
+        assertEquals(1, resultado.size());
+        assertEquals("Renata", resultado.get(0).getNome());
+        verify(usuarioRepository).buscarArtistasFiltrados(Role.ROLE_ARTISTA, "Pixel Art", "cyber");
+    }
+
+    @Test
+    @DisplayName("Deve passar null para repositorio quando categoria ou termo forem vazios ou apenas espacos")
+    void devePassarNullQuandoFiltrosForemVazios() {
+        when(usuarioRepository.buscarArtistasFiltrados(Role.ROLE_ARTISTA, null, null))
+                .thenReturn(List.of());
+
+        List<Usuario> resultado = service.buscarArtistasComFiltros("   ", "");
+
+        assertNotNull(resultado);
+        verify(usuarioRepository).buscarArtistasFiltrados(Role.ROLE_ARTISTA, null, null);
+    }
 }

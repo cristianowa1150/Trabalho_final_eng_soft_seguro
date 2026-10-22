@@ -25,4 +25,14 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
             "LOWER(u.nome) LIKE LOWER(CONCAT('%', :termo, '%')) OR " +
             "LOWER(u.bio) LIKE LOWER(CONCAT('%', :termo, '%')))")
     List<Usuario> buscarArtistasPorTermo(@Param("role") Role role, @Param("termo") String termo);
+
+    @Query("SELECT DISTINCT u FROM Usuario u WHERE u.role = :role " +
+            "AND (:termo IS NULL OR :termo = '' OR LOWER(u.nome) LIKE LOWER(CONCAT('%', :termo, '%')) OR LOWER(u.bio) LIKE LOWER(CONCAT('%', :termo, '%'))) " +
+            "AND (:categoria IS NULL OR :categoria = '' OR " +
+            "EXISTS (SELECT 1 FROM ObraPortfolio o WHERE o.artista = u AND LOWER(o.categoria) = LOWER(:categoria)) OR " +
+            "EXISTS (SELECT 1 FROM TipoComissao t WHERE t.artista = u AND t.ativo = true AND LOWER(t.categoria) = LOWER(:categoria))) " +
+            "ORDER BY u.nome ASC")
+    List<Usuario> buscarArtistasFiltrados(@Param("role") Role role,
+                                          @Param("categoria") String categoria,
+                                          @Param("termo") String termo);
 }
