@@ -101,7 +101,7 @@ public class PainelArtistaController {
     @GetMapping("/servicos")
     public String gerenciarServicos(Principal principal, Model model) {
         Usuario artista = usuarioService.buscarPorEmail(principal.getName());
-        List<TipoComissao> servicos = artistaService.obterPerfilCompleto(artista.getId()).tiposComissao();
+        List<TipoComissao> servicos = artistaService.listarTiposComissaoDoArtista(artista.getId());
 
         model.addAttribute("servicos", servicos);
         if (!model.containsAttribute("novoTipoDto")) {
@@ -119,7 +119,7 @@ public class PainelArtistaController {
         Usuario artista = usuarioService.buscarPorEmail(principal.getName());
 
         if (bindingResult.hasErrors()) {
-            List<TipoComissao> servicos = artistaService.obterPerfilCompleto(artista.getId()).tiposComissao();
+            List<TipoComissao> servicos = artistaService.listarTiposComissaoDoArtista(artista.getId());
             model.addAttribute("servicos", servicos);
             return "artista/servicos";
         }
