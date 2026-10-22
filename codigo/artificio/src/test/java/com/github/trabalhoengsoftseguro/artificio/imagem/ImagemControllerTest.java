@@ -42,8 +42,8 @@ class ImagemControllerTest {
     @Test
     @DisplayName("Deve aplicar CSP sandbox e nosniff em imagens para isolar execucao de scripts e cookies")
     void deveAplicarCspSandboxENosniff() throws Exception {
-        byte[] dados = "<svg><script>alert(1)</script></svg>".getBytes(StandardCharsets.UTF_8);
-        String imagemId = imagemService.salvar(dados, "xss.svg", "image/svg+xml");
+        byte[] dados = "<svg xmlns='http://www.w3.org/2000/svg'><circle cx='10' cy='10' r='5'/></svg>".getBytes(StandardCharsets.UTF_8);
+        String imagemId = imagemService.salvar(dados, "vetor.svg", "image/svg+xml");
 
         mockMvc.perform(get("/imagens/" + imagemId))
                 .andExpect(status().isOk())
@@ -62,7 +62,7 @@ class ImagemControllerTest {
     @Test
     @DisplayName("Deve garantir acesso anonimo publico para carregamento de imagens na vitrine")
     void devePermitirAcessoAnonimoAImagens() throws Exception {
-        byte[] dados = "PNG_DEMO".getBytes(StandardCharsets.UTF_8);
+        byte[] dados = new byte[]{(byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 0};
         String imagemId = imagemService.salvar(dados, "preview.png", "image/png");
 
         // Executado sem autenticacao

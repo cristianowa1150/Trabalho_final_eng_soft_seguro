@@ -10,24 +10,35 @@ import java.util.UUID;
 public class ImagemService {
 
     private final ImagemBlobRepository repository;
+    private final ValidadorUploadImagem validador;
 
-    public ImagemService(ImagemBlobRepository repository) {
+    public ImagemService(ImagemBlobRepository repository, ValidadorUploadImagem validador) {
         this.repository = repository;
+        this.validador = validador;
     }
 
     @Transactional
     public String salvar(byte[] conteudo, String nomeOriginal, String contentType) {
-        if (conteudo == null || conteudo.length == 0) {
-            throw new IllegalArgumentException("O arquivo de imagem não pode estar vazio");
-        }
-        if (contentType == null || contentType.isBlank()) {
-            contentType = "application/octet-stream";
-        }
+        String mimeSeguro = validador.validarEObterMimeType(conteudo, contentType);
 
         String id = UUID.randomUUID().toString();
-        ImagemBlob blob = new ImagemBlob(id, nomeOriginal != null ? nomeOriginal : "sem-nome", contentType, conteudo);
+        // Descarta completamente o nomeOriginal fornecido e gera um nome aleatório e seguro
+        String nomeSeguro = id + obterExtensaoPorMime(mimeSeguro);
+
+        ImagemBlob blob = new ImagemBlob(id, nomeSeguro, mimeSeguro, conteudo);
         repository.save(blob);
         return id;
+    }
+
+    private String obterExtensaoPorMime(String mimeType) {
+        return switch (mimeType) {
+            case "image/png" -> ".png";
+            case "image/jpeg" -> ".jpg";
+            case "image/gif" -> ".gif";
+            case "image/webp" -> ".webp";
+            case "image/svg+xml" -> ".svg";
+            default -> ".img";
+        };
     }
 
     public ImagemBlob recuperar(String id) {
