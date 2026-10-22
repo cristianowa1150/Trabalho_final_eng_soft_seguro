@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::#conteudo})}">
+<head>
+    <title>Avaliar Comissão - Artifício</title>
+</head>
+<body>
+<div id="conteudo" style="max-width: 500px; margin: 0 auto;">
+    <div class="card">
+        <div style="text-align: center; margin-bottom: 15px; border-bottom: 1px solid #eeeeee; padding-bottom: 10px;">
+            <h1 style="font-size: 18px; font-weight: bold;">Avalie sua Experiência</h1>
+            <p style="color: #666666; font-size: 13px;">
+                Avalie o trabalho entregue por <strong th:text="${pedido.artista.nome}">Artista</strong>
+            </p>
+        </div>
+
+        <form th:action="@{'/comissoes/' + ${pedido.id} + '/avaliar'}" th:object="${novaAvaliacaoDto}" method="post">
+            <input type="hidden" th:field="*{pedidoId}" />
+
+            <!-- Seleção de Estrelas -->
+            <div class="form-group" style="text-align: center;">
+                <label class="form-label">Sua Nota (1 a 5 estrelas)</label>
+                <div style="display: flex; justify-content: center; gap: 15px; margin: 10px 0;">
+                    <label th:each="estrela : ${#numbers.sequence(1, 5)}" style="cursor: pointer; text-align: center;">
+                        <input type="radio" th:field="*{nota}" th:value="${estrela}" />
+                        <span style="font-size: 14px; font-weight: bold; margin-left: 2px;" th:text="${estrela} + '★'">5★</span>
+                    </label>
+                </div>
+                <div th:if="${#fields.hasErrors('nota')}" th:errors="*{nota}" class="form-error">Erro na nota</div>
+            </div>
+
+            <!-- Comentário -->
+            <div class="form-group">
+                <label for="comentario" class="form-label">Comentário Público (Opcional)</label>
+                <textarea id="comentario" th:field="*{comentario}" class="form-control" rows="4"
+                          placeholder="Deixe um comentário sobre a qualidade da ilustração, cumprimento de prazos, etc..."></textarea>
+                <div th:if="${#fields.hasErrors('comentario')}" th:errors="*{comentario}" class="form-error">Erro no comentário</div>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-top: 15px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                    Publicar Avaliação
+                </button>
+                <a th:href="@{/painel/cliente/pedidos}" class="btn btn-secondary">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

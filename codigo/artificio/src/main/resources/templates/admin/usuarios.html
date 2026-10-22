@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::#conteudo})}">
+<head>
+    <title>Painel Administrativo de Usuários - Artifício</title>
+</head>
+<body>
+<div id="conteudo">
+    <div style="margin-bottom: 15px; border-bottom: 1px solid #eeeeee; padding-bottom: 8px;">
+        <h1 style="font-size: 18px; font-weight: bold;">Supervisão de Usuários</h1>
+        <p style="color: #666666; font-size: 12px;">Painel restrito a administradores para auditoria e controle de privilégios</p>
+    </div>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Papel do Sistema</th>
+                        <th>Cadastrado em</th>
+                        <th>Ações Administrativas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${usuarios}">
+                        <td th:text="${user.id}">1</td>
+                        <td><strong th:text="${user.nome}">Nome</strong></td>
+                        <td th:text="${user.email}">email@artificio.local</td>
+                        <td>
+                            <span th:if="${user.role.name() == 'ROLE_ADMIN'}" class="badge badge-recusada">ADMINISTRADOR</span>
+                            <span th:if="${user.role.name() == 'ROLE_ARTISTA'}" class="badge badge-em_andamento">ARTISTA</span>
+                            <span th:if="${user.role.name() == 'ROLE_CLIENTE'}" class="badge badge-solicitada">CLIENTE</span>
+                        </td>
+                        <td th:text="${#temporals.format(user.dataCriacao, 'dd/MM/yyyy HH:mm')}">16/10/2026</td>
+                        <td>
+                            <form th:if="${user.role.name() == 'ROLE_CLIENTE'}"
+                                  th:action="@{'/admin/usuarios/' + ${user.id} + '/promover'}"
+                                  method="post"
+                                  onsubmit="return confirm('Confirmar promoção deste usuário para Artista?');">
+                                <button type="submit" class="btn btn-primary btn-sm">
+                                    Promover para Artista
+                                </button>
+                            </form>
+                            <span th:unless="${user.role.name() == 'ROLE_CLIENTE'}" style="color: #888888; font-size: 12px;">
+                                Nenhuma ação pendente
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="layout(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:replace="${title}">Artifício - Plataforma Segura de Arte</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <header class="navbar">
+        <div class="navbar-container">
+            <a th:href="@{/}" class="brand-logo">
+                <span>Artifício</span>
+            </a>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a th:href="@{/}" class="nav-link">Catálogo</a></li>
+
+                    <!-- Menu Artista -->
+                    <li sec:authorize="hasRole('ARTISTA')">
+                        <a th:href="@{/painel/artista/pedidos}" class="nav-link">Pedidos Recebidos</a>
+                    </li>
+                    <li sec:authorize="hasRole('ARTISTA')">
+                        <a th:href="@{/painel/artista/portfolio}" class="nav-link">Meu Portfólio</a>
+                    </li>
+                    <li sec:authorize="hasRole('ARTISTA')">
+                        <a th:href="@{/painel/artista/servicos}" class="nav-link">Meus Serviços</a>
+                    </li>
+
+                    <!-- Menu Cliente -->
+                    <li sec:authorize="hasRole('CLIENTE')">
+                        <a th:href="@{/painel/cliente/pedidos}" class="nav-link">Minhas Encomendas</a>
+                    </li>
+
+                    <!-- Menu Administrador -->
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/admin/usuarios}" class="nav-link">Usuários & Moderação</a>
+                    </li>
+
+                    <!-- Não Autenticado -->
+                    <li sec:authorize="isAnonymous()">
+                        <a th:href="@{/login}" class="nav-link">Entrar</a>
+                    </li>
+                    <li sec:authorize="isAnonymous()">
+                        <a th:href="@{/cadastro}" class="btn btn-primary btn-sm">Cadastrar-se</a>
+                    </li>
+
+                    <!-- Autenticado: Informações e Logout -->
+                    <li sec:authorize="isAuthenticated()" class="user-badge">
+                        <span sec:authentication="name">usuario@artificio.local</span>
+                        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 0.5rem;">
+                            <button type="submit" class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.5rem;">Sair</button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Notificações Flash de Sucesso / Erro -->
+        <div th:if="${sucesso}" class="alert alert-success">
+            <span>✅</span>
+            <span th:text="${sucesso}">Operação realizada com sucesso!</span>
+        </div>
+        <div th:if="${erro}" class="alert alert-danger">
+            <span>⚠️</span>
+            <span th:text="${erro}">Ocorreu um erro ao processar sua solicitação.</span>
+        </div>
+
+        <!-- Conteúdo Injetado pela Página -->
+        <div th:replace="${content}"></div>
+    </main>
+
+    <footer class="footer">
+        <p>Artifício &copy; 2026 — Plataforma Segura para Comissões e Portfólios de Arte.</p>
+        <p style="margin-top: 4px; font-size: 12px; color: #555555;">
+            Disciplina de <strong>Engenharia de Software Seguro</strong> (PPGCO/UFU) — Integrantes:
+        </p>
+        <p style="margin-top: 6px; font-size: 12px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <a href="https://github.com/annaletycia" target="_blank" rel="noopener noreferrer" style="color: #0066cc;">Anna Letycia</a> •
+            <a href="https://github.com/cristianowa1150" target="_blank" rel="noopener noreferrer" style="color: #0066cc;">Cristiano Silveira</a> •
+            <a href="https://github.com/vndmtrx" target="_blank" rel="noopener noreferrer" style="color: #0066cc;">Eduardo Rolim</a> •
+            <a href="https://github.com/LuanDinizMR" target="_blank" rel="noopener noreferrer" style="color: #0066cc;">Luan Diniz</a>
+        </p>
+    </footer>
+
+    <!-- Balão Flutuante e Modal de Contas de Teste (Ativo apenas em ambiente de desenvolvimento/avaliação) -->
+    <div th:if="${exibirCredenciaisDemo}" sec:authorize="isAnonymous()">
+        <button type="button" id="btnCredenciaisDemo" onclick="abrirModalDemo()"
+                style="position: fixed; bottom: 20px; right: 20px; z-index: 999; background: #ffffff; border: 1px solid #cccccc; border-radius: 20px; padding: 7px 14px; font-size: 12px; cursor: pointer; color: #333333; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);">
+            <span>🔑</span>
+            <span>Contas de Teste</span>
+        </button>
+
+        <!-- Modal Simples de Credenciais de Demonstração -->
+        <div id="modalCredenciaisDemo" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 1000; justify-content: center; align-items: center;">
+            <div class="card" style="max-width: 540px; width: 92%; max-height: 90vh; overflow-y: auto; margin: auto; border: 1px solid #999999;">
+                <div class="card-header" style="margin-bottom: 10px;">
+                    <h3 style="font-size: 15px; font-weight: bold; margin: 0;">🔑 Contas de Demonstração & Testes</h3>
+                    <button type="button" onclick="fecharModalDemo()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #555555;">&times;</button>
+                </div>
+
+                <div style="background-color: #fff9db; border: 1px solid #ffe066; border-radius: 3px; padding: 8px 10px; margin-bottom: 12px; font-size: 12px; color: #7f5f00;">
+                    ⚠️ <strong>Aviso Acadêmico:</strong> Este facilitador está ativo exclusivamente para testes e avaliação na disciplina de Engenharia de Software Seguro. Ele é <strong>desativado automaticamente</strong> em perfil de produção (<code>prod</code>).
+                </div>
+
+                <p style="font-size: 12px; color: #555555; margin-bottom: 10px;">
+                    Selecione uma das contas abaixo para carregar o formulário de login automaticamente:
+                </p>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Admin -->
+                    <div style="border: 1px solid #dddddd; border-radius: 3px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                        <div>
+                            <strong style="font-size: 13px;">Administrador da Plataforma</strong>
+                            <span class="badge badge-recusada" style="margin-left: 5px;">ROLE_ADMIN</span>
+                            <div style="color: #555555; font-size: 11px; margin-top: 2px;">
+                                <code>admin@artificio.local</code> • senha: <code th:text="${senhaAdminDemo != null ? senhaAdminDemo : 'Admin#2026'}">Admin#2026</code>
+                            </div>
+                        </div>
+                        <a th:href="@{/login(email='admin@artificio.local', senha=${senhaAdminDemo != null ? senhaAdminDemo : 'Admin#2026'})}" class="btn btn-primary btn-sm">Usar Conta</a>
+                    </div>
+
+                    <!-- Artista 1 - Anna Letycia -->
+                    <div style="border: 1px solid #dddddd; border-radius: 3px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                        <div>
+                            <strong style="font-size: 13px;">Anna Letycia</strong>
+                            <span class="badge badge-em_andamento" style="margin-left: 5px;">Artista (Aquarela)</span>
+                            <div style="color: #555555; font-size: 11px; margin-top: 2px;">
+                                <code>anna@artificio.local</code> • senha: <code>Anna@Arte2026</code>
+                            </div>
+                        </div>
+                        <a th:href="@{/login(email='anna@artificio.local', senha='Anna@Arte2026')}" class="btn btn-primary btn-sm">Usar Conta</a>
+                    </div>
+
+                    <!-- Artista 2 - Cristiano Silveira -->
+                    <div style="border: 1px solid #dddddd; border-radius: 3px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                        <div>
+                            <strong style="font-size: 13px;">Cristiano Silveira</strong>
+                            <span class="badge badge-em_andamento" style="margin-left: 5px;">Artista (Pixel Art)</span>
+                            <div style="color: #555555; font-size: 11px; margin-top: 2px;">
+                                <code>cristiano@artificio.local</code> • senha: <code>Cris#Pixel2026</code>
+                            </div>
+                        </div>
+                        <a th:href="@{/login(email='cristiano@artificio.local', senha='Cris#Pixel2026')}" class="btn btn-primary btn-sm">Usar Conta</a>
+                    </div>
+
+                    <!-- Artista 3 - Marina Duarte (Extra) -->
+                    <div style="border: 1px solid #dddddd; border-radius: 3px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                        <div>
+                            <strong style="font-size: 13px;">Marina Duarte</strong>
+                            <span class="badge badge-em_andamento" style="margin-left: 5px;">Artista Extra (Vetor)</span>
+                            <div style="color: #555555; font-size: 11px; margin-top: 2px;">
+                                <code>marina@artificio.local</code> • senha: <code>Marina*Vetor2026</code>
+                            </div>
+                        </div>
+                        <a th:href="@{/login(email='marina@artificio.local', senha='Marina*Vetor2026')}" class="btn btn-primary btn-sm">Usar Conta</a>
+                    </div>
+
+                    <!-- Cliente 1 - Eduardo Rolim -->
+                    <div style="border: 1px solid #dddddd; border-radius: 3px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                        <div>
+                            <strong style="font-size: 13px;">Eduardo Rolim</strong>
+                            <span class="badge badge-solicitada" style="margin-left: 5px;">Cliente</span>
+                            <div style="color: #555555; font-size: 11px; margin-top: 2px;">
+                                <code>eduardo@artificio.local</code> • senha: <code>Eduardo&Cliente2026</code>
+                            </div>
+                        </div>
+                        <a th:href="@{/login(email='eduardo@artificio.local', senha='Eduardo&Cliente2026')}" class="btn btn-primary btn-sm">Usar Conta</a>
+                    </div>
+
+                    <!-- Cliente 2 - Luan Diniz -->
+                    <div style="border: 1px solid #dddddd; border-radius: 3px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; background: #fafafa;">
+                        <div>
+                            <strong style="font-size: 13px;">Luan Diniz</strong>
+                            <span class="badge badge-solicitada" style="margin-left: 5px;">Cliente</span>
+                            <div style="color: #555555; font-size: 11px; margin-top: 2px;">
+                                <code>luan@artificio.local</code> • senha: <code>Luan$Cliente2026</code>
+                            </div>
+                        </div>
+                        <a th:href="@{/login(email='luan@artificio.local', senha='Luan$Cliente2026')}" class="btn btn-primary btn-sm">Usar Conta</a>
+                    </div>
+                </div>
+
+                <div style="text-align: right; margin-top: 15px; border-top: 1px solid #eeeeee; padding-top: 10px;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="fecharModalDemo()">Fechar</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function abrirModalDemo() {
+                var m = document.getElementById('modalCredenciaisDemo');
+                if (m) { m.style.display = 'flex'; }
+            }
+            function fecharModalDemo() {
+                var m = document.getElementById('modalCredenciaisDemo');
+                if (m) { m.style.display = 'none'; }
+            }
+        </script>
+    </div>
+</body>
+</html>

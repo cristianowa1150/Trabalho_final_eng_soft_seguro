@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::#conteudo})}">
+<head>
+    <title>Entrar na Plataforma - Artifício</title>
+</head>
+<body>
+<div id="conteudo" style="max-width: 460px; margin: 20px auto;">
+    <div class="card">
+        <div style="margin-bottom: 15px; border-bottom: 1px solid #eeeeee; padding-bottom: 8px;">
+            <h2 style="font-size: 16px; font-weight: bold;">Acesse sua Conta</h2>
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="seu@email.com"
+                       th:value="${param.email != null ? param.email : ''}" required autofocus />
+            </div>
+
+            <div class="form-group">
+                <label for="senha" class="form-label">Senha</label>
+                <input type="password" id="senha" name="senha" class="form-control" placeholder="••••••••"
+                       th:value="${param.senha != null ? param.senha : ''}" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                Entrar
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 15px; padding-top: 10px; border-top: 1px solid #eeeeee; font-size: 12px; color: #666666;">
+            Não possui uma conta? <a th:href="@{/cadastro}" style="color: #0066cc;">Cadastre-se aqui</a>
+        </div>
+    </div>
+
+    <!-- Bloco de Apoio com Credenciais Demo (Ativo apenas em ambiente de desenvolvimento/avaliação) -->
+    <div th:if="${exibirCredenciaisDemo}" class="card" style="margin-top: 15px; background-color: #fafafa; border-color: #e5e7eb;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <strong style="font-size: 13px; color: #333333;">🔑 Acesso Rápido para Testes</strong>
+            <span class="badge badge-em_andamento">Ambiente Acadêmico</span>
+        </div>
+        <p style="font-size: 11px; color: #666666; margin-bottom: 10px;">
+            Clique em <em>Preencher</em> para carregar a conta desejada. Desativado automaticamente no perfil de produção (<code>prod</code>).
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <!-- Admin -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
+                <div>
+                    <strong>Admin:</strong> <code>admin@artificio.local</code>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm"
+                        th:attr="onclick=|preencherFormLogin('admin@artificio.local', '${senhaAdminDemo != null ? senhaAdminDemo : 'Admin#2026'}')|">
+                    Preencher
+                </button>
+            </div>
+
+            <!-- Artista Anna Letycia -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
+                <div>
+                    <strong>Artista (Aquarela):</strong> <code>anna@artificio.local</code>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('anna@artificio.local', 'Anna@Arte2026')">
+                    Preencher
+                </button>
+            </div>
+
+            <!-- Artista Cristiano Silveira -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
+                <div>
+                    <strong>Artista (Pixel Art):</strong> <code>cristiano@artificio.local</code>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('cristiano@artificio.local', 'Cris#Pixel2026')">
+                    Preencher
+                </button>
+            </div>
+
+            <!-- Artista Extra Marina Duarte -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
+                <div>
+                    <strong>Artista Extra (Vetor):</strong> <code>marina@artificio.local</code>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('marina@artificio.local', 'Marina*Vetor2026')">
+                    Preencher
+                </button>
+            </div>
+
+            <!-- Cliente Eduardo Rolim -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
+                <div>
+                    <strong>Cliente:</strong> <code>eduardo@artificio.local</code>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('eduardo@artificio.local', 'Eduardo&Cliente2026')">
+                    Preencher
+                </button>
+            </div>
+
+            <!-- Cliente Luan Diniz -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; padding: 6px 8px; border: 1px solid #dddddd; border-radius: 3px; font-size: 12px;">
+                <div>
+                    <strong>Cliente:</strong> <code>luan@artificio.local</code>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="preencherFormLogin('luan@artificio.local', 'Luan$Cliente2026')">
+                    Preencher
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function preencherFormLogin(email, senha) {
+            var inputEmail = document.getElementById('email');
+            var inputSenha = document.getElementById('senha');
+            if (inputEmail) inputEmail.value = email;
+            if (inputSenha) inputSenha.value = senha;
+            if (inputEmail) inputEmail.focus();
+        }
+    </script>
+</div>
+</body>
+</html>

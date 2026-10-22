@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::#conteudo})}">
+<head>
+    <title>Pedidos Recebidos - Artifício</title>
+</head>
+<body>
+<div id="conteudo">
+    <div style="margin-bottom: 15px; border-bottom: 1px solid #eeeeee; padding-bottom: 8px;">
+        <h1 style="font-size: 18px; font-weight: bold;">Painel de Pedidos Recebidos</h1>
+        <p style="color: #666666; font-size: 12px;">Acompanhe solicitações de clientes, aceite briefings e envie as entregas finais</p>
+    </div>
+
+    <div th:if="${pedidos.isEmpty()}" class="card" style="text-align: center; padding: 25px;">
+        <p style="color: #666666;">Você ainda não recebeu pedidos de encomenda.</p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 15px;" th:unless="${pedidos.isEmpty()}">
+        <div th:each="pedido : ${pedidos}" class="card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <h3 style="font-size: 14px; font-weight: bold;" th:text="'Pedido #' + ${pedido.id} + ' — ' + ${pedido.tipoComissao.titulo}">Pedido #1</h3>
+                        <span class="badge"
+                              th:classappend="'badge-' + ${#strings.toLowerCase(pedido.status)}"
+                              th:text="${pedido.status}">SOLICITADA</span>
+                    </div>
+                    <div style="color: #666666; font-size: 12px; margin-top: 3px;">
+                        Cliente: <strong th:text="${pedido.cliente.nome}">Nome do Cliente</strong> (<span th:text="${pedido.cliente.email}">email</span>) •
+                        Solicitado em: <span th:text="${#temporals.format(pedido.dataSolicitacao, 'dd/MM/yyyy HH:mm')}">16/10/2026</span>
+                    </div>
+                </div>
+
+                <div style="text-align: right;">
+                    <div style="font-size: 14px; font-weight: bold; color: #155724;" th:text="'R$ ' + ${#numbers.formatDecimal(pedido.valorFinal, 1, 'POINT', 2, 'COMMA')}">R$ 180,00</div>
+                    <div style="font-size: 11px; color: #777777;" th:text="'Prazo: ' + ${pedido.prazoDias} + ' dias'">Prazo: 7 dias</div>
+                </div>
+            </div>
+
+            <!-- Briefing do Cliente -->
+            <div style="background-color: #f8f8f8; border: 1px solid #e5e5e5; border-radius: 3px; padding: 8px 10px; margin-bottom: 10px;">
+                <strong style="display: block; font-size: 12px; color: #555555; margin-bottom: 3px;">Briefing do Cliente:</strong>
+                <p style="font-size: 13px; white-space: pre-wrap;" th:text="${pedido.briefing}">Detalhes descritos pelo cliente...</p>
+            </div>
+
+            <!-- Entrega registrada (se houver) -->
+            <div th:if="${pedido.linkEntrega != null}" style="margin-bottom: 10px; padding: 6px 10px; background-color: #e8f4fd; border: 1px solid #b8daff; border-radius: 3px; font-size: 12px;">
+                <strong>Arquivo / Link de Entrega:</strong>
+                <a th:href="${pedido.linkEntrega}" target="_blank" rel="noopener noreferrer" style="color: #0066cc; margin-left: 5px;" th:text="${pedido.linkEntrega}">https://...</a>
+            </div>
+
+            <!-- Ações do Artista de acordo com o status -->
+            <div style="display: flex; gap: 8px; align-items: center; justify-content: flex-end; flex-wrap: wrap;">
+                <!-- Quando SOLICITADA: Aceitar ou Recusar -->
+                <div th:if="${pedido.status.name() == 'SOLICITADA'}" style="display: flex; gap: 6px;">
+                    <form th:action="@{'/comissoes/' + ${pedido.id} + '/aceitar'}" method="post">
+                        <button type="submit" class="btn btn-success btn-sm">Aceitar Proposta</button>
+                    </form>
+                    <form th:action="@{'/comissoes/' + ${pedido.id} + '/recusar'}" method="post" onsubmit="return confirm('Deseja realmente recusar este pedido?');">
+                        <button type="submit" class="btn btn-danger btn-sm">Recusar</button>
+                    </form>
+                </div>
+
+                <!-- Quando AGUARDANDO_PAGAMENTO -->
+                <div th:if="${pedido.status.name() == 'AGUARDANDO_PAGAMENTO'}">
+                    <span style="font-size: 12px; color: #856404;">Aguardando confirmação de pagamento pelo cliente.</span>
+                </div>
+
+                <!-- Quando PAGO: Iniciar Produção -->
+                <div th:if="${pedido.status.name() == 'PAGO'}">
+                    <form th:action="@{'/comissoes/' + ${pedido.id} + '/iniciar'}" method="post">
+                        <button type="submit" class="btn btn-primary btn-sm">Iniciar Produção</button>
+                    </form>
+                </div>
+
+                <!-- Quando EM_ANDAMENTO: Enviar Entrega -->
+                <div th:if="${pedido.status.name() == 'EM_ANDAMENTO'}" style="width: 100%;">
+                    <form th:action="@{'/comissoes/' + ${pedido.id} + '/entregar'}" method="post" style="display: flex; gap: 6px; align-items: center;">
+                        <input type="text" name="linkEntrega" class="form-control" placeholder="Link de entrega (Drive, Dropbox, Imgur...)" required style="flex: 1;" />
+                        <button type="submit" class="btn btn-primary btn-sm" style="white-space: nowrap;">Registrar Entrega</button>
+                    </form>
+                </div>
+
+                <!-- Quando ENTREGUE -->
+                <div th:if="${pedido.status.name() == 'ENTREGUE'}">
+                    <span style="font-size: 12px; color: #004085;">Entrega enviada! Aguardando conferência e aprovação do cliente.</span>
+                </div>
+
+                <!-- Quando CONCLUIDA ou AVALIADA -->
+                <div th:if="${pedido.status.name() == 'CONCLUIDA' or pedido.status.name() == 'AVALIADA'}">
+                    <span style="font-size: 12px; color: #155724; font-weight: bold;">Comissão finalizada.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

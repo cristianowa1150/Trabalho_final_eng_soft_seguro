@@ -1,0 +1,422 @@
+/* ==========================================================================
+   Artifício - Estilo Visual Acadêmico / MVP Simples
+   Disciplina de Engenharia de Software Seguro - PPGCO/UFU
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333333;
+  background-color: #fcfcfc;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Barra de Navegação */
+.navbar {
+  background-color: #f4f4f4;
+  border-bottom: 1px solid #dddddd;
+  padding: 10px 20px;
+}
+
+.navbar-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand-logo {
+  font-size: 18px;
+  font-weight: bold;
+  color: #222222;
+  text-decoration: none;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.nav-link {
+  color: #0066cc;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+}
+
+.user-badge {
+  font-size: 12px;
+  color: #555555;
+  background-color: #e9e9e9;
+  border: 1px solid #cccccc;
+  padding: 4px 8px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Conteúdo Principal */
+.container {
+  max-width: 1000px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 0 15px;
+  flex: 1;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.card-header {
+  border-bottom: 1px solid #eeeeee;
+  padding-bottom: 8px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header h1, .card-header h2, .card-header h3 {
+  font-size: 16px;
+  color: #222222;
+}
+
+/* Botões Simples */
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  border-radius: 3px;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid #999999;
+  background-color: #eeeeee;
+  color: #333333;
+}
+
+.btn:hover {
+  background-color: #dddddd;
+}
+
+.btn-primary {
+  background-color: #0066cc;
+  border-color: #0052a3;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: #0052a3;
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  border-color: #cccccc;
+  color: #333333;
+}
+
+.btn-secondary:hover {
+  background-color: #f0f0f0;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border-color: #218838;
+  color: #ffffff;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #bd2130;
+  color: #ffffff;
+}
+
+.btn-danger:hover {
+  background-color: #bd2130;
+}
+
+.btn-sm {
+  padding: 3px 8px;
+  font-size: 12px;
+}
+
+/* Status / Badges Simples */
+.badge {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: bold;
+  border-radius: 3px;
+  border: 1px solid #cccccc;
+  background-color: #f0f0f0;
+  color: #333333;
+}
+
+.badge-solicitada { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
+.badge-aguardando_pagamento { background-color: #ffe8d6; color: #b7410e; border-color: #ffd4b2; }
+.badge-pago { background-color: #d1ecf1; color: #0c5460; border-color: #bee5eb; }
+.badge-em_andamento { background-color: #e2e3e5; color: #383d41; border-color: #d6d8db; }
+.badge-entregue { background-color: #cce5ff; color: #004085; border-color: #b8daff; }
+.badge-concluida, .badge-avaliada { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+.badge-recusada, .badge-cancelada { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+
+/* Formulários Simples */
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-label {
+  display: block;
+  font-weight: bold;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 13px;
+  font-family: inherit;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  background-color: #ffffff;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #0066cc;
+}
+
+.form-error {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+/* Mensagens de Alerta */
+.alert {
+  padding: 10px 14px;
+  border-radius: 3px;
+  margin-bottom: 15px;
+  font-size: 13px;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+/* Hero e Busca */
+.hero {
+  text-align: center;
+  padding: 15px 0 20px;
+  margin-bottom: 15px;
+}
+
+.hero h1 {
+  font-size: 20px;
+  color: #222222;
+  margin-bottom: 6px;
+}
+
+.hero p {
+  color: #666666;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+.search-box {
+  display: flex;
+  gap: 8px;
+  max-width: 500px;
+  margin: 0 auto 12px;
+}
+
+.search-box input {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+.categories-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.pill {
+  padding: 3px 8px;
+  border: 1px solid #cccccc;
+  background-color: #f8f8f8;
+  color: #333333;
+  text-decoration: none;
+  font-size: 12px;
+  border-radius: 3px;
+}
+
+.pill:hover, .pill.active {
+  background-color: #0066cc;
+  color: #ffffff;
+  border-color: #0052a3;
+}
+
+/* Grids Básicos */
+.grid-artists {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+}
+
+.artist-card {
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+.artist-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.artist-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #dddddd;
+  color: #333333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.artist-info h3 {
+  font-size: 14px;
+  color: #222222;
+}
+
+.artist-bio {
+  color: #666666;
+  font-size: 12px;
+  margin-bottom: 12px;
+  flex: 1;
+}
+
+.grid-artworks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 15px;
+}
+
+.artwork-card {
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.artwork-img-wrapper {
+  width: 100%;
+  height: 160px;
+  background-color: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.artwork-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.artwork-body {
+  padding: 10px;
+}
+
+.artwork-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #222222;
+}
+
+/* Tabelas Simples */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.table th, .table td {
+  padding: 8px 10px;
+  border: 1px solid #dddddd;
+}
+
+.table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+  color: #444444;
+}
+
+.table tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+/* Rodapé */
+.footer {
+  margin-top: auto;
+  border-top: 1px solid #dddddd;
+  padding: 12px;
+  text-align: center;
+  color: #777777;
+  font-size: 12px;
+  background-color: #f9f9f9;
+}

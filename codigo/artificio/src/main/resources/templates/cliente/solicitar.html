@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::#conteudo})}">
+<head>
+    <title>Solicitar Encomenda de Arte - Artifício</title>
+</head>
+<body>
+<div id="conteudo" style="max-width: 600px; margin: 0 auto;">
+    <div class="card">
+        <div style="margin-bottom: 15px; border-bottom: 1px solid #eeeeee; padding-bottom: 10px;">
+            <span class="badge badge-em_andamento" style="margin-bottom: 5px;" th:text="${tipo.categoria}">Categoria</span>
+            <h1 style="font-size: 18px; font-weight: bold;" th:text="'Encomendar: ' + ${tipo.titulo}">Encomenda</h1>
+            <p style="color: #666666; font-size: 13px; margin-top: 5px;">
+                Artista: <strong th:text="${tipo.artista.nome}">Artista</strong> •
+                Preço Base: <strong style="color: #155724;" th:text="'R$ ' + ${#numbers.formatDecimal(tipo.precoBase, 1, 'POINT', 2, 'COMMA')}">R$ 150,00</strong> •
+                Prazo Estimado: <span th:text="${tipo.prazoEstimadoDias} + ' dias'">7 dias</span>
+            </p>
+        </div>
+
+        <form th:action="@{/comissoes/solicitar}" th:object="${solicitacaoDto}" method="post">
+            <input type="hidden" th:field="*{tipoComissaoId}" />
+
+            <div class="form-group">
+                <label for="briefing" class="form-label">Briefing e Instruções para o Artista</label>
+                <p style="font-size: 12px; color: #666666; margin-bottom: 5px;">
+                    Descreva o que deseja na arte: pose, referências visuais, paleta de cores e detalhes importantes.
+                </p>
+                <textarea id="briefing" th:field="*{briefing}" class="form-control" rows="5"
+                          placeholder="Ex: Gostaria de uma ilustração de um personagem em estilo aquarela..." required></textarea>
+                <div th:if="${#fields.hasErrors('briefing')}" th:errors="*{briefing}" class="form-error">Erro no briefing</div>
+            </div>
+
+            <div style="background-color: #f0f4f8; border: 1px solid #d0dbe5; border-radius: 3px; padding: 10px; margin-bottom: 15px; font-size: 12px; color: #333333;">
+                <strong>Nota do Sistema:</strong> Ao submeter sua proposta, o artista avaliará a disponibilidade e os detalhes do briefing.
+                Após aprovação do artista, o pagamento simulado via PIX será habilitado para início da produção.
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                    Enviar Solicitação de Encomenda
+                </button>
+                <a th:href="@{'/artistas/' + ${tipo.artista.id}}" class="btn btn-secondary">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

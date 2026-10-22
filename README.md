@@ -115,3 +115,14 @@ Trabalho_final_eng_soft_seguro/
 ├── README.md
 │
 └── contributors.json
+```
+
+---
+
+## 💻 Aplicação Web (Artifício)
+
+A implementação do sistema está contida no diretório [`codigo/artificio/`](codigo/artificio/).
+
+As instruções detalhadas de pré-requisitos, compilação, testes automatizados e execução em modo de desenvolvimento ou produção estão disponíveis no guia dedicado:
+
+👉 **[Guia de Compilação, Testes e Execução da Aplicação Spring Boot](codigo/artificio/README.md)**
