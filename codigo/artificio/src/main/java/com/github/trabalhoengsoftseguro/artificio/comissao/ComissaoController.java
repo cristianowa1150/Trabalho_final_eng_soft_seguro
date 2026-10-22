@@ -50,9 +50,24 @@ public class ComissaoController {
     }
 
     @GetMapping("/comissoes/solicitar/{tipoId}")
-    public String formularioSolicitacao(@PathVariable Long tipoId, Model model) {
+    public String formularioSolicitacao(@PathVariable Long tipoId,
+                                       Principal principal,
+                                       Model model,
+                                       RedirectAttributes redirectAttributes) {
         TipoComissao tipo = tipoComissaoRepository.findById(tipoId)
                 .orElseThrow(() -> new IllegalArgumentException("Modalidade de serviço não encontrada com ID: " + tipoId));
+
+        if (principal != null) {
+            Usuario usuarioLogado = usuarioService.buscarPorEmail(principal.getName());
+            if (usuarioLogado.isAdmin()) {
+                redirectAttributes.addFlashAttribute("erro", "Administradores não têm permissão para contratar serviços.");
+                return "redirect:/artistas/" + tipo.getArtista().getId();
+            }
+            if (tipo.getArtista().getId().equals(usuarioLogado.getId())) {
+                redirectAttributes.addFlashAttribute("erro", "Você não pode solicitar uma comissão para o seu próprio serviço.");
+                return "redirect:/artistas/" + tipo.getArtista().getId();
+            }
+        }
 
         model.addAttribute("tipo", tipo);
         model.addAttribute("solicitacaoDto", new SolicitacaoComissaoDto(tipoId, ""));
@@ -66,6 +81,10 @@ public class ComissaoController {
                                       Model model,
                                       RedirectAttributes redirectAttributes) {
         Usuario cliente = usuarioService.buscarPorEmail(principal.getName());
+        if (cliente.isAdmin()) {
+            redirectAttributes.addFlashAttribute("erro", "Administradores não têm permissão para contratar serviços.");
+            return "redirect:/";
+        }
 
         if (dto.tipoComissaoId() == null) {
             redirectAttributes.addFlashAttribute("erro", "Modalidade de serviço inválida ou não especificada.");

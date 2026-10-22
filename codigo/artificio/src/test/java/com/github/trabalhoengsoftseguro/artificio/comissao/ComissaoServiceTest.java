@@ -81,6 +81,21 @@ class ComissaoServiceTest {
     }
 
     @Test
+    @DisplayName("Deve rejeitar solicitacao se solicitante for administrador")
+    void deveRejeitarSolicitacaoQuandoClienteForAdministrador() {
+        Usuario admin = new Usuario("Admin", "admin@teste.com", "hash", Role.ROLE_ADMIN, null, null);
+        admin.setId(99L);
+        when(usuarioRepository.findById(99L)).thenReturn(Optional.of(admin));
+
+        SolicitacaoComissaoDto dto = new SolicitacaoComissaoDto(30L, "Briefing valido");
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.criarSolicitacao(99L, dto));
+        assertTrue(ex.getMessage().contains("Contas administrativas"));
+        verify(pedidoRepository, never()).save(any());
+    }
+
+    @Test
     @DisplayName("Deve aceitar pedido de comissao e gerar codigo PIX simulado")
     void deveAceitarPedidoComSucessoGerandoPix() {
         PedidoComissao pedido = new PedidoComissao("Briefing", new BigDecimal("120.00"), 4, cliente, artista, tipoComissao);

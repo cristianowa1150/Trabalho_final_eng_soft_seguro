@@ -36,6 +36,10 @@ public class ComissaoService {
         Usuario cliente = usuarioRepository.findById(clienteId)
                 .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado com ID: " + clienteId));
 
+        if (cliente.isAdmin()) {
+            throw new IllegalArgumentException("Contas administrativas não têm permissão para contratar comissões");
+        }
+
         TipoComissao tipo = tipoComissaoRepository.findById(dto.tipoComissaoId())
                 .orElseThrow(() -> new IllegalArgumentException("Tipo de comissão não encontrado com ID: " + dto.tipoComissaoId()));
 

@@ -92,4 +92,55 @@ class ComissaoControllerTest {
                 .andExpect(redirectedUrl("/painel/cliente/pedidos"))
                 .andExpect(flash().attributeExists("erro"));
     }
+
+    @Test
+    @WithMockUser(username = "admin@artificio.local", roles = {"ADMIN"})
+    @DisplayName("Deve negar (403 Forbidden) acesso de administrador ao painel de pedidos de cliente")
+    void deveNegarAcessoDeAdminAoPainelCliente() throws Exception {
+        mockMvc.perform(get("/painel/cliente/pedidos"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "anna@artificio.local", roles = {"ARTISTA"})
+    @DisplayName("Deve impedir artista de abrir tela de solicitacao para seu proprio servico")
+    void deveImpedirArtistaDeAbrirFormularioDeAutocontratacao() throws Exception {
+        // Modalidade 1 pertence à artista anna@artificio.local
+        mockMvc.perform(get("/comissoes/solicitar/1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/artistas/2"))
+                .andExpect(flash().attributeExists("erro"));
+    }
+
+    @Test
+    @WithMockUser(username = "anna@artificio.local", roles = {"ARTISTA"})
+    @DisplayName("Deve rejeitar submissao de solicitacao para o proprio artista com flash de erro")
+    void deveRejeitarSubmissaoDeAutocontratacaoPorArtista() throws Exception {
+        mockMvc.perform(post("/comissoes/solicitar")
+                        .with(csrf())
+                        .param("tipoComissaoId", "1")
+                        .param("briefing", "Briefing longo e detalhado para encomendar de mim mesma"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"))
+                .andExpect(flash().attributeExists("erro"));
+    }
+
+    @Test
+    @WithMockUser(username = "cristiano@artificio.local", roles = {"ARTISTA"})
+    @DisplayName("Deve permitir que um artista contrate outro artista sem bloqueio")
+    void devePermitirQueArtistaContrateOutroArtista() throws Exception {
+        // Modalidade 1 pertence à Anna, Cristiano é outro artista
+        mockMvc.perform(get("/comissoes/solicitar/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("cliente/solicitar"))
+                .andExpect(model().attributeExists("tipo"));
+
+        mockMvc.perform(post("/comissoes/solicitar")
+                        .with(csrf())
+                        .param("tipoComissaoId", "1")
+                        .param("briefing", "Briefing detalhado para a colega Anna encomendado por Cristiano"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/painel/cliente/pedidos"))
+                .andExpect(flash().attributeExists("sucesso"));
+    }
 }
