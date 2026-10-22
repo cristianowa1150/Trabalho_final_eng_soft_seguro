@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::#conteudo})}">
+<head>
+    <title th:text="${titulo != null ? titulo + ' - Artifício' : 'Ops! Ocorreu um problema - Artifício'}">Erro - Artifício</title>
+</head>
+<body>
+<div id="conteudo">
+    <div class="card" style="max-width: 650px; margin: 40px auto; text-align: center; padding: 35px 25px;">
+        <div style="font-size: 52px; margin-bottom: 15px;">🛡️</div>
+
+        <h1 style="font-size: 24px; font-weight: bold; margin-bottom: 10px;"
+            th:text="${titulo != null ? titulo : 'Ops! Não foi possível processar sua solicitação'}">
+            Ops! Algo deu errado
+        </h1>
+
+        <p style="color: #666666; font-size: 15px; line-height: 1.6; margin-bottom: 20px;"
+           th:text="${mensagem != null ? mensagem : (message != null ? message : 'A requisição solicitada não pôde ser concluída. Verifique os dados informados ou tente novamente.')}">
+            Mensagem descritiva do erro.
+        </p>
+
+        <div th:if="${status != null}" style="margin-bottom: 25px;">
+            <span class="badge badge-recusada" style="font-size: 13px; padding: 4px 10px;"
+                  th:text="'Status HTTP ' + ${status}">Status HTTP 400</span>
+        </div>
+
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+            <a th:href="@{/}" class="btn btn-primary">Voltar para o Início</a>
+            <a href="javascript:history.back()" class="btn btn-secondary">Voltar à Página Anterior</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
