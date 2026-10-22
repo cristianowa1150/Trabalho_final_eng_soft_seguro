@@ -58,12 +58,28 @@ public class AuthController {
 
         try {
             usuarioService.registrarUsuario(cadastroDto);
-            redirectAttributes.addFlashAttribute("sucesso", "Cadastro realizado com sucesso! Faça login para começar a usar a plataforma.");
+            redirectAttributes.addFlashAttribute("sucesso", "Cadastro realizado com sucesso! Enviamos um link de confirmação para seu e-mail (veja no console do terminal). Ative sua conta para fazer login.");
             return "redirect:/login";
         } catch (IllegalArgumentException ex) {
             model.addAttribute("erro", ex.getMessage());
             model.addAttribute("rolesDisponiveis", List.of(Role.ROLE_CLIENTE, Role.ROLE_ARTISTA));
             return "cadastro";
         }
+    }
+
+    @GetMapping("/confirmar-email")
+    public String confirmarEmail(@RequestParam(value = "token", required = false) String token,
+                                 RedirectAttributes redirectAttributes) {
+        if (token == null || token.isBlank()) {
+            redirectAttributes.addFlashAttribute("erro", "Token de confirmação não informado.");
+            return "redirect:/login";
+        }
+        try {
+            usuarioService.confirmarEmail(token);
+            redirectAttributes.addFlashAttribute("sucesso", "E-mail confirmado com sucesso! Sua conta está ativa para login.");
+        } catch (IllegalArgumentException ex) {
+            redirectAttributes.addFlashAttribute("erro", ex.getMessage());
+        }
+        return "redirect:/login";
     }
 }

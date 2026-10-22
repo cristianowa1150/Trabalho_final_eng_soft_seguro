@@ -1,5 +1,6 @@
 package com.github.trabalhoengsoftseguro.artificio.usuario;
 
+import com.github.trabalhoengsoftseguro.artificio.email.EmailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,15 +25,21 @@ class UsuarioServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private TokenAtivacaoRepository tokenAtivacaoRepository;
+
+    @Mock
+    private EmailService emailService;
+
     private UsuarioService service;
 
     @BeforeEach
     void setUp() {
-        service = new UsuarioService(usuarioRepository, passwordEncoder);
+        service = new UsuarioService(usuarioRepository, passwordEncoder, tokenAtivacaoRepository, emailService);
     }
 
     @Test
-    @DisplayName("Deve registrar novo usuario criptografando a senha com BCrypt")
+    @DisplayName("Deve registrar novo usuario criptografando a senha com BCrypt e emitindo token de ativacao")
     void deveRegistrarUsuarioComSucesso() {
         CadastroDto dto = new CadastroDto("Alice", "alice@artificio.local", "senha123", Role.ROLE_CLIENTE, "Bio teste", null);
 
@@ -46,7 +53,10 @@ class UsuarioServiceTest {
         assertEquals("alice@artificio.local", criado.getEmail());
         assertEquals("$2a$10$hashedPassword", criado.getSenha());
         assertEquals(Role.ROLE_CLIENTE, criado.getRole());
+        assertFalse(criado.isEmailConfirmado(), "Novo usuario deve iniciar com email nao confirmado");
         verify(usuarioRepository).save(any(Usuario.class));
+        verify(tokenAtivacaoRepository).save(any(TokenAtivacao.class));
+        verify(emailService).enviarEmailConfirmacao(eq("alice@artificio.local"), eq("Alice"), contains("/confirmar-email?token="));
     }
 
     @Test
@@ -171,4 +181,64 @@ class UsuarioServiceTest {
 
         assertThrows(IllegalArgumentException.class, () -> service.buscarPorId(999L));
     }
+
+    @Test
+    @DisplayName("Deve confirmar email com sucesso e remover token apos ativacao")
+    void deveConfirmarEmailComSucesso() {
+        Usuario usuario = new Usuario("Maria", "maria@artificio.local", "senha", Role.ROLE_CLIENTE, null, null);
+        usuario.setEmailConfirmado(false);
+        TokenAtivacao token = new TokenAtivacao("token-valido-123", usuario, java.time.LocalDateTime.now().plusHours(1));
+
+        when(tokenAtivacaoRepository.findByToken("token-valido-123")).thenReturn(Optional.of(token));
+        when(usuarioRepository.save(any(Usuario.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Usuario ativado = service.confirmarEmail("token-valido-123");
+
+        assertTrue(ativado.isEmailConfirmado());
+        verify(usuarioRepository).save(usuario);
+        verify(tokenAtivacaoRepository).delete(token);
+    }
+
+    @Test
+    @DisplayName("Deve rejeitar confirmacao quando token nao for encontrado")
+    void deveRejeitarConfirmacaoComTokenInexistente() {
+        when(tokenAtivacaoRepository.findByToken("token-inexistente")).thenReturn(Optional.empty());
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.confirmarEmail("token-inexistente"));
+
+        assertTrue(ex.getMessage().contains("Token de confirmação inválido"));
+        verify(usuarioRepository, never()).save(any(Usuario.class));
+    }
+
+    @Test
+    @DisplayName("Deve rejeitar confirmacao quando token estiver expirado e exclui-lo")
+    void deveRejeitarConfirmacaoComTokenExpirado() {
+        Usuario usuario = new Usuario("Maria", "maria@artificio.local", "senha", Role.ROLE_CLIENTE, null, null);
+        usuario.setEmailConfirmado(false);
+        TokenAtivacao tokenExpirado = new TokenAtivacao("token-expirado", usuario, java.time.LocalDateTime.now().minusHours(1));
+
+        when(tokenAtivacaoRepository.findByToken("token-expirado")).thenReturn(Optional.of(tokenExpirado));
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> service.confirmarEmail("token-expirado"));
+
+        assertTrue(ex.getMessage().contains("expirou"));
+        verify(tokenAtivacaoRepository).delete(tokenExpirado);
+        verify(usuarioRepository, never()).save(any(Usuario.class));
+    }
+
+    @Test
+    @DisplayName("Deve marcar UserDetails como disabled quando email nao estiver confirmado")
+    void deveCarregarUserDetailsDesabilitadoQuandoEmailNaoConfirmado() {
+        Usuario usuario = new Usuario("Inativo", "inativo@artificio.local", "$2a$10$hash", Role.ROLE_CLIENTE, null, null);
+        usuario.setEmailConfirmado(false);
+        when(usuarioRepository.findByEmail("inativo@artificio.local")).thenReturn(Optional.of(usuario));
+
+        var userDetails = service.loadUserByUsername("inativo@artificio.local");
+
+        assertNotNull(userDetails);
+        assertFalse(userDetails.isEnabled(), "Usuario com email nao confirmado deve ter isEnabled() == false");
+    }
 }
+

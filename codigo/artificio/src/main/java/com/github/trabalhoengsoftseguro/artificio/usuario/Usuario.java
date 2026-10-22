@@ -37,6 +37,9 @@ public class Usuario {
     @Column(name = "data_criacao", nullable = false)
     private LocalDateTime dataCriacao;
 
+    @Column(name = "email_confirmado", nullable = false)
+    private boolean emailConfirmado = true;
+
     public Usuario() {
     }
 
@@ -131,6 +134,14 @@ public class Usuario {
 
     public void setDataCriacao(LocalDateTime dataCriacao) {
         this.dataCriacao = dataCriacao;
+    }
+
+    public boolean isEmailConfirmado() {
+        return emailConfirmado;
+    }
+
+    public void setEmailConfirmado(boolean emailConfirmado) {
+        this.emailConfirmado = emailConfirmado;
     }
 
     @Override

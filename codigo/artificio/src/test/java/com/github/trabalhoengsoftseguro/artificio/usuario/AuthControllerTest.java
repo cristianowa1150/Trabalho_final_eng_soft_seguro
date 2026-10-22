@@ -64,6 +64,15 @@ class AuthControllerTest {
                 .andExpect(flash().attributeExists("sucesso"));
     }
 
+    @Autowired
+    private TokenAtivacaoRepository tokenAtivacaoRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private UsuarioService usuarioService;
+
     @Test
     @DisplayName("Deve rejeitar cadastro com dados invalidos e exibir mensagens de erro")
     void deveRejeitarCadastroInvalido() throws Exception {
@@ -77,4 +86,33 @@ class AuthControllerTest {
                 .andExpect(view().name("cadastro"))
                 .andExpect(model().hasErrors());
     }
+
+    @Test
+    @DisplayName("Deve confirmar email com token valido e redirecionar para login com sucesso")
+    void deveConfirmarEmailComTokenValido() throws Exception {
+        CadastroDto dto = new CadastroDto("Usuario Confirma", "confirma@artificio.local", "senhaSegura123", Role.ROLE_CLIENTE, null, null);
+        Usuario usuario = usuarioService.registrarUsuario(dto);
+
+        TokenAtivacao token = tokenAtivacaoRepository.findAll().stream()
+                .filter(t -> t.getUsuario().getId().equals(usuario.getId()))
+                .findFirst()
+                .orElseThrow();
+
+        mockMvc.perform(get("/confirmar-email")
+                        .param("token", token.getToken()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"))
+                .andExpect(flash().attribute("sucesso", "E-mail confirmado com sucesso! Sua conta está ativa para login."));
+    }
+
+    @Test
+    @DisplayName("Deve redirecionar para login com mensagem de erro quando token for invalido")
+    void deveRedirecionarComErroQuandoTokenInvalido() throws Exception {
+        mockMvc.perform(get("/confirmar-email")
+                        .param("token", "token-inexistente-xyz"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"))
+                .andExpect(flash().attributeExists("erro"));
+    }
 }
+

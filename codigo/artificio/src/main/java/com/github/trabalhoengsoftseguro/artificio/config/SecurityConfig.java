@@ -49,6 +49,7 @@ public class SecurityConfig {
                                 "/imagens/**",
                                 "/login",
                                 "/cadastro",
+                                "/confirmar-email",
                                 "/css/**",
                                 "/js/**",
                                 "/error",
