@@ -58,7 +58,9 @@ class ArtificioJpaTests {
         cliente = usuarioRepository.save(cliente);
 
         assertThat(artista.getId()).isNotNull();
+        assertThat(artista.getId().version()).isEqualTo(7);
         assertThat(cliente.getId()).isNotNull();
+        assertThat(cliente.getId().version()).isEqualTo(7);
 
         // 2. Salvar Imagem BLOB (Feature: imagem)
         byte[] dadosFake = "fake-image-bytes".getBytes();

@@ -1,7 +1,9 @@
 package com.github.trabalhoengsoftseguro.artificio.usuario;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Entidade para persistência de tokens temporários de confirmação e ativação de contas.
@@ -11,8 +13,9 @@ import java.time.LocalDateTime;
 public class TokenAtivacao {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
 
     @Column(nullable = false, unique = true, length = 100)
     private String token;
@@ -37,8 +40,12 @@ public class TokenAtivacao {
         return LocalDateTime.now().isAfter(dataExpiracao);
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getToken() {

@@ -4,13 +4,14 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.UUID;
 
 /**
  * DTO para submissão de nota e comentário avaliando o trabalho do artista.
  */
 public record NovaAvaliacaoDto(
         @NotNull(message = "O ID do pedido é obrigatório")
-        Long pedidoId,
+        UUID pedidoId,
 
         @NotNull(message = "A nota é obrigatória")
         @Min(value = 1, message = "A nota mínima é 1 estrela")

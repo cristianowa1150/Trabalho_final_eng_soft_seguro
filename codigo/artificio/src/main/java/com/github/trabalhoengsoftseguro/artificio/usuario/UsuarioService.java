@@ -125,7 +125,7 @@ public class UsuarioService implements UserDetailsService {
         return email.trim().toLowerCase(Locale.ROOT);
     }
 
-    public Usuario buscarPorId(Long id) {
+    public Usuario buscarPorId(UUID id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado com ID: " + id));
     }
@@ -139,7 +139,7 @@ public class UsuarioService implements UserDetailsService {
     }
 
     @Transactional
-    public Usuario promoverParaArtista(Long usuarioId) {
+    public Usuario promoverParaArtista(UUID usuarioId) {
         Usuario usuario = buscarPorId(usuarioId);
         if (usuario.getRole() != Role.ROLE_CLIENTE) {
             throw new IllegalArgumentException("Apenas contas com papel de Cliente podem ser promovidas a Artista");
@@ -149,7 +149,7 @@ public class UsuarioService implements UserDetailsService {
     }
 
     @Transactional
-    public Usuario atualizarPerfil(Long usuarioId, String bio, String chavePix) {
+    public Usuario atualizarPerfil(UUID usuarioId, String bio, String chavePix) {
         Usuario usuario = buscarPorId(usuarioId);
         usuario.setBio(bio);
         usuario.setChavePix(chavePix);

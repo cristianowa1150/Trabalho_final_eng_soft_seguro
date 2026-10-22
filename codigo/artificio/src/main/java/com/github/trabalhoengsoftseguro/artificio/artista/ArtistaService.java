@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,7 +41,7 @@ public class ArtistaService {
         return usuarioRepository.buscarArtistasFiltrados(Role.ROLE_ARTISTA, catNorm, termoNorm);
     }
 
-    public ArtistaPerfilDto obterPerfilCompleto(Long artistaId) {
+    public ArtistaPerfilDto obterPerfilCompleto(UUID artistaId) {
         Usuario artista = usuarioRepository.findById(artistaId)
                 .orElseThrow(() -> new IllegalArgumentException("Artista não encontrado com ID: " + artistaId));
 
@@ -57,7 +58,7 @@ public class ArtistaService {
     }
 
     @Transactional
-    public ObraPortfolio adicionarObra(Long artistaId, NovaObraDto dto, byte[] bytesArquivo, String nomeArquivo, String contentType) {
+    public ObraPortfolio adicionarObra(UUID artistaId, NovaObraDto dto, byte[] bytesArquivo, String nomeArquivo, String contentType) {
         if (dto == null) {
             throw new IllegalArgumentException("Dados da obra não podem ser nulos");
         }
@@ -75,7 +76,7 @@ public class ArtistaService {
     }
 
     @Transactional
-    public void removerObra(Long artistaId, Long obraId) {
+    public void removerObra(UUID artistaId, UUID obraId) {
         ObraPortfolio obra = obraPortfolioRepository.findById(obraId)
                 .orElseThrow(() -> new IllegalArgumentException("Obra não encontrada com ID: " + obraId));
 
@@ -88,7 +89,7 @@ public class ArtistaService {
     }
 
     @Transactional
-    public TipoComissao salvarTipoComissao(Long artistaId, NovoTipoComissaoDto dto) {
+    public TipoComissao salvarTipoComissao(UUID artistaId, NovoTipoComissaoDto dto) {
         if (dto == null) {
             throw new IllegalArgumentException("Dados do tipo de comissão não podem ser nulos");
         }
@@ -112,7 +113,7 @@ public class ArtistaService {
     }
 
     @Transactional
-    public void alternarStatusTipoComissao(Long artistaId, Long tipoId, boolean ativo) {
+    public void alternarStatusTipoComissao(UUID artistaId, UUID tipoId, boolean ativo) {
         TipoComissao tipo = tipoComissaoRepository.findById(tipoId)
                 .orElseThrow(() -> new IllegalArgumentException("Tipo de comissão não encontrado com ID: " + tipoId));
 
@@ -124,11 +125,11 @@ public class ArtistaService {
         tipoComissaoRepository.save(tipo);
     }
 
-    public List<ObraPortfolio> listarObrasDoArtista(Long artistaId) {
+    public List<ObraPortfolio> listarObrasDoArtista(UUID artistaId) {
         return obraPortfolioRepository.findByArtistaIdOrderByDataCriacaoDesc(artistaId);
     }
 
-    public List<TipoComissao> listarTiposComissaoDoArtista(Long artistaId) {
+    public List<TipoComissao> listarTiposComissaoDoArtista(UUID artistaId) {
         return tipoComissaoRepository.findByArtistaId(artistaId);
     }
 }

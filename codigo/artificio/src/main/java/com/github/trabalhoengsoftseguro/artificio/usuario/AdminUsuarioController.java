@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Controller restrito ao papel de Administrador para supervisão e promoção de usuários.
@@ -31,7 +32,7 @@ public class AdminUsuarioController {
     }
 
     @PostMapping("/{id}/promover")
-    public String promoverParaArtista(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String promoverParaArtista(@PathVariable UUID id, RedirectAttributes redirectAttributes) {
         try {
             Usuario promovido = usuarioService.promoverParaArtista(id);
             redirectAttributes.addFlashAttribute("sucesso", "Usuário '" + promovido.getNome() + "' promovido com sucesso para Artista!");

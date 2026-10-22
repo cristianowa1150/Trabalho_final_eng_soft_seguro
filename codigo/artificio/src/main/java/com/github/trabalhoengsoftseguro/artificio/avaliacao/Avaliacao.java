@@ -3,8 +3,10 @@ package com.github.trabalhoengsoftseguro.artificio.avaliacao;
 import com.github.trabalhoengsoftseguro.artificio.comissao.PedidoComissao;
 import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Entidade para avaliações e comentários de clientes sobre serviços concluídos.
@@ -14,8 +16,9 @@ import java.util.Objects;
 public class Avaliacao {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
 
     @Column(nullable = false)
     private Integer nota;
@@ -57,11 +60,11 @@ public class Avaliacao {
         }
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

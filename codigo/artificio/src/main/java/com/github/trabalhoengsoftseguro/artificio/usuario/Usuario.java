@@ -1,8 +1,10 @@
 package com.github.trabalhoengsoftseguro.artificio.usuario;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Entidade que representa os usuários da plataforma (Clientes, Artistas e Administradores).
@@ -12,8 +14,9 @@ import java.util.Objects;
 public class Usuario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
 
     @Column(nullable = false, length = 150)
     private String nome;
@@ -72,11 +75,11 @@ public class Usuario {
         return this.role == Role.ROLE_CLIENTE;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

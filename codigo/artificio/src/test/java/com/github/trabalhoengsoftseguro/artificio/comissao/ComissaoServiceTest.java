@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,29 +38,33 @@ class ComissaoServiceTest {
     private Usuario artista;
     private TipoComissao tipoComissao;
 
+    private final UUID clienteId = UUID.randomUUID();
+    private final UUID artistaId = UUID.randomUUID();
+    private final UUID tipoComissaoId = UUID.randomUUID();
+
     @BeforeEach
     void setUp() {
         service = new ComissaoService(pedidoRepository, usuarioRepository, tipoComissaoRepository);
 
         cliente = new Usuario("Cliente Teste", "cliente@teste.com", "hash", Role.ROLE_CLIENTE, null, null);
-        cliente.setId(10L);
+        cliente.setId(clienteId);
 
         artista = new Usuario("Artista Teste", "artista@teste.com", "hash", Role.ROLE_ARTISTA, "Bio", "pix-key");
-        artista.setId(20L);
+        artista.setId(artistaId);
 
         tipoComissao = new TipoComissao("Pixel Art", "Busto", "Pixel", new BigDecimal("120.00"), 4, artista);
-        tipoComissao.setId(30L);
+        tipoComissao.setId(tipoComissaoId);
     }
 
     @Test
     @DisplayName("Deve criar solicitacao de comissao com preco base e prazo do tipo selecionado")
     void deveCriarSolicitacaoComSucesso() {
-        when(usuarioRepository.findById(10L)).thenReturn(Optional.of(cliente));
-        when(tipoComissaoRepository.findById(30L)).thenReturn(Optional.of(tipoComissao));
+        when(usuarioRepository.findById(clienteId)).thenReturn(Optional.of(cliente));
+        when(tipoComissaoRepository.findById(tipoComissaoId)).thenReturn(Optional.of(tipoComissao));
         when(pedidoRepository.save(any(PedidoComissao.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        SolicitacaoComissaoDto dto = new SolicitacaoComissaoDto(30L, "Quero um avatar retro pixel art de 64x64");
-        PedidoComissao criado = service.criarSolicitacao(10L, dto);
+        SolicitacaoComissaoDto dto = new SolicitacaoComissaoDto(tipoComissaoId, "Quero um avatar retro pixel art de 64x64");
+        PedidoComissao criado = service.criarSolicitacao(clienteId, dto);
 
         assertNotNull(criado);
         assertEquals(StatusComissao.SOLICITADA, criado.getStatus());
@@ -71,26 +76,27 @@ class ComissaoServiceTest {
     @Test
     @DisplayName("Deve rejeitar solicitacao se cliente tentar contratar seu proprio servico")
     void deveRejeitarSolicitacaoParaSiProprio() {
-        when(usuarioRepository.findById(20L)).thenReturn(Optional.of(artista));
-        when(tipoComissaoRepository.findById(30L)).thenReturn(Optional.of(tipoComissao));
+        when(usuarioRepository.findById(artistaId)).thenReturn(Optional.of(artista));
+        when(tipoComissaoRepository.findById(tipoComissaoId)).thenReturn(Optional.of(tipoComissao));
 
-        SolicitacaoComissaoDto dto = new SolicitacaoComissaoDto(30L, "Briefing valido");
+        SolicitacaoComissaoDto dto = new SolicitacaoComissaoDto(tipoComissaoId, "Briefing valido");
 
-        assertThrows(IllegalArgumentException.class, () -> service.criarSolicitacao(20L, dto));
+        assertThrows(IllegalArgumentException.class, () -> service.criarSolicitacao(artistaId, dto));
         verify(pedidoRepository, never()).save(any());
     }
 
     @Test
     @DisplayName("Deve rejeitar solicitacao se solicitante for administrador")
     void deveRejeitarSolicitacaoQuandoClienteForAdministrador() {
+        UUID adminId = UUID.randomUUID();
         Usuario admin = new Usuario("Admin", "admin@teste.com", "hash", Role.ROLE_ADMIN, null, null);
-        admin.setId(99L);
-        when(usuarioRepository.findById(99L)).thenReturn(Optional.of(admin));
+        admin.setId(adminId);
+        when(usuarioRepository.findById(adminId)).thenReturn(Optional.of(admin));
 
-        SolicitacaoComissaoDto dto = new SolicitacaoComissaoDto(30L, "Briefing valido");
+        SolicitacaoComissaoDto dto = new SolicitacaoComissaoDto(tipoComissaoId, "Briefing valido");
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> service.criarSolicitacao(99L, dto));
+                () -> service.criarSolicitacao(adminId, dto));
         assertTrue(ex.getMessage().contains("Contas administrativas"));
         verify(pedidoRepository, never()).save(any());
     }
@@ -98,13 +104,14 @@ class ComissaoServiceTest {
     @Test
     @DisplayName("Deve aceitar pedido de comissao e gerar codigo PIX simulado")
     void deveAceitarPedidoComSucessoGerandoPix() {
+        UUID pedidoId = UUID.randomUUID();
         PedidoComissao pedido = new PedidoComissao("Briefing", new BigDecimal("120.00"), 4, cliente, artista, tipoComissao);
-        pedido.setId(100L);
+        pedido.setId(pedidoId);
 
-        when(pedidoRepository.findById(100L)).thenReturn(Optional.of(pedido));
+        when(pedidoRepository.findById(pedidoId)).thenReturn(Optional.of(pedido));
         when(pedidoRepository.save(any(PedidoComissao.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        PedidoComissao aceito = service.aceitarPedido(100L, 20L);
+        PedidoComissao aceito = service.aceitarPedido(pedidoId, artistaId);
 
         assertEquals(StatusComissao.AGUARDANDO_PAGAMENTO, aceito.getStatus());
         assertNotNull(aceito.getCodigoPixSimulado());
@@ -114,27 +121,30 @@ class ComissaoServiceTest {
     @Test
     @DisplayName("Deve impedir que outro artista aceite pedido destinado a terceiro")
     void deveRejeitarAceitePorArtistaDiferente() {
+        UUID pedidoId = UUID.randomUUID();
+        UUID outroArtistaId = UUID.randomUUID();
         PedidoComissao pedido = new PedidoComissao("Briefing", new BigDecimal("120.00"), 4, cliente, artista, tipoComissao);
-        pedido.setId(100L);
+        pedido.setId(pedidoId);
 
-        when(pedidoRepository.findById(100L)).thenReturn(Optional.of(pedido));
+        when(pedidoRepository.findById(pedidoId)).thenReturn(Optional.of(pedido));
 
-        // Artista com ID 99 tentando aceitar pedido destinado ao artista ID 20
-        assertThrows(IllegalArgumentException.class, () -> service.aceitarPedido(100L, 99L));
+        // Artista com outro ID tentando aceitar pedido destinado ao artista
+        assertThrows(IllegalArgumentException.class, () -> service.aceitarPedido(pedidoId, outroArtistaId));
         assertEquals(StatusComissao.SOLICITADA, pedido.getStatus());
     }
 
     @Test
     @DisplayName("Deve registrar pagamento simulado e transitar para PAGO")
     void deveRegistrarPagamentoSimulado() {
+        UUID pedidoId = UUID.randomUUID();
         PedidoComissao pedido = new PedidoComissao("Briefing", new BigDecimal("120.00"), 4, cliente, artista, tipoComissao);
-        pedido.setId(100L);
+        pedido.setId(pedidoId);
         pedido.setStatus(StatusComissao.AGUARDANDO_PAGAMENTO);
 
-        when(pedidoRepository.findById(100L)).thenReturn(Optional.of(pedido));
+        when(pedidoRepository.findById(pedidoId)).thenReturn(Optional.of(pedido));
         when(pedidoRepository.save(any(PedidoComissao.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        PedidoComissao pago = service.registrarPagamentoSimulado(100L, 10L);
+        PedidoComissao pago = service.registrarPagamentoSimulado(pedidoId, clienteId);
 
         assertEquals(StatusComissao.PAGO, pago.getStatus());
     }
@@ -142,20 +152,21 @@ class ComissaoServiceTest {
     @Test
     @DisplayName("Deve registrar entrega de arquivo e permitir aprovacao pelo cliente")
     void deveRegistrarEntregaEAprovarConclusao() {
+        UUID pedidoId = UUID.randomUUID();
         PedidoComissao pedido = new PedidoComissao("Briefing", new BigDecimal("120.00"), 4, cliente, artista, tipoComissao);
-        pedido.setId(100L);
+        pedido.setId(pedidoId);
         pedido.setStatus(StatusComissao.EM_ANDAMENTO);
 
-        when(pedidoRepository.findById(100L)).thenReturn(Optional.of(pedido));
+        when(pedidoRepository.findById(pedidoId)).thenReturn(Optional.of(pedido));
         when(pedidoRepository.save(any(PedidoComissao.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Artista entrega
-        PedidoComissao entregue = service.registrarEntrega(100L, "https://drive.com/arte-final.png", 20L);
+        PedidoComissao entregue = service.registrarEntrega(pedidoId, "https://drive.com/arte-final.png", artistaId);
         assertEquals(StatusComissao.ENTREGUE, entregue.getStatus());
         assertEquals("https://drive.com/arte-final.png", entregue.getLinkEntrega());
 
         // Cliente aprova
-        PedidoComissao concluido = service.aprovarConclusao(100L, 10L);
+        PedidoComissao concluido = service.aprovarConclusao(pedidoId, clienteId);
         assertEquals(StatusComissao.CONCLUIDA, concluido.getStatus());
         assertNotNull(concluido.getDataConclusao());
     }

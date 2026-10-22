@@ -1,5 +1,9 @@
 package com.github.trabalhoengsoftseguro.artificio.comissao;
 
+import com.github.trabalhoengsoftseguro.artificio.artista.TipoComissao;
+import com.github.trabalhoengsoftseguro.artificio.artista.TipoComissaoRepository;
+import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
+import com.github.trabalhoengsoftseguro.artificio.usuario.UsuarioRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.UUID;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -20,6 +26,17 @@ class ComissaoControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private TipoComissaoRepository tipoComissaoRepository;
+
+    private TipoComissao obterTipoComissaoAnna() {
+        Usuario anna = usuarioRepository.findByEmail("anna@artificio.local").orElseThrow();
+        return tipoComissaoRepository.findByArtistaIdAndAtivoTrue(anna.getId()).get(0);
+    }
 
     @Test
     @DisplayName("Deve barrar visitante anonimo tentando acessar encomendas de cliente")
@@ -44,7 +61,8 @@ class ComissaoControllerTest {
     @WithMockUser(username = "eduardo@artificio.local", roles = {"CLIENTE"})
     @DisplayName("Deve carregar tela de solicitacao de comissao para modalidade existente")
     void deveCarregarFormularioDeSolicitacao() throws Exception {
-        mockMvc.perform(get("/comissoes/solicitar/1"))
+        TipoComissao tipo = obterTipoComissaoAnna();
+        mockMvc.perform(get("/comissoes/solicitar/" + tipo.getId()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("cliente/solicitar"))
                 .andExpect(model().attributeExists("tipo"))
@@ -58,7 +76,7 @@ class ComissaoControllerTest {
     void deveTratarSolicitacaoComTipoInexistenteOuNuloSemErro500() throws Exception {
         mockMvc.perform(post("/comissoes/solicitar")
                         .with(csrf())
-                        .param("tipoComissaoId", "99999")
+                        .param("tipoComissaoId", UUID.randomUUID().toString())
                         .param("briefing", "curto"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"))
@@ -69,9 +87,10 @@ class ComissaoControllerTest {
     @WithMockUser(username = "eduardo@artificio.local", roles = {"CLIENTE"})
     @DisplayName("Deve reexibir formulario com erros de validacao e tipo preenchido quando briefing for invalido")
     void deveReexibirFormularioSolicitacaoQuandoBriefingInvalidoMasTipoValido() throws Exception {
+        TipoComissao tipo = obterTipoComissaoAnna();
         mockMvc.perform(post("/comissoes/solicitar")
                         .with(csrf())
-                        .param("tipoComissaoId", "1")
+                        .param("tipoComissaoId", tipo.getId().toString())
                         .param("briefing", "curto"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("cliente/solicitar"))
@@ -83,9 +102,10 @@ class ComissaoControllerTest {
     @WithMockUser(username = "eduardo@artificio.local", roles = {"CLIENTE"})
     @DisplayName("Deve redirecionar com erro quando pedido de avaliacao for inexistente sem gerar 500")
     void deveTratarAvaliacaoDePedidoInexistenteSemErro500() throws Exception {
-        mockMvc.perform(post("/comissoes/99999/avaliar")
+        UUID fakeId = UUID.randomUUID();
+        mockMvc.perform(post("/comissoes/" + fakeId + "/avaliar")
                         .with(csrf())
-                        .param("pedidoId", "99999")
+                        .param("pedidoId", fakeId.toString())
                         .param("nota", "5")
                         .param("comentario", "Excelente!"))
                 .andExpect(status().is3xxRedirection())
@@ -105,10 +125,11 @@ class ComissaoControllerTest {
     @WithMockUser(username = "anna@artificio.local", roles = {"ARTISTA"})
     @DisplayName("Deve impedir artista de abrir tela de solicitacao para seu proprio servico")
     void deveImpedirArtistaDeAbrirFormularioDeAutocontratacao() throws Exception {
-        // Modalidade 1 pertence à artista anna@artificio.local
-        mockMvc.perform(get("/comissoes/solicitar/1"))
+        Usuario anna = usuarioRepository.findByEmail("anna@artificio.local").orElseThrow();
+        TipoComissao tipo = tipoComissaoRepository.findByArtistaIdAndAtivoTrue(anna.getId()).get(0);
+        mockMvc.perform(get("/comissoes/solicitar/" + tipo.getId()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/artistas/2"))
+                .andExpect(redirectedUrl("/artistas/" + anna.getId()))
                 .andExpect(flash().attributeExists("erro"));
     }
 
@@ -116,9 +137,10 @@ class ComissaoControllerTest {
     @WithMockUser(username = "anna@artificio.local", roles = {"ARTISTA"})
     @DisplayName("Deve rejeitar submissao de solicitacao para o proprio artista com flash de erro")
     void deveRejeitarSubmissaoDeAutocontratacaoPorArtista() throws Exception {
+        TipoComissao tipo = obterTipoComissaoAnna();
         mockMvc.perform(post("/comissoes/solicitar")
                         .with(csrf())
-                        .param("tipoComissaoId", "1")
+                        .param("tipoComissaoId", tipo.getId().toString())
                         .param("briefing", "Briefing longo e detalhado para encomendar de mim mesma"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"))
@@ -129,15 +151,15 @@ class ComissaoControllerTest {
     @WithMockUser(username = "cristiano@artificio.local", roles = {"ARTISTA"})
     @DisplayName("Deve permitir que um artista contrate outro artista sem bloqueio")
     void devePermitirQueArtistaContrateOutroArtista() throws Exception {
-        // Modalidade 1 pertence à Anna, Cristiano é outro artista
-        mockMvc.perform(get("/comissoes/solicitar/1"))
+        TipoComissao tipo = obterTipoComissaoAnna();
+        mockMvc.perform(get("/comissoes/solicitar/" + tipo.getId()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("cliente/solicitar"))
                 .andExpect(model().attributeExists("tipo"));
 
         mockMvc.perform(post("/comissoes/solicitar")
                         .with(csrf())
-                        .param("tipoComissaoId", "1")
+                        .param("tipoComissaoId", tipo.getId().toString())
                         .param("briefing", "Briefing detalhado para a colega Anna encomendado por Cristiano"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/painel/cliente/pedidos"))

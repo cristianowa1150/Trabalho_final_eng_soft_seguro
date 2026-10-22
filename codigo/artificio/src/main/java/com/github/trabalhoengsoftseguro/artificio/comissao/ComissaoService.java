@@ -28,7 +28,7 @@ public class ComissaoService {
     }
 
     @Transactional
-    public PedidoComissao criarSolicitacao(Long clienteId, SolicitacaoComissaoDto dto) {
+    public PedidoComissao criarSolicitacao(UUID clienteId, SolicitacaoComissaoDto dto) {
         if (dto == null) {
             throw new IllegalArgumentException("Dados da solicitação não podem ser nulos");
         }
@@ -65,7 +65,7 @@ public class ComissaoService {
     }
 
     @Transactional
-    public PedidoComissao aceitarPedido(Long pedidoId, Long artistaId) {
+    public PedidoComissao aceitarPedido(UUID pedidoId, UUID artistaId) {
         PedidoComissao pedido = buscarPorId(pedidoId);
 
         if (!pedido.getArtista().getId().equals(artistaId)) {
@@ -82,7 +82,7 @@ public class ComissaoService {
     }
 
     @Transactional
-    public PedidoComissao recusarPedido(Long pedidoId, Long artistaId) {
+    public PedidoComissao recusarPedido(UUID pedidoId, UUID artistaId) {
         PedidoComissao pedido = buscarPorId(pedidoId);
 
         if (!pedido.getArtista().getId().equals(artistaId)) {
@@ -97,7 +97,7 @@ public class ComissaoService {
     }
 
     @Transactional
-    public PedidoComissao cancelarPedido(Long pedidoId, Long clienteId) {
+    public PedidoComissao cancelarPedido(UUID pedidoId, UUID clienteId) {
         PedidoComissao pedido = buscarPorId(pedidoId);
 
         if (!pedido.getCliente().getId().equals(clienteId)) {
@@ -112,7 +112,7 @@ public class ComissaoService {
     }
 
     @Transactional
-    public PedidoComissao registrarPagamentoSimulado(Long pedidoId, Long clienteId) {
+    public PedidoComissao registrarPagamentoSimulado(UUID pedidoId, UUID clienteId) {
         PedidoComissao pedido = buscarPorId(pedidoId);
 
         if (!pedido.getCliente().getId().equals(clienteId)) {
@@ -127,7 +127,7 @@ public class ComissaoService {
     }
 
     @Transactional
-    public PedidoComissao iniciarProducao(Long pedidoId, Long artistaId) {
+    public PedidoComissao iniciarProducao(UUID pedidoId, UUID artistaId) {
         PedidoComissao pedido = buscarPorId(pedidoId);
 
         if (!pedido.getArtista().getId().equals(artistaId)) {
@@ -142,7 +142,7 @@ public class ComissaoService {
     }
 
     @Transactional
-    public PedidoComissao registrarEntrega(Long pedidoId, String linkEntrega, Long artistaId) {
+    public PedidoComissao registrarEntrega(UUID pedidoId, String linkEntrega, UUID artistaId) {
         if (linkEntrega == null || linkEntrega.isBlank()) {
             throw new IllegalArgumentException("O link ou endereço do arquivo de entrega é obrigatório");
         }
@@ -166,7 +166,7 @@ public class ComissaoService {
     }
 
     @Transactional
-    public PedidoComissao solicitarRevisao(Long pedidoId, Long clienteId) {
+    public PedidoComissao solicitarRevisao(UUID pedidoId, UUID clienteId) {
         PedidoComissao pedido = buscarPorId(pedidoId);
 
         if (!pedido.getCliente().getId().equals(clienteId)) {
@@ -181,7 +181,7 @@ public class ComissaoService {
     }
 
     @Transactional
-    public PedidoComissao aprovarConclusao(Long pedidoId, Long clienteId) {
+    public PedidoComissao aprovarConclusao(UUID pedidoId, UUID clienteId) {
         PedidoComissao pedido = buscarPorId(pedidoId);
 
         if (!pedido.getCliente().getId().equals(clienteId)) {
@@ -197,16 +197,16 @@ public class ComissaoService {
         return pedidoRepository.save(pedido);
     }
 
-    public PedidoComissao buscarPorId(Long pedidoId) {
+    public PedidoComissao buscarPorId(UUID pedidoId) {
         return pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new IllegalArgumentException("Pedido de comissão não encontrado com ID: " + pedidoId));
     }
 
-    public List<PedidoComissao> listarPorCliente(Long clienteId) {
+    public List<PedidoComissao> listarPorCliente(UUID clienteId) {
         return pedidoRepository.findByClienteIdOrderByDataSolicitacaoDesc(clienteId);
     }
 
-    public List<PedidoComissao> listarPorArtista(Long artistaId) {
+    public List<PedidoComissao> listarPorArtista(UUID artistaId) {
         return pedidoRepository.findByArtistaIdOrderByDataSolicitacaoDesc(artistaId);
     }
 }

@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,33 +36,39 @@ class AvaliacaoServiceTest {
     private Usuario artista;
     private PedidoComissao pedido;
 
+    private final UUID clienteId = UUID.randomUUID();
+    private final UUID artistaId = UUID.randomUUID();
+    private final UUID outroUsuarioId = UUID.randomUUID();
+    private final UUID tipoId = UUID.randomUUID();
+    private final UUID pedidoId = UUID.randomUUID();
+
     @BeforeEach
     void setUp() {
         service = new AvaliacaoService(avaliacaoRepository, pedidoRepository);
 
         cliente = new Usuario("Cliente", "cli@artificio.local", "hash", Role.ROLE_CLIENTE, null, null);
-        cliente.setId(10L);
+        cliente.setId(clienteId);
 
         artista = new Usuario("Artista", "art@artificio.local", "hash", Role.ROLE_ARTISTA, "Bio", "pix");
-        artista.setId(20L);
+        artista.setId(artistaId);
 
         TipoComissao tipo = new TipoComissao("Arte", "Desc", "Cat", new BigDecimal("100.00"), 5, artista);
-        tipo.setId(30L);
+        tipo.setId(tipoId);
 
         pedido = new PedidoComissao("Briefing", new BigDecimal("100.00"), 5, cliente, artista, tipo);
-        pedido.setId(50L);
+        pedido.setId(pedidoId);
         pedido.setStatus(StatusComissao.CONCLUIDA);
     }
 
     @Test
     @DisplayName("Deve salvar avaliacao com sucesso e atualizar status do pedido para AVALIADA")
     void deveSalvarAvaliacaoComSucessoEAtualizarStatusPedido() {
-        when(pedidoRepository.findById(50L)).thenReturn(Optional.of(pedido));
-        when(avaliacaoRepository.existsByPedidoComissaoId(50L)).thenReturn(false);
+        when(pedidoRepository.findById(pedidoId)).thenReturn(Optional.of(pedido));
+        when(avaliacaoRepository.existsByPedidoComissaoId(pedidoId)).thenReturn(false);
         when(avaliacaoRepository.save(any(Avaliacao.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        NovaAvaliacaoDto dto = new NovaAvaliacaoDto(50L, 5, "Ficou perfeito!");
-        Avaliacao salva = service.salvarAvaliacao(10L, dto);
+        NovaAvaliacaoDto dto = new NovaAvaliacaoDto(pedidoId, 5, "Ficou perfeito!");
+        Avaliacao salva = service.salvarAvaliacao(clienteId, dto);
 
         assertNotNull(salva);
         assertEquals(5, salva.getNota());
@@ -76,46 +83,46 @@ class AvaliacaoServiceTest {
     @DisplayName("Deve rejeitar avaliacao se o pedido ainda nao estiver no estado CONCLUIDA")
     void deveRejeitarAvaliacaoParaPedidoNaoConcluido() {
         pedido.setStatus(StatusComissao.EM_ANDAMENTO);
-        when(pedidoRepository.findById(50L)).thenReturn(Optional.of(pedido));
+        when(pedidoRepository.findById(pedidoId)).thenReturn(Optional.of(pedido));
 
-        NovaAvaliacaoDto dto = new NovaAvaliacaoDto(50L, 5, "Tentando avaliar antes do tempo");
+        NovaAvaliacaoDto dto = new NovaAvaliacaoDto(pedidoId, 5, "Tentando avaliar antes do tempo");
 
-        assertThrows(IllegalStateException.class, () -> service.salvarAvaliacao(10L, dto));
+        assertThrows(IllegalStateException.class, () -> service.salvarAvaliacao(clienteId, dto));
         verify(avaliacaoRepository, never()).save(any());
     }
 
     @Test
     @DisplayName("Deve rejeitar avaliacao duplicada para o mesmo pedido")
     void deveRejeitarAvaliacaoDuplicadaParaMesmoPedido() {
-        when(pedidoRepository.findById(50L)).thenReturn(Optional.of(pedido));
-        when(avaliacaoRepository.existsByPedidoComissaoId(50L)).thenReturn(true);
+        when(pedidoRepository.findById(pedidoId)).thenReturn(Optional.of(pedido));
+        when(avaliacaoRepository.existsByPedidoComissaoId(pedidoId)).thenReturn(true);
 
-        NovaAvaliacaoDto dto = new NovaAvaliacaoDto(50L, 4, "Tentativa duplicada");
+        NovaAvaliacaoDto dto = new NovaAvaliacaoDto(pedidoId, 4, "Tentativa duplicada");
 
-        assertThrows(IllegalStateException.class, () -> service.salvarAvaliacao(10L, dto));
+        assertThrows(IllegalStateException.class, () -> service.salvarAvaliacao(clienteId, dto));
         verify(avaliacaoRepository, never()).save(any());
     }
 
     @Test
     @DisplayName("Deve rejeitar avaliacao enviada por outro usuario que nao seja o cliente do pedido")
     void deveRejeitarAvaliacaoPorUsuarioDiferenteDoCliente() {
-        when(pedidoRepository.findById(50L)).thenReturn(Optional.of(pedido));
+        when(pedidoRepository.findById(pedidoId)).thenReturn(Optional.of(pedido));
 
-        NovaAvaliacaoDto dto = new NovaAvaliacaoDto(50L, 5, "Tentativa indevida");
+        NovaAvaliacaoDto dto = new NovaAvaliacaoDto(pedidoId, 5, "Tentativa indevida");
 
-        // Usuário com ID 99 tentando avaliar pedido do cliente ID 10
-        assertThrows(IllegalArgumentException.class, () -> service.salvarAvaliacao(99L, dto));
+        // Usuário com ID outroUsuarioId tentando avaliar pedido do cliente
+        assertThrows(IllegalArgumentException.class, () -> service.salvarAvaliacao(outroUsuarioId, dto));
         verify(avaliacaoRepository, never()).save(any());
     }
 
     @Test
     @DisplayName("Deve obter media de notas do artista com sucesso")
     void deveObterMediaDeNotasDoArtista() {
-        when(avaliacaoRepository.calcularMediaNotasPorArtista(20L)).thenReturn(4.75);
+        when(avaliacaoRepository.calcularMediaNotasPorArtista(artistaId)).thenReturn(4.75);
 
-        Double media = service.obterMediaArtista(20L);
+        Double media = service.obterMediaArtista(artistaId);
 
         assertEquals(4.75, media);
-        verify(avaliacaoRepository).calcularMediaNotasPorArtista(20L);
+        verify(avaliacaoRepository).calcularMediaNotasPorArtista(artistaId);
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Controller responsável pelo ciclo completo de encomendas de arte (solicitação, pagamento simulado PIX,
@@ -50,10 +51,10 @@ public class ComissaoController {
     }
 
     @GetMapping("/comissoes/solicitar/{tipoId}")
-    public String formularioSolicitacao(@PathVariable Long tipoId,
-                                       Principal principal,
-                                       Model model,
-                                       RedirectAttributes redirectAttributes) {
+    public String formularioSolicitacao(@PathVariable UUID tipoId,
+                                        Principal principal,
+                                        Model model,
+                                        RedirectAttributes redirectAttributes) {
         TipoComissao tipo = tipoComissaoRepository.findById(tipoId)
                 .orElseThrow(() -> new IllegalArgumentException("Modalidade de serviço não encontrada com ID: " + tipoId));
 
@@ -113,7 +114,7 @@ public class ComissaoController {
     }
 
     @PostMapping("/comissoes/{id}/aceitar")
-    public String aceitarPedido(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+    public String aceitarPedido(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
         Usuario artista = usuarioService.buscarPorEmail(principal.getName());
         try {
             comissaoService.aceitarPedido(id, artista.getId());
@@ -125,7 +126,7 @@ public class ComissaoController {
     }
 
     @PostMapping("/comissoes/{id}/recusar")
-    public String recusarPedido(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+    public String recusarPedido(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
         Usuario artista = usuarioService.buscarPorEmail(principal.getName());
         try {
             comissaoService.recusarPedido(id, artista.getId());
@@ -137,7 +138,7 @@ public class ComissaoController {
     }
 
     @PostMapping("/comissoes/{id}/cancelar")
-    public String cancelarPedido(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+    public String cancelarPedido(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
         Usuario cliente = usuarioService.buscarPorEmail(principal.getName());
         try {
             comissaoService.cancelarPedido(id, cliente.getId());
@@ -149,7 +150,7 @@ public class ComissaoController {
     }
 
     @GetMapping("/comissoes/{id}/pagamento")
-    public String exibirPagamentoPix(@PathVariable Long id, Principal principal, Model model) {
+    public String exibirPagamentoPix(@PathVariable UUID id, Principal principal, Model model) {
         Usuario cliente = usuarioService.buscarPorEmail(principal.getName());
         PedidoComissao pedido = comissaoService.buscarPorId(id);
 
@@ -162,7 +163,7 @@ public class ComissaoController {
     }
 
     @PostMapping("/comissoes/{id}/confirmar-pagamento")
-    public String confirmarPagamento(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+    public String confirmarPagamento(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
         Usuario cliente = usuarioService.buscarPorEmail(principal.getName());
         try {
             comissaoService.registrarPagamentoSimulado(id, cliente.getId());
@@ -174,7 +175,7 @@ public class ComissaoController {
     }
 
     @PostMapping("/comissoes/{id}/iniciar")
-    public String iniciarProducao(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+    public String iniciarProducao(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
         Usuario artista = usuarioService.buscarPorEmail(principal.getName());
         try {
             comissaoService.iniciarProducao(id, artista.getId());
@@ -186,7 +187,7 @@ public class ComissaoController {
     }
 
     @PostMapping("/comissoes/{id}/entregar")
-    public String registrarEntrega(@PathVariable Long id,
+    public String registrarEntrega(@PathVariable UUID id,
                                    @RequestParam("linkEntrega") String linkEntrega,
                                    Principal principal,
                                    RedirectAttributes redirectAttributes) {
@@ -201,7 +202,7 @@ public class ComissaoController {
     }
 
     @PostMapping("/comissoes/{id}/revisao")
-    public String solicitarRevisao(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+    public String solicitarRevisao(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
         Usuario cliente = usuarioService.buscarPorEmail(principal.getName());
         try {
             comissaoService.solicitarRevisao(id, cliente.getId());
@@ -213,7 +214,7 @@ public class ComissaoController {
     }
 
     @PostMapping("/comissoes/{id}/aprovar")
-    public String aprovarConclusao(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+    public String aprovarConclusao(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
         Usuario cliente = usuarioService.buscarPorEmail(principal.getName());
         try {
             comissaoService.aprovarConclusao(id, cliente.getId());
@@ -225,7 +226,7 @@ public class ComissaoController {
     }
 
     @GetMapping("/comissoes/{id}/avaliar")
-    public String formularioAvaliacao(@PathVariable Long id, Principal principal, Model model) {
+    public String formularioAvaliacao(@PathVariable UUID id, Principal principal, Model model) {
         Usuario cliente = usuarioService.buscarPorEmail(principal.getName());
         PedidoComissao pedido = comissaoService.buscarPorId(id);
 
@@ -239,7 +240,7 @@ public class ComissaoController {
     }
 
     @PostMapping("/comissoes/{id}/avaliar")
-    public String submeterAvaliacao(@PathVariable("id") Long id,
+    public String submeterAvaliacao(@PathVariable("id") UUID id,
                                     @Valid @ModelAttribute("novaAvaliacaoDto") NovaAvaliacaoDto dto,
                                     BindingResult bindingResult,
                                     Principal principal,
@@ -247,7 +248,7 @@ public class ComissaoController {
                                     RedirectAttributes redirectAttributes) {
         Usuario cliente = usuarioService.buscarPorEmail(principal.getName());
 
-        Long pedidoId = (id != null) ? id : (dto != null ? dto.pedidoId() : null);
+        UUID pedidoId = (id != null) ? id : (dto != null ? dto.pedidoId() : null);
         if (pedidoId == null) {
             redirectAttributes.addFlashAttribute("erro", "Pedido de comissão inválido ou não especificado.");
             return "redirect:/painel/cliente/pedidos";

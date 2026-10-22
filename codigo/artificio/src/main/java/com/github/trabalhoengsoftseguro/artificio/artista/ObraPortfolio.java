@@ -2,8 +2,10 @@ package com.github.trabalhoengsoftseguro.artificio.artista;
 
 import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Representa uma obra publicada no portfólio de um artista.
@@ -13,8 +15,9 @@ import java.util.Objects;
 public class ObraPortfolio {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
 
     @Column(nullable = false, length = 150)
     private String titulo;
@@ -54,11 +57,11 @@ public class ObraPortfolio {
         }
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

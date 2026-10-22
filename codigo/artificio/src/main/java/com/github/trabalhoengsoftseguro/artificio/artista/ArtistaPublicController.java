@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.UUID;
+
 /**
  * Controller público para visualização da vitrine, portfólio e serviços de um artista específico.
  */
@@ -22,7 +24,7 @@ public class ArtistaPublicController {
     }
 
     @GetMapping("/{id}")
-    public String exibirPerfilPublico(@PathVariable Long id, Model model) {
+    public String exibirPerfilPublico(@PathVariable UUID id, Model model) {
         try {
             ArtistaPerfilDto perfil = artistaService.obterPerfilCompleto(id);
             model.addAttribute("perfil", perfil);

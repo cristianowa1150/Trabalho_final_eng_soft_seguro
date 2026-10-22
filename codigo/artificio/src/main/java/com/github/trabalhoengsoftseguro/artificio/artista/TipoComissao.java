@@ -2,8 +2,10 @@ package com.github.trabalhoengsoftseguro.artificio.artista;
 
 import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Define um tipo/modalidade de comissão oferecida por um artista (ex: Retrato Digital, Pixel Art, Chibi).
@@ -13,8 +15,9 @@ import java.util.Objects;
 public class TipoComissao {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
 
     @Column(nullable = false, length = 150)
     private String titulo;
@@ -51,11 +54,11 @@ public class TipoComissao {
         this.ativo = true;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

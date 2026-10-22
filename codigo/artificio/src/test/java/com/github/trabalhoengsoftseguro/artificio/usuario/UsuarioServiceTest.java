@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -93,12 +94,13 @@ class UsuarioServiceTest {
     @DisplayName("Deve promover usuario cliente para artista com sucesso")
     void devePromoverClienteParaArtista() {
         Usuario cliente = new Usuario("Leticia", "leticia@artificio.local", "hash", Role.ROLE_CLIENTE, null, null);
-        cliente.setId(10L);
+        UUID id = UUID.randomUUID();
+        cliente.setId(id);
 
-        when(usuarioRepository.findById(10L)).thenReturn(Optional.of(cliente));
+        when(usuarioRepository.findById(id)).thenReturn(Optional.of(cliente));
         when(usuarioRepository.save(any(Usuario.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Usuario promovido = service.promoverParaArtista(10L);
+        Usuario promovido = service.promoverParaArtista(id);
 
         assertEquals(Role.ROLE_ARTISTA, promovido.getRole());
         assertTrue(promovido.isArtista());
@@ -109,12 +111,13 @@ class UsuarioServiceTest {
     @DisplayName("Deve rejeitar promocao a artista quando usuario for administrador ou ja for artista")
     void deveRejeitarPromocaoParaUsuarioNaoCliente() {
         Usuario admin = new Usuario("Admin", "admin@artificio.local", "hash", Role.ROLE_ADMIN, null, null);
-        admin.setId(1L);
+        UUID id = UUID.randomUUID();
+        admin.setId(id);
 
-        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(admin));
+        when(usuarioRepository.findById(id)).thenReturn(Optional.of(admin));
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> service.promoverParaArtista(1L));
+                () -> service.promoverParaArtista(id));
 
         assertTrue(ex.getMessage().contains("Apenas contas com papel de Cliente"));
         verify(usuarioRepository, never()).save(any(Usuario.class));
@@ -177,9 +180,10 @@ class UsuarioServiceTest {
     @Test
     @DisplayName("Deve lancar excecao ao buscar id inexistente")
     void deveLancarExcecaoParaIdInexistente() {
-        when(usuarioRepository.findById(999L)).thenReturn(Optional.empty());
+        UUID idInexistente = UUID.randomUUID();
+        when(usuarioRepository.findById(idInexistente)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> service.buscarPorId(999L));
+        assertThrows(IllegalArgumentException.class, () -> service.buscarPorId(idInexistente));
     }
 
     @Test

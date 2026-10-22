@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Controller exclusivo para artistas autenticados gerenciarem portfólio, serviços e pedidos.
@@ -87,7 +88,7 @@ public class PainelArtistaController {
     }
 
     @PostMapping("/portfolio/{id}/remover")
-    public String removerObra(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+    public String removerObra(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
         Usuario artista = usuarioService.buscarPorEmail(principal.getName());
         try {
             artistaService.removerObra(artista.getId(), id);
@@ -135,7 +136,7 @@ public class PainelArtistaController {
     }
 
     @PostMapping("/servicos/{id}/toggle")
-    public String alternarStatusServico(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+    public String alternarStatusServico(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
         Usuario artista = usuarioService.buscarPorEmail(principal.getName());
         try {
             TipoComissao tipo = tipoComissaoRepository.findById(id)

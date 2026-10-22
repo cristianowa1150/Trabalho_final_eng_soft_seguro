@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,7 +22,7 @@ public class AvaliacaoService {
     }
 
     @Transactional
-    public Avaliacao salvarAvaliacao(Long clienteId, NovaAvaliacaoDto dto) {
+    public Avaliacao salvarAvaliacao(UUID clienteId, NovaAvaliacaoDto dto) {
         if (dto == null) {
             throw new IllegalArgumentException("Dados da avaliação não podem ser nulos");
         }
@@ -61,16 +62,16 @@ public class AvaliacaoService {
         return salva;
     }
 
-    public Double obterMediaArtista(Long artistaId) {
+    public Double obterMediaArtista(UUID artistaId) {
         Double media = avaliacaoRepository.calcularMediaNotasPorArtista(artistaId);
         return media != null ? media : 0.0;
     }
 
-    public long contarAvaliacoesArtista(Long artistaId) {
+    public long contarAvaliacoesArtista(UUID artistaId) {
         return avaliacaoRepository.countByArtistaId(artistaId);
     }
 
-    public List<Avaliacao> listarPorArtista(Long artistaId) {
+    public List<Avaliacao> listarPorArtista(UUID artistaId) {
         return avaliacaoRepository.findByArtistaIdOrderByDataAvaliacaoDesc(artistaId);
     }
 }
