@@ -830,15 +830,15 @@ Serão considerados:
 > Marque `- [🟢]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
 
 - [🟢] 20. Objetivo
-- [ ] 21. Entregável mínimo
-- [ ] Selecionar duas práticas de código seguro
-- [ ] Relacionar cada prática aos riscos e requisitos anteriores
-- [ ] Definir dois testes de segurança para cada prática
-- [ ] Elaborar implementação, pseudocódigo ou descrição detalhada
-- [ ] Definir o resultado esperado
-- [ ] Registrar a referência da OWASP utilizada
-- [ ] 21.1 Testes antes da implementação
-- [ ] 21.2 Forma de realização
+- [🟢] 21. Entregável mínimo
+- [🟢] Selecionar duas práticas de código seguro
+- [🟢] Relacionar cada prática aos riscos e requisitos anteriores
+- [🟢] Definir dois testes de segurança para cada prática
+- [🟢] Elaborar implementação, pseudocódigo ou descrição detalhada
+- [🟢] Definir o resultado esperado
+- [🟢] Registrar a referência da OWASP utilizada
+- [🟢] 21.1 Testes antes da implementação
+- [🟢] 21.2 Forma de realização
 - [🟢] 22. Critérios de avaliação da Etapa 4
 
 
