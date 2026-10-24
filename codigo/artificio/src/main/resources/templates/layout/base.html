@@ -39,6 +39,9 @@
                     <li sec:authorize="hasRole('ADMIN')">
                         <a th:href="@{/admin/usuarios}" class="nav-link">Usuários & Moderação</a>
                     </li>
+                    <li sec:authorize="hasRole('ADMIN')">
+                        <a th:href="@{/admin/auditoria}" class="nav-link">Trilha de Auditoria</a>
+                    </li>
 
                     <!-- Não Autenticado -->
                     <li sec:authorize="isAnonymous()">
