@@ -65,7 +65,7 @@ public class PainelArtistaController {
             bindingResult.rejectValue("titulo", "arquivo.obrigatorio", "O arquivo da obra de arte deve ser selecionado");
         }
 
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors() || arquivo == null) {
             List<ObraPortfolio> obras = artistaService.obterPerfilCompleto(artista.getId()).obras();
             model.addAttribute("obras", obras);
             return "artista/portfolio";

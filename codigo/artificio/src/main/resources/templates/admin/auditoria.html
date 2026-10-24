@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::#conteudo})}">
+<head>
+    <title>Trilha de Auditoria - Artifício</title>
+</head>
+<body>
+<div id="conteudo">
+    <div style="margin-bottom: 15px; border-bottom: 1px solid #eeeeee; padding-bottom: 8px;">
+        <h1 style="font-size: 18px; font-weight: bold;">Trilha de Auditoria</h1>
+        <p style="color: #666666; font-size: 12px;">Histórico de registros, alterações e eventos da plataforma</p>
+    </div>
+
+    <!-- Barra de Busca -->
+    <form th:action="@{/admin/auditoria}" method="get" class="search-box" style="margin: 0 0 15px 0; max-width: 100%;">
+        <input type="text" name="busca" th:value="${termoBusca}" placeholder="Filtrar por autor, entidade, status (ex: CANCELADA), UUID ou revisão..." />
+        <button type="submit" class="btn btn-primary btn-sm">Buscar</button>
+        <a th:if="${termoBusca != null and !termoBusca.isBlank()}" th:href="@{/admin/auditoria}" class="btn btn-secondary btn-sm" style="text-decoration: none;">Limpar</a>
+    </form>
+
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Revisão</th>
+                        <th style="width: 160px;">Data & Hora</th>
+                        <th style="width: 160px;">Entidade</th>
+                        <th style="width: 120px;">Operação</th>
+                        <th style="width: 180px;">Autor</th>
+                        <th>Identificador</th>
+                        <th>Resumo do Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(revisoes)}">
+                        <td colspan="7" style="text-align: center; color: #888888; padding: 25px;">
+                            Nenhum registro de auditoria encontrado para o critério informado.
+                        </td>
+                    </tr>
+                    <tr th:each="rev : ${revisoes}">
+                        <td><strong th:text="'#' + ${rev.numeroRevisao}">#1</strong></td>
+                        <td th:text="${#temporals.format(rev.dataHora, 'dd/MM/yyyy HH:mm:ss')}">22/10/2026 13:30:00</td>
+                        <td>
+                            <strong th:text="${rev.entidade}">Pedido de Comissão</strong>
+                        </td>
+                        <td>
+                            <span class="badge" th:classappend="${rev.operacaoBadgeClass}" th:text="${rev.operacao}">CRIAÇÃO</span>
+                        </td>
+                        <td>
+                            <code th:text="${rev.autor}" style="font-size: 11px;">sistema@artificio.local</code>
+                        </td>
+                        <td>
+                            <code th:text="${rev.identificador}" style="font-size: 10px; word-break: break-all;">-</code>
+                        </td>
+                        <td th:text="${rev.resumo}">Resumo do estado</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Barra de Paginação -->
+        <div th:if="${totalItens > 0}" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-top: 1px solid #eeeeee; background: #fafafa; border-radius: 0 0 8px 8px; font-size: 13px;">
+            <div style="color: #666666;">
+                Exibindo <span th:text="${pagina.numberOfElements}">10</span> de <strong th:text="${totalItens}">25</strong> eventos
+                (Página <span th:text="${paginaAtual + 1}">1</span> de <span th:text="${totalPaginas == 0 ? 1 : totalPaginas}">3</span>)
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <a th:if="${pagina.hasPrevious()}"
+                   th:href="@{/admin/auditoria(pagina=${paginaAtual - 1}, tamanho=${pagina.size}, busca=${termoBusca})}"
+                   class="btn btn-secondary btn-sm" style="text-decoration: none;">
+                    &laquo; Anterior
+                </a>
+                <span th:unless="${pagina.hasPrevious()}" class="btn btn-secondary btn-sm" style="opacity: 0.45; cursor: not-allowed;">
+                    &laquo; Anterior
+                </span>
+
+                <a th:if="${pagina.hasNext()}"
+                   th:href="@{/admin/auditoria(pagina=${paginaAtual + 1}, tamanho=${pagina.size}, busca=${termoBusca})}"
+                   class="btn btn-secondary btn-sm" style="text-decoration: none;">
+                    Próxima &raquo;
+                </a>
+                <span th:unless="${pagina.hasNext()}" class="btn btn-secondary btn-sm" style="opacity: 0.45; cursor: not-allowed;">
+                    Próxima &raquo;
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

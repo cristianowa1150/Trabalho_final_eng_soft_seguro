@@ -1,8 +1,10 @@
 package com.github.trabalhoengsoftseguro.artificio.usuario;
 
+import com.github.trabalhoengsoftseguro.artificio.auditoria.EntidadeAuditavel;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
-import java.time.LocalDateTime;
+import org.hibernate.envers.Audited;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,7 +13,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "usuarios")
-public class Usuario {
+@Audited
+public class Usuario extends EntidadeAuditavel {
 
     @Id
     @GeneratedValue
@@ -37,9 +40,6 @@ public class Usuario {
     @Column(name = "chave_pix", length = 100)
     private String chavePix;
 
-    @Column(name = "data_criacao", nullable = false)
-    private LocalDateTime dataCriacao;
-
     @Column(name = "email_confirmado", nullable = false)
     private boolean emailConfirmado = true;
 
@@ -53,14 +53,6 @@ public class Usuario {
         this.role = role;
         this.bio = bio;
         this.chavePix = chavePix;
-        this.dataCriacao = LocalDateTime.now();
-    }
-
-    @PrePersist
-    public void prePersist() {
-        if (this.dataCriacao == null) {
-            this.dataCriacao = LocalDateTime.now();
-        }
     }
 
     public boolean isArtista() {
@@ -129,14 +121,6 @@ public class Usuario {
 
     public void setChavePix(String chavePix) {
         this.chavePix = chavePix;
-    }
-
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public void setDataCriacao(LocalDateTime dataCriacao) {
-        this.dataCriacao = dataCriacao;
     }
 
     public boolean isEmailConfirmado() {

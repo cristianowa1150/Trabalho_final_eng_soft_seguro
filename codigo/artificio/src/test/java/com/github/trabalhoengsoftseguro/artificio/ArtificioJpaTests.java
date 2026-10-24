@@ -14,6 +14,7 @@ import com.github.trabalhoengsoftseguro.artificio.imagem.ImagemBlobRepository;
 import com.github.trabalhoengsoftseguro.artificio.usuario.Role;
 import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
 import com.github.trabalhoengsoftseguro.artificio.usuario.UsuarioRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,6 +30,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 class ArtificioJpaTests {
+
+    @Autowired
+    private EntityManager entityManager;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -59,8 +64,12 @@ class ArtificioJpaTests {
 
         assertThat(artista.getId()).isNotNull();
         assertThat(artista.getId().version()).isEqualTo(7);
+        assertThat(artista.getDataCriacao()).isNotNull();
+        assertThat(artista.getCriadoPor()).isNotNull();
+
         assertThat(cliente.getId()).isNotNull();
         assertThat(cliente.getId().version()).isEqualTo(7);
+        assertThat(cliente.getDataCriacao()).isNotNull();
 
         // 2. Salvar Imagem BLOB (Feature: imagem)
         byte[] dadosFake = "fake-image-bytes".getBytes();
@@ -95,5 +104,27 @@ class ArtificioJpaTests {
 
         Double media = avaliacaoRepository.calcularMediaNotasPorArtista(artista.getId());
         assertThat(media).isEqualTo(5.0);
+    }
+
+    @Test
+    @DisplayName("Deve garantir que as tabelas de auditoria do Hibernate Envers residem no schema isolado AUDITORIA")
+    void testSegregacaoSchemaAuditoriaEnvers() {
+        @SuppressWarnings("unchecked")
+        List<String> tabelasAuditoria = entityManager.createNativeQuery(
+                "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'AUDITORIA'"
+        ).getResultList();
+
+        assertThat(tabelasAuditoria)
+                .as("Tabelas de auditoria devem ser criadas dentro do schema AUDITORIA")
+                .contains("REVINFO", "USUARIOS_AUD", "PEDIDOS_COMISSAO_AUD");
+
+        @SuppressWarnings("unchecked")
+        List<String> tabelasPublic = entityManager.createNativeQuery(
+                "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'PUBLIC'"
+        ).getResultList();
+
+        assertThat(tabelasPublic)
+                .as("Tabelas de auditoria não devem estar no schema de negócio PUBLIC")
+                .doesNotContain("REVINFO", "USUARIOS_AUD", "PEDIDOS_COMISSAO_AUD");
     }
 }

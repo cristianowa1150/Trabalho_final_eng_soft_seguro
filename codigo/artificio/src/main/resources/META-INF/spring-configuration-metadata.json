@@ -1,0 +1,29 @@
+{
+  "groups": [
+    {
+      "name": "artificio.demo",
+      "type": "java.lang.Object",
+      "sourceType": "com.github.trabalhoengsoftseguro.artificio.config.GlobalModelAdvice"
+    },
+    {
+      "name": "artificio.seed",
+      "type": "java.lang.Object",
+      "sourceType": "com.github.trabalhoengsoftseguro.artificio.config.DataInitializer"
+    }
+  ],
+  "properties": [
+    {
+      "name": "artificio.demo.exibir-credenciais",
+      "type": "java.lang.Boolean",
+      "description": "Controla a exibição das credenciais de demonstração na barra superior da aplicação (desativado em prod).",
+      "defaultValue": true
+    },
+    {
+      "name": "artificio.seed.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Habilita a carga inicial de dados simulados (seed) de catálogo e comissões (desativado em prod).",
+      "defaultValue": true
+    }
+  ],
+  "hints": []
+}

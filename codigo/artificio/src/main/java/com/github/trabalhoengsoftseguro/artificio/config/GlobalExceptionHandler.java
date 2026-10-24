@@ -75,11 +75,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public String handleMaxUploadSize(MaxUploadSizeExceededException ex, Model model, HttpServletResponse response) {
-        response.setStatus(HttpStatus.PAYLOAD_TOO_LARGE.value());
+        response.setStatus(HttpStatus.CONTENT_TOO_LARGE.value());
 
         log.warn("Tentativa de upload com tamanho excedido: {}", ex.getMessage());
 
-        model.addAttribute("status", HttpStatus.PAYLOAD_TOO_LARGE.value());
+        model.addAttribute("status", HttpStatus.CONTENT_TOO_LARGE.value());
         model.addAttribute("titulo", "Arquivo Muito Grande");
         model.addAttribute("mensagem", "O arquivo enviado excede o limite máximo permitido pela plataforma (5MB).");
         return "error";

@@ -68,9 +68,6 @@ class AuthControllerTest {
     private TokenAtivacaoRepository tokenAtivacaoRepository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
     private UsuarioService usuarioService;
 
     @Test

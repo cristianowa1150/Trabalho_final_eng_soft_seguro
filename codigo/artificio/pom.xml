@@ -5,26 +5,48 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.1.1</version>
+		<version>4.1.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.github.trabalhoengsoftseguro</groupId>
 	<artifactId>artificio</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
-	<url/>
+	<version>1.0.0</version>
+	<name>Artifício</name>
+	<description>Catálogo e Plataforma de Gestão Segura de Comissões Artísticas - Engenharia de Software Seguro (PPGCO/UFU)</description>
+	<url>https://github.com/cristianowa1150/Trabalho_final_eng_soft_seguro</url>
 	<licenses>
-		<license/>
+		<license>
+			<name>GNU General Public License v3.0</name>
+			<url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+		</license>
 	</licenses>
 	<developers>
-		<developer/>
+		<developer>
+			<name>Anna Letycia Fernandes Reis</name>
+			<email>anna.fernandes@ufu.br</email>
+			<organization>PPGCO - Universidade Federal de Uberlândia (UFU)</organization>
+		</developer>
+		<developer>
+			<name>Cristiano Silveira Silva</name>
+			<email>cristianowa1150@hotmail.com</email>
+			<organization>PPGCO - Universidade Federal de Uberlândia (UFU)</organization>
+		</developer>
+		<developer>
+			<name>Eduardo Nascimento de Souza Rolim</name>
+			<email>vndmtrx@duck.com</email>
+			<organization>PPGCO - Universidade Federal de Uberlândia (UFU)</organization>
+		</developer>
+		<developer>
+			<name>Luan Diniz Mazaro Rodovalho</name>
+			<email>luan.dinizwork@gmail.com</email>
+			<organization>PPGCO - Universidade Federal de Uberlândia (UFU)</organization>
+		</developer>
 	</developers>
 	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
+		<connection>scm:git:https://github.com/cristianowa1150/Trabalho_final_eng_soft_seguro.git</connection>
+		<developerConnection>scm:git:ssh://github.com/cristianowa1150/Trabalho_final_eng_soft_seguro.git</developerConnection>
+		<url>https://github.com/cristianowa1150/Trabalho_final_eng_soft_seguro</url>
+		<tag>HEAD</tag>
 	</scm>
 	<properties>
 		<java.version>25</java.version>
@@ -37,6 +59,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.orm</groupId>
+			<artifactId>hibernate-envers</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

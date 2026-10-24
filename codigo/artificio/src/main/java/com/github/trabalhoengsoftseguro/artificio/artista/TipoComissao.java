@@ -1,8 +1,11 @@
 package com.github.trabalhoengsoftseguro.artificio.artista;
 
+import com.github.trabalhoengsoftseguro.artificio.auditoria.EntidadeAuditavel;
 import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.envers.Audited;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.util.UUID;
@@ -12,7 +15,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "tipos_comissao")
-public class TipoComissao {
+@Audited
+public class TipoComissao extends EntidadeAuditavel {
 
     @Id
     @GeneratedValue

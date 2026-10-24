@@ -1,9 +1,11 @@
 package com.github.trabalhoengsoftseguro.artificio.artista;
 
+import com.github.trabalhoengsoftseguro.artificio.auditoria.EntidadeAuditavel;
 import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
-import java.time.LocalDateTime;
+import org.hibernate.envers.Audited;
+
 import java.util.Objects;
 import java.util.UUID;
 
@@ -12,7 +14,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "obras_portfolio")
-public class ObraPortfolio {
+@Audited
+public class ObraPortfolio extends EntidadeAuditavel {
 
     @Id
     @GeneratedValue
@@ -31,9 +34,6 @@ public class ObraPortfolio {
     @Column(name = "imagem_id", nullable = false, length = 64)
     private String imagemId;
 
-    @Column(name = "data_criacao", nullable = false)
-    private LocalDateTime dataCriacao;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artista_id", nullable = false)
     private Usuario artista;
@@ -47,14 +47,6 @@ public class ObraPortfolio {
         this.categoria = categoria;
         this.imagemId = imagemId;
         this.artista = artista;
-        this.dataCriacao = LocalDateTime.now();
-    }
-
-    @PrePersist
-    public void prePersist() {
-        if (this.dataCriacao == null) {
-            this.dataCriacao = LocalDateTime.now();
-        }
     }
 
     public UUID getId() {
@@ -95,14 +87,6 @@ public class ObraPortfolio {
 
     public void setImagemId(String imagemId) {
         this.imagemId = imagemId;
-    }
-
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public void setDataCriacao(LocalDateTime dataCriacao) {
-        this.dataCriacao = dataCriacao;
     }
 
     public Usuario getArtista() {

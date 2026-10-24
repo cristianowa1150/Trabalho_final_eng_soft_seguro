@@ -1,9 +1,12 @@
 package com.github.trabalhoengsoftseguro.artificio.avaliacao;
 
+import com.github.trabalhoengsoftseguro.artificio.auditoria.EntidadeAuditavel;
 import com.github.trabalhoengsoftseguro.artificio.comissao.PedidoComissao;
 import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.envers.Audited;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -13,7 +16,8 @@ import java.util.UUID;
  */
 @Entity
 @Table(name = "avaliacoes")
-public class Avaliacao {
+@Audited
+public class Avaliacao extends EntidadeAuditavel {
 
     @Id
     @GeneratedValue
