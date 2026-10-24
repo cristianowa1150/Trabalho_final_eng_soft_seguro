@@ -48,18 +48,35 @@ O artefato gerado estará em `target/artificio-0.0.1-SNAPSHOT.jar`.
 A aplicação conta com uma suíte de testes unitários (Mockito) e testes de integração de controllers (MockMvc e Spring Security Test):
 
 ```bash
-# Executa todos os testes automatizados
-./mvnw test
+# Executa todos os testes automatizados (276 testes)
+make test
+# ou: ./mvnw test
 ```
 
-Para rodar testes de uma classe ou pacote específico:
+Para rodar suítes específicas via `Makefile` ou Maven:
 ```bash
-# Testes de autenticação e controle de acesso
-./mvnw test -Dtest=AuthControllerTest
+# Testes fundamentais de domínio e persistência (107 testes)
+make test-base
+# ou: ./mvnw test -Dtest="!CasosAbusoTests*,!Gemini*"
 
-# Testes de validação de isolamento do perfil de produção
-./mvnw test -Dtest=GlobalModelAdviceProdTest
+# Suíte formal de Casos de Abuso (CA01 a CA27 - 42 testes)
+make test-abuso
+# ou: ./mvnw test -Dtest=CasosAbusoTests
+
+# Suíte modular de resiliência e estresse do Gemini (127 testes divididos em 6 classes)
+make test-gemini
+# ou: ./mvnw test -Dtest="Gemini*Tests"
 ```
+
+A suíte Gemini está modularizada em 6 classes especializadas no pacote `com.github.trabalhoengsoftseguro.artificio.gemini`:
+- `GeminiAutenticacaoControleAcessoTests`: RBAC, prevenção de escalada vertical e CSRF (23 testes)
+- `GeminiComissoesMaquinaEstadosTests`: Integridade do fluxo de estados de comissões (23 testes)
+- `GeminiIdorIntegridadeDadosTests`: Proteção anti-IDOR/BOLA e isolamento de posse (18 testes)
+- `GeminiUploadSegurancaMidiaTests`: Magic bytes, upload malicioso e proteção SVG (16 testes)
+- `GeminiValidacaoResilienciaHttpTests`: Entradas extremas, resiliência HTTP e GlobalExceptionHandler (32 testes)
+- `GeminiWebAuditoriaTests`: Integridade da trilha forense do Envers e rotas administrativas (15 testes)
+
+> 📋 Para a listagem completa, detalhamento dos 276 testes e mapeamento de cada caso de abuso, consulte o [Relatório Geral de Testes e Casos de Abuso](../../docs/relatorio_testes_casos_de_abuso.md).
 
 ---
 
@@ -68,6 +85,8 @@ Para rodar testes de uma classe ou pacote específico:
 ### 3.1 Ambiente de Desenvolvimento / Avaliação (Padrão)
 
 Neste modo, o banco de dados H2 é inicializado e populado automaticamente com massa de dados de teste (artistas, portfólio, modalidades e pedidos), e os facilitadores de login rápido e console H2 ficam ativos.
+
+As tabelas de negócio residem no schema padrão `PUBLIC`, enquanto todas as tabelas de auditoria forense do Hibernate Envers (`REVINFO` e `*_AUD`) são segregadas automaticamente no schema isolado `AUDITORIA`.
 
 **Opção A — Executar diretamente pelo Maven:**
 ```bash
@@ -84,6 +103,7 @@ java -jar target/artificio-0.0.1-SNAPSHOT.jar
   - JDBC URL: `jdbc:h2:mem:artificiodb`
   - Usuário: `sa`
   - Senha: *(em branco)*
+  - Schemas disponíveis: `PUBLIC` (negócio) e `AUDITORIA` (trilha forense e tabelas `*_AUD`)
 
 ---
 
