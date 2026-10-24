@@ -39,7 +39,7 @@ Aplicação web desenvolvida para o trabalho final da disciplina de **Engenharia
 # (Opcional) Gerar o JAR sem executar os testes:
 ./mvnw clean package -DskipTests
 ```
-O artefato gerado estará em `target/artificio-0.0.1-SNAPSHOT.jar`.
+O artefato gerado estará em `target/artificio-1.0.0.jar`.
 
 ---
 
@@ -95,7 +95,7 @@ As tabelas de negócio residem no schema padrão `PUBLIC`, enquanto todas as tab
 
 **Opção B — Executar a partir do JAR compilado:**
 ```bash
-java -jar target/artificio-0.0.1-SNAPSHOT.jar
+java -jar target/artificio-1.0.0.jar
 ```
 
 - **URL da Aplicação:** [http://localhost:8080](http://localhost:8080)
@@ -118,13 +118,13 @@ No perfil de produção, os facilitadores de avaliação são desativados automa
 
 **Opção B — Executar o JAR com propriedade de sistema:**
 ```bash
-java -jar -Dspring.profiles.active=prod target/artificio-0.0.1-SNAPSHOT.jar
+java -jar -Dspring.profiles.active=prod target/artificio-1.0.0.jar
 ```
 
 **Opção C — Executar via variável de ambiente:**
 ```bash
 export SPRING_PROFILES_ACTIVE=prod
-java -jar target/artificio-0.0.1-SNAPSHOT.jar
+java -jar target/artificio-1.0.0.jar
 ```
 
 ---
