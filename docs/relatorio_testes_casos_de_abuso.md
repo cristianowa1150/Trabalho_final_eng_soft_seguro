@@ -2,7 +2,7 @@
 
 **Sistema:** Artifício — Catálogo e Gestão de Comissões Artísticas  
 **Disciplina:** Engenharia de Software Seguro (PPGCO/UFU)  
-**Status da Suíte:** **276 testes automatizados executados com 100% de aprovação (0 falhas, 0 erros)**  
+**Status da Suíte:** **277 testes automatizados executados com 100% de aprovação (0 falhas, 0 erros)**  
 **Comando de Execução:** `make test` ou `./mvnw test` a partir de `codigo/artificio/`
 
 ---
@@ -14,7 +14,7 @@ A estratégia de garantia de qualidade e resiliência da plataforma **Artifício
 A suíte está estruturada em três grandes grupos:
 1. **Testes Iniciais da Aplicação (Base)** (107 testes): Validações essenciais das regras de negócio, serviços, persistência relacional, segregação de schemas de banco e controle de acesso inicial em conformidade com *Package-by-Feature*.
 2. **Testes Formais dos Casos de Abuso** (42 testes): Bateria mapeada diretamente a partir do documento de modelagem de ameaças e especificação de casos de abuso (*8.6 Definição de casos de abuso*), cobrindo os códigos **CA01 a CA27**.
-3. **Testes de Resiliência e Casos de Borda do Gemini** (127 testes): Bateria dividida em 6 classes modulares no pacote `com.github.trabalhoengsoftseguro.artificio.gemini`, cobrindo cenários de estresse, ataques STRIDE, entradas anômalas e resiliência defensiva.
+3. **Testes de Resiliência e Casos de Borda do Gemini** (128 testes): Bateria dividida em 6 classes modulares no pacote `com.github.trabalhoengsoftseguro.artificio.gemini`, cobrindo cenários de estresse, ataques STRIDE, entradas anômalas e resiliência defensiva.
 
 ---
 
@@ -94,7 +94,7 @@ Implementados na classe **CasosAbusoTests**, estes 42 testes mapeiam e verificam
 
 ---
 
-## 4. Testes de Resiliência do Gemini (127 Testes — 6 Classes Modulares)
+## 4. Testes de Resiliência do Gemini (128 Testes — 6 Classes Modulares)
 
 A suíte do Gemini foi refatorada e decomposta em **6 classes especializadas e desacopladas**, localizadas no pacote `com.github.trabalhoengsoftseguro.artificio.gemini`, herdando o contexto compartilhado de `GeminiBaseTest`. Esta arquitetura elimina arquivos monolíticos, viabiliza execução paralela e isolamento claro por vetor de segurança:
 
@@ -103,9 +103,9 @@ A suíte do Gemini foi refatorada e decomposta em **6 classes especializadas e d
 | **GeminiAutenticacaoControleAcessoTests** | 23 | Prevenção de escalada de privilégios vertical (RBAC), tentativas de auto-atribuição de `ROLE_ADMIN`, proteção obrigatória contra CSRF em endpoints `POST` sensíveis, e isolamento de rotas administrativas. |
 | **GeminiComissoesMaquinaEstadosTests** | 23 | Integridade estrita da máquina de estados transacional de comissões artísticas (tentativas de cancelamento, solicitação de revisão fora de estado permitido, entrega prematura, aprovação sem arte, recusa de pedido já quitado). |
 | **GeminiIdorIntegridadeDadosTests** | 18 | Violação de autorização e posse (*Anti-IDOR / BOLA*): tentativas de manipulação ou exclusão de obras de portfólio de terceiros, confirmação de pagamentos ou entregas por contas não-proprietárias. |
-| **GeminiUploadSegurancaMidiaTests** | 16 | Falsificação de mídia e upload malicioso: validação de Magic Bytes (`PNG`, `JPEG`, `WEBP`, `SVG`), bloqueio de vetores SVG contendo scripts embutidos, esquemas `javascript:` e tags perigosas, e respeito ao teto de 5MB. |
-| **GeminiValidacaoResilienciaHttpTests** | 32 | Entradas espúrias e extremas (strings gigantescas, valores monetários negativos, unicode), blindagem a injeções de SQL parametrizadas, proteção contra XSS refletido/persistido e resiliência uniforme do `GlobalExceptionHandler`. |
-| **GeminiWebAuditoriaTests** | 15 | Auditoria forense e integridade do Hibernate Envers: métodos HTTP não permitidos (405) na trilha forense, paginação defensiva, imutabilidade temporal e integridade de acesso administrativo. |
+| **GeminiUploadSegurancaMidiaTests** | 22 | Falsificação de mídia e upload malicioso: validação de Magic Bytes (`PNG`, `JPEG`, `WEBP`, `SVG`), bloqueio de vetores SVG contendo scripts embutidos, esquemas `javascript:` e tags perigosas, e respeito ao teto de 5MB. |
+| **GeminiValidacaoResilienciaHttpTests** | 26 | Entradas espúrias e extremas (strings gigantescas, valores monetários negativos, unicode), blindagem a injeções de SQL parametrizadas, proteção contra XSS refletido/persistido e resiliência uniforme do `GlobalExceptionHandler`. |
+| **GeminiWebAuditoriaTests** | 16 | Auditoria forense e integridade do Hibernate Envers: métodos HTTP não permitidos (405) na trilha forense, paginação defensiva (imunidade a overflow de inteiros), imutabilidade temporal e integridade de acesso administrativo. |
 
 ---
 
@@ -117,9 +117,9 @@ RESUMO CONSOLIDADO DE EXECUÇÃO DOS TESTES
 ========================================================================================
 Testes Iniciais da Aplicação (Base / Feature Packages)      : 107 testes  [100% PASS]
 Suíte Formal de Casos de Abuso (CA01 a CA27)               :  42 testes  [100% PASS]
-Suíte Modular de Resiliência e Casos de Borda (Gemini)      : 127 testes  [100% PASS]
+Suíte Modular de Resiliência e Casos de Borda (Gemini)      : 128 testes  [100% PASS]
 ----------------------------------------------------------------------------------------
-TOTAL GERAL DE TESTES AUTOMATIZADOS                        : 276 testes  [100% PASS]
+TOTAL GERAL DE TESTES AUTOMATIZADOS                        : 277 testes  [100% PASS]
 FALHAS: 0 | ERROS: 0 | IGNORADOS: 0
 TEMPO TOTAL DE EXECUÇÃO: ~24 segundos
 ========================================================================================

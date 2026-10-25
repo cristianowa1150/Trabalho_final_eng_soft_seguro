@@ -4,6 +4,7 @@ import com.github.trabalhoengsoftseguro.artificio.auditoria.EntidadeAuditavel;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -27,6 +28,7 @@ public class Usuario extends EntidadeAuditavel {
     @Column(nullable = false, unique = true, length = 180)
     private String email;
 
+    @NotAudited
     @Column(nullable = false, length = 255)
     private String senha;
 

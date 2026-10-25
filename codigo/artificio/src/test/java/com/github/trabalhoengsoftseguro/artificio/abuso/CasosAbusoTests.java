@@ -80,7 +80,7 @@ public class CasosAbusoTests {
     @Autowired
     private ImagemBlobRepository imagemBlobRepository;
 
-    @Autowired(required = false)
+    @Autowired
     private AuditoriaService auditoriaService;
 
     private TipoComissao obterTipoAnna() {
@@ -484,10 +484,11 @@ public class CasosAbusoTests {
         @DisplayName("CA11.1: Trilha do Hibernate Envers deve registrar e preservar histórico de revisões de entidades")
         void testCA11_1_PreservacaoRevisoesEnvers() {
             log.info("Caso de Abuso CA11.1: Testando capacidade da trilha Envers de preservar histórico perante modificações.");
-            if (auditoriaService != null) {
-                var revisoes = auditoriaService.listarUltimasRevisoes(10);
-                assertThat(revisoes).isNotNull();
-            }
+            var revisoes = auditoriaService.listarUltimasRevisoes(30);
+            assertThat(revisoes)
+                    .as("A trilha do Envers deve conter revisões geradas pela carga inicial ou operações")
+                    .isNotEmpty();
+            assertThat(revisoes.get(0).numeroRevisao()).isGreaterThan(0L);
         }
     }
 
@@ -775,12 +776,14 @@ public class CasosAbusoTests {
     class CA27_AuditoriaAcoesAdministrativasTests {
 
         @Test
+        @org.springframework.transaction.annotation.Transactional(propagation = org.springframework.transaction.annotation.Propagation.NOT_SUPPORTED)
         @WithMockUser(username = "admin@artificio.local", roles = {"ADMIN"})
         @DisplayName("CA27.1: Ações administrativas de promoção de usuários devem gerar revisão obrigatória na auditoria forense")
         void testCA27_1_AuditoriaPromocaoAdministrativa() throws Exception {
             log.info("Caso de Abuso CA27.1: Testando registro em auditoria ao executar operação administrativa.");
             Usuario cliente = new Usuario("Cliente Promocao", "promover@artificio.local", "hash123", Role.ROLE_CLIENTE, "", "");
             cliente = usuarioRepository.saveAndFlush(cliente);
+            try {
 
             mockMvc.perform(post("/admin/usuarios/" + cliente.getId() + "/promover").with(csrf()))
                     .andExpect(status().is3xxRedirection())
@@ -790,6 +793,21 @@ public class CasosAbusoTests {
             Usuario promovido = usuarioRepository.findById(cliente.getId()).orElseThrow();
             assertThat(promovido.getRole()).isEqualTo(Role.ROLE_ARTISTA);
             assertThat(promovido.getDataAtualizacao()).isNotNull();
+
+            var revisoes = auditoriaService.listarRevisoesPaginadas(0, 10, cliente.getId().toString());
+            assertThat(revisoes.getContent())
+                    .as("Deve existir registro na auditoria para a alteração de papel do usuário")
+                    .isNotEmpty();
+            var revPromocao = revisoes.getContent().get(0);
+            assertThat(revPromocao.autor())
+                    .as("O autor registrado na auditoria deve ser o administrador autenticado")
+                    .isEqualTo("admin@artificio.local");
+            assertThat(revPromocao.operacao())
+                    .as("A operação registrada deve ser MODIFICAÇÃO")
+                    .isEqualTo("MODIFICAÇÃO");
+            } finally {
+                usuarioRepository.deleteById(cliente.getId());
+            }
         }
     }
 }

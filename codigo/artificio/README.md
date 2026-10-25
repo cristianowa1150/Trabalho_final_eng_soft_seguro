@@ -48,9 +48,13 @@ O artefato gerado estará em `target/artificio-1.0.0.jar`.
 A aplicação conta com uma suíte de testes unitários (Mockito) e testes de integração de controllers (MockMvc e Spring Security Test):
 
 ```bash
-# Executa todos os testes automatizados (276 testes)
+# Executa todos os testes automatizados (277 testes)
 make test
 # ou: ./mvnw test
+
+# Executa testes e gera relatório de cobertura JaCoCo (target/site/jacoco)
+make coverage
+# ou: ./mvnw test jacoco:report
 ```
 
 Para rodar suítes específicas via `Makefile` ou Maven:
@@ -63,7 +67,7 @@ make test-base
 make test-abuso
 # ou: ./mvnw test -Dtest=CasosAbusoTests
 
-# Suíte modular de resiliência e estresse do Gemini (127 testes divididos em 6 classes)
+# Suíte modular de resiliência e estresse do Gemini (128 testes divididos em 6 classes)
 make test-gemini
 # ou: ./mvnw test -Dtest="Gemini*Tests"
 ```
@@ -72,11 +76,11 @@ A suíte Gemini está modularizada em 6 classes especializadas no pacote `com.gi
 - `GeminiAutenticacaoControleAcessoTests`: RBAC, prevenção de escalada vertical e CSRF (23 testes)
 - `GeminiComissoesMaquinaEstadosTests`: Integridade do fluxo de estados de comissões (23 testes)
 - `GeminiIdorIntegridadeDadosTests`: Proteção anti-IDOR/BOLA e isolamento de posse (18 testes)
-- `GeminiUploadSegurancaMidiaTests`: Magic bytes, upload malicioso e proteção SVG (16 testes)
-- `GeminiValidacaoResilienciaHttpTests`: Entradas extremas, resiliência HTTP e GlobalExceptionHandler (32 testes)
-- `GeminiWebAuditoriaTests`: Integridade da trilha forense do Envers e rotas administrativas (15 testes)
+- `GeminiUploadSegurancaMidiaTests`: Magic bytes, upload malicioso e proteção SVG (22 testes)
+- `GeminiValidacaoResilienciaHttpTests`: Entradas extremas, resiliência HTTP e GlobalExceptionHandler (26 testes)
+- `GeminiWebAuditoriaTests`: Integridade da trilha forense do Envers, paginação segura e rotas administrativas (16 testes)
 
-> 📋 Para a listagem completa, detalhamento dos 276 testes e mapeamento de cada caso de abuso, consulte o [Relatório Geral de Testes e Casos de Abuso](../../docs/relatorio_testes_casos_de_abuso.md).
+> 📋 Para a listagem completa, detalhamento dos 277 testes e mapeamento de cada caso de abuso, consulte o [Relatório Geral de Testes e Casos de Abuso](../../docs/relatorio_testes_casos_de_abuso.md).
 
 ---
 
@@ -118,7 +122,9 @@ No perfil de produção, os facilitadores de avaliação são desativados automa
 
 **Opção B — Executar o JAR com propriedade de sistema:**
 ```bash
-java -jar -Dspring.profiles.active=prod target/artificio-1.0.0.jar
+java -Dspring.profiles.active=prod -jar target/artificio-1.0.0.jar
+# ou passando argumento de linha de comando:
+java -jar target/artificio-1.0.0.jar --spring.profiles.active=prod
 ```
 
 **Opção C — Executar via variável de ambiente:**

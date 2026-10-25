@@ -126,5 +126,14 @@ class ArtificioJpaTests {
         assertThat(tabelasPublic)
                 .as("Tabelas de auditoria não devem estar no schema de negócio PUBLIC")
                 .doesNotContain("REVINFO", "USUARIOS_AUD", "PEDIDOS_COMISSAO_AUD");
+
+        @SuppressWarnings("unchecked")
+        List<String> colunasUsuariosAud = entityManager.createNativeQuery(
+                "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'AUDITORIA' AND TABLE_NAME = 'USUARIOS_AUD'"
+        ).getResultList();
+
+        assertThat(colunasUsuariosAud)
+                .as("A coluna de senha não deve ser auditada no schema AUDITORIA por segurança")
+                .doesNotContain("SENHA");
     }
 }

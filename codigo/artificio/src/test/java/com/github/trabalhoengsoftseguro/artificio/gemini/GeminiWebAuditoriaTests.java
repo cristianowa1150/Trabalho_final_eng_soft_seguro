@@ -173,7 +173,8 @@ public class GeminiWebAuditoriaTests extends GeminiBaseTest {
                             .param("tamanho", "-20"))
                     .andExpect(status().isOk())
                     .andExpect(view().name("admin/auditoria"))
-                    .andExpect(model().attributeExists("pagina"));
+                    .andExpect(model().attributeExists("pagina"))
+                    .andExpect(model().attribute("paginaAtual", 0));
         }
 
         @Test
@@ -184,6 +185,19 @@ public class GeminiWebAuditoriaTests extends GeminiBaseTest {
             mockMvc.perform(get("/admin/auditoria")
                             .param("pagina", "999999")
                             .param("tamanho", "50"))
+                    .andExpect(status().isOk())
+                    .andExpect(view().name("admin/auditoria"))
+                    .andExpect(model().attributeExists("pagina"));
+        }
+
+        @Test
+        @WithMockUser(username = "admin@artificio.local", roles = {"ADMIN"})
+        @DisplayName("Elaborado pelo Gemini: Deve prevenir integer overflow em paginação com valores extremos (MAX_INT)")
+        void testPaginacaoOverflowAuditoria() throws Exception {
+            log.info("Elaborado pelo Gemini: Testando valores de paginação suscetíveis a integer overflow.");
+            mockMvc.perform(get("/admin/auditoria")
+                            .param("pagina", String.valueOf(Integer.MAX_VALUE))
+                            .param("tamanho", String.valueOf(Integer.MAX_VALUE)))
                     .andExpect(status().isOk())
                     .andExpect(view().name("admin/auditoria"))
                     .andExpect(model().attributeExists("pagina"));

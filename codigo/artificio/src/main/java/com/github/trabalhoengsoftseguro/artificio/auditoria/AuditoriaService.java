@@ -57,8 +57,9 @@ public class AuditoriaService {
         int total = todos.size();
         int safePage = Math.max(0, pagina);
         int safeSize = Math.max(1, tamanho);
-        int inicio = Math.min(safePage * safeSize, total);
-        int fim = Math.min(inicio + safeSize, total);
+        long offset = (long) safePage * safeSize;
+        int inicio = (offset > total) ? total : (int) offset;
+        int fim = (int) Math.min((long) inicio + safeSize, (long) total);
         List<RegistroAuditoriaDto> sublista = todos.subList(inicio, fim);
         Pageable pageable = PageRequest.of(safePage, safeSize);
         return new PageImpl<>(sublista, pageable, total);
@@ -140,9 +141,6 @@ public class AuditoriaService {
                 } else if (entidade instanceof Usuario user) {
                     identificador = user.getId() != null ? user.getId().toString() : "-";
                     resumo = user.getNome() + " (" + user.getEmail() + ") - " + user.getRole();
-                    if (autor.equals("SISTEMA") && user.getEmail() != null) {
-                        autor = user.getEmail();
-                    }
                 } else if (entidade instanceof Avaliacao avaliacao) {
                     identificador = avaliacao.getId() != null ? avaliacao.getId().toString() : "-";
                     resumo = "Nota: " + avaliacao.getNota() + "⭐ | Comentário: " + avaliacao.getComentario();

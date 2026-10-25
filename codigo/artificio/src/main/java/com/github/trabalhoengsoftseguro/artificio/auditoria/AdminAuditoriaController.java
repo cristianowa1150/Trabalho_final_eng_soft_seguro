@@ -29,7 +29,7 @@ public class AdminAuditoriaController {
         Page<RegistroAuditoriaDto> paginaRevisoes = auditoriaService.listarRevisoesPaginadas(pagina, tamanho, busca);
         model.addAttribute("pagina", paginaRevisoes);
         model.addAttribute("revisoes", paginaRevisoes.getContent());
-        model.addAttribute("paginaAtual", pagina);
+        model.addAttribute("paginaAtual", paginaRevisoes.getNumber());
         model.addAttribute("totalPaginas", paginaRevisoes.getTotalPages());
         model.addAttribute("totalItens", paginaRevisoes.getTotalElements());
         model.addAttribute("termoBusca", busca);
