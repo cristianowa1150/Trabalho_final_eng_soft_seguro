@@ -918,20 +918,20 @@ Serão considerados:
 
 ## 📋 Checklist de execução — Etapa 5
 
-> Marque `- [x]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
+> Marque `- [🟢]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
 
-- [ ] 23. Objetivo
-- [ ] 24. Ambiente recomendado
-- [ ] 25. Entregável mínimo
-- [ ] Definir sistema ou ambiente testado
-- [ ] Definir ferramenta utilizada
-- [ ] Registrar configuração básica do teste
-- [ ] Registrar evidência da execução
-- [ ] Analisar até três alertas ou achados
-- [ ] Propor correção para cada achado
-- [ ] Armazenar capturas em `evidencias/etapa-5/`
-- [ ] Armazenar relatório em `evidencias/etapa-5/`
-- [ ] 26. Critérios de avaliação da Etapa 5
+- [🟢] 23. Objetivo
+- [🟢] 24. Ambiente recomendado
+- [🟢] 25. Entregável mínimo
+- [🟢] Definir sistema ou ambiente testado
+- [🟢] Definir ferramenta utilizada
+- [🟢] Registrar configuração básica do teste
+- [🟢] Registrar evidência da execução
+- [🟢] Analisar até três alertas ou achados
+- [🟢] Propor correção para cada achado
+- [🟢] Armazenar capturas em `evidencias/etapa-5/`
+- [🟢] Armazenar relatório em `evidencias/etapa-5/`
+- [🟢] 26. Critérios de avaliação da Etapa 5
 
 
 ## 23\. Objetivo
