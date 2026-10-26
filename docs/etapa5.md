@@ -42,14 +42,60 @@ incluindo:
 |---|---|
 | Tipo de verificação | análise de segurança orientada pelos arquivos de configuração e código do próprio sistema |
 | Ferramenta sugerida no roteiro | OWASP ZAP |
-| Sessão dinâmica com ZAP | não executada neste ambiente; o executável não está disponível |
-| Fonte das evidências | trechos versionados do código e das configurações |
+| Sessão dinâmica com ZAP | concluída em 26/10/2026, contra `http://127.0.0.1:8080` |
+| Verificação HTTP executada | `curl` contra `127.0.0.1:8080` (padrão) e `127.0.0.1:8081` (`prod`), sem exploração ou comandos SQL |
+| Fonte das evidências | respostas HTTP, HTML sanitizado, status do endpoint H2 e observação sanitizada do log |
 | Perfil observado | configuração padrão de desenvolvimento; o perfil `prod` foi comparado para identificar controles condicionais |
-| Limitação | sem captura HTTP, spider, passive scan ou active scan do ZAP; os achados abaixo são candidatos confirmados por inspeção estática e devem ser revalidados em uma sessão dinâmica autorizada |
+| Limitação | foi executado o `zap-baseline.py`, com rastreamento e análise passiva; não foi executada exploração ativa |
 
-O roteiro recomenda o ZAP, mas não permite afirmar que uma execução ocorreu quando a
-ferramenta não está instalada. Por isso, este relatório separa explicitamente os
-achados de código da evidência dinâmica ainda pendente.
+O ZAP foi executado com a imagem `zaproxy/zap-stable`, versão 2.17.0, e os relatórios
+foram salvos em <a href="../evidencias/etapa-5/relatorio-zap.html" target="_blank" rel="noopener noreferrer">relatorio-zap.html</a> e
+[`relatorio-zap.json`](../evidencias/etapa-5/relatorio-zap.json). Os relatórios
+foram sanitizados para remover senhas que apareceram em URLs de demonstração.
+
+### Evidências HTML
+
+Os arquivos HTML abaixo podem ser abertos em uma nova aba:
+
+- <a href="../evidencias/etapa-5/relatorio-zap.html" target="_blank" rel="noopener noreferrer">Relatório completo do OWASP ZAP</a>
+- <a href="../evidencias/etapa-5/default-home.html" target="_blank" rel="noopener noreferrer">Página inicial no perfil padrão</a>
+- <a href="../evidencias/etapa-5/prod-home.html" target="_blank" rel="noopener noreferrer">Página inicial no perfil de produção</a>
+- <a href="../evidencias/etapa-5/A01-h2-console.html" target="_blank" rel="noopener noreferrer">Console H2 no perfil padrão</a>
+- <a href="../evidencias/etapa-5/A01-prod-h2-console.html" target="_blank" rel="noopener noreferrer">Console H2 no perfil de produção</a>
+
+### Comandos para liberar e executar o ZAP no Fedora
+
+O comando abaixo foi tentado automaticamente, mas o Fedora exigiu a senha do
+administrador em um terminal interativo. Execute os comandos a seguir no terminal
+local:
+
+```bash
+# Adiciona o usuário atual ao grupo que pode acessar o Docker.
+sudo usermod -aG docker "$USER"
+
+# Atualiza a sessão atual sem precisar reiniciar o computador.
+newgrp docker
+
+# Confirma que o Docker pode ser acessado sem sudo.
+docker ps
+
+# Baixa a imagem oficial do OWASP ZAP.
+docker pull zaproxy/zap-stable
+
+# Executa o ZAP em modo de linha de comando contra a aplicação local.
+# A aplicação deve estar rodando em http://127.0.0.1:8080.
+docker run --rm --network host \
+  -v "$PWD/evidencias/etapa-5:/zap/wrk:rw" \
+  zaproxy/zap-stable zap-baseline.py \
+  -t http://127.0.0.1:8080 \
+  -r relatorio-zap.html \
+  -J relatorio-zap.json
+```
+
+Após executar o `usermod`, pode ser necessário sair e entrar novamente na sessão do
+Fedora. O diretório atual para o último comando deve ser a raiz do repositório.
+Os arquivos `relatorio-zap.html` e `relatorio-zap.json` deverão ser mantidos em
+[`evidencias/etapa-5/`](../../evidencias/etapa-5/).
 
 ## 25. Achados e propostas de correção
 
@@ -82,6 +128,11 @@ resposta de `/h2-console` no perfil padrão e repetir no perfil `prod`, sem envi
 comandos SQL destrutivos. A evidência dinâmica correspondente deve ser salva em
 [`evidencias/etapa-5/`](../../evidencias/etapa-5/) após a execução autorizada.
 
+**Resultado executado:** no perfil padrão, `GET /h2-console/` retornou **HTTP 200**;
+no perfil `prod`, a mesma requisição retornou **HTTP 404**. Os registros estão em
+[`A01-h2-console-headers.txt`](../../evidencias/etapa-5/A01-h2-console-headers.txt)
+e [`A01-prod-resultado.txt`](../../evidencias/etapa-5/A01-prod-resultado.txt).
+
 ### A02 — Credenciais demo no HTML e na URL
 
 **Evidência observada:** o template base exibe senhas de contas de teste e constrói
@@ -99,6 +150,13 @@ autenticar, salvar o HTML recebido e verificar se há senhas; em seguida, consul
 histórico de navegação após usar um link de conta demo. Não é necessário efetuar
 tentativas de login de terceiros.
 
+**Resultado executado:** o HTML do perfil padrão apresentou o modal de contas de
+teste, e os links continham os parâmetros `email` e `senha`. No perfil `prod`, não
+foram encontradas credenciais nos indicadores pesquisados. Os arquivos
+[`A02-credenciais-demo-observacao.txt`](../../evidencias/etapa-5/A02-credenciais-demo-observacao.txt)
+e [`A02-prod-credenciais-observacao.txt`](../../evidencias/etapa-5/A02-prod-credenciais-observacao.txt)
+registram os resultados sem armazenar senhas reais.
+
 ### A03 — Senha administrativa em saída de processo
 
 **Evidência observada:** o inicializador cria a senha com `SecureRandom`, armazena
@@ -115,6 +173,33 @@ ambiente local descartável e confirmar que o valor não é encaminhado a um
 agregador. A senha exibida durante esse teste deve ser revogada e o ambiente
 descartado após a verificação.
 
+**Resultado executado:** a saída de inicialização do perfil padrão confirmou a
+impressão da credencial administrativa em texto claro. O valor foi omitido
+deliberadamente da evidência versionada; a ocorrência e a origem no código estão em
+[`A03-admin-log-observacao.txt`](../../evidencias/etapa-5/A03-admin-log-observacao.txt).
+
+## Resultados da sessão do OWASP ZAP
+
+O ZAP identificou dez tipos de alerta no alvo local: um de risco médio, cinco de
+risco baixo e quatro informativos. Os três primeiros achados abaixo foram
+selecionados para análise detalhada conforme o entregável mínimo da Etapa 5.
+
+| ID | Alerta do ZAP | Evidência | Possível impacto | Relação com OWASP ou CWE | Correção proposta |
+|---|---|---|---|---|---|
+| **Z01** | Cabeçalho Content-Security-Policy não definido — **Médio**, confiança alta | [`relatorio-zap.json`](../evidencias/etapa-5/relatorio-zap.json), alerta `10038`, 5 ocorrências; a página inicial não retornou `Content-Security-Policy` | Maior exposição a XSS e injeção de conteúdo caso uma entrada não confiável alcance o HTML ou um recurso incorporado | OWASP Top 10 **A05 — Configuração de segurança inadequada**; CWE-693 | Definir uma política CSP explícita em `SecurityConfig`, começando por `default-src 'self'`, restringindo scripts, estilos, imagens e frames; revisar os recursos inline antes de remover exceções |
+| **Z02** | Cookie sem atributo SameSite — **Baixo**, confiança média | <a href="../evidencias/etapa-5/relatorio-zap.html" target="_blank" rel="noopener noreferrer">relatorio-zap.html</a>, alerta `10054`, 2 ocorrências | O navegador pode enviar o cookie em contextos entre sites, aumentando o risco de requisições cross-site e contribuindo para ataques CSRF | OWASP Top 10 **A05 — Configuração de segurança inadequada**; CWE-1275 | Configurar `SameSite=Lax` ou `Strict`, além de `Secure` em HTTPS e `HttpOnly`; manter e testar a proteção CSRF do Spring Security |
+| **Z03** | Cabeçalhos de isolamento entre origens ausentes ou inválidos — **Baixo**, confiança média | [`relatorio-zap.json`](../evidencias/etapa-5/relatorio-zap.json), alertas `90004-1`, `90004-2` e `90004-3`; ocorrências em páginas públicas e login | Reduz as garantias contra interação indevida entre origens e alguns cenários de vazamento lateral entre documentos e recursos | OWASP Top 10 **A05 — Configuração de segurança inadequada**; CWE-693 | Avaliar e configurar `Cross-Origin-Opener-Policy: same-origin`, `Cross-Origin-Resource-Policy: same-origin` e `Cross-Origin-Embedder-Policy` conforme os recursos necessários; validar compatibilidade antes de aplicar |
+
+### Alertas informativos e resultados não priorizados
+
+O ZAP também apontou `Permissions-Policy` ausente (baixo), comentários
+potencialmente informativos, conteúdo não armazenável, identificação de resposta de
+sessão e possível atributo HTML controlável. Os quatro últimos foram mantidos como
+informativos pelo próprio ZAP e não foram tratados como vulnerabilidades confirmadas.
+O possível XSS exige revisão manual; não houve exploração nem evidência de execução de
+JavaScript. O alerta de `Permissions-Policy` deve ser tratado junto com os demais
+cabeçalhos em uma correção posterior.
+
 ## Resultados descartados e limitações
 
 - As validações de upload em [`ValidadorUploadImagem.java`](../../codigo/artificio/src/main/java/com/github/trabalhoengsoftseguro/artificio/imagem/ValidadorUploadImagem.java)
@@ -126,9 +211,11 @@ descartado após a verificação.
   alertas descobertos pela ferramenta.
 - A análise não prova exploração remota dos três achados. O impacto depende do
   modo de execução, exposição de rede, retenção de logs e configuração do ambiente.
-- A ausência do ZAP impede apresentar um relatório passivo/ativo ou afirmar
-  severidade baseada em tráfego real. A sessão dinâmica deve ser executada somente
-  após instalar a ferramenta e manter o sistema localmente autorizado.
+- A sessão executou rastreamento e análise passiva, mas não uma análise ativa
+  exploratória. As severidades são as classificações do ZAP e devem ser confirmadas
+  por revisão manual antes de qualquer correção abrangente.
+- O rastreamento encontrou URLs de login com parâmetros de senha; esses valores foram
+  removidos dos relatórios versionados para não preservar credenciais.
 
 ## Participação individual
 
@@ -139,4 +226,16 @@ descartado após a verificação.
 | Eduardo Nascimento de Souza Rolim | Análise dos impactos e relacionamento com OWASP/CWE |
 | Luan Diniz Mazaro Rodovalho | Revisão das propostas de correção e limitações da verificação |
 
+## Checklist da Etapa 5
 
+- [x] Sistema próprio identificado e autorizado para análise.
+- [x] Ambiente e escopo documentados.
+- [x] Configuração analisada e limitações registradas.
+- [x] Sessão dinâmica com ZAP executada contra o sistema próprio.
+- [x] Relatórios HTML e JSON do ZAP armazenados em `evidencias/etapa-5/`.
+- [x] Verificação HTTP local executada nos perfis padrão e `prod`.
+- [x] Três achados relevantes analisados.
+- [x] Relação dos achados com OWASP/CWE apresentada.
+- [x] Proposta de correção para cada achado apresentada.
+- [x] Possíveis falsos positivos e resultados descartados explicados.
+- [x] Capturas e relatório da verificação armazenados em `evidencias/etapa-5/`.
