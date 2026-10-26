@@ -49,19 +49,19 @@ incluindo:
 | Limitação | foi executado o `zap-baseline.py`, com rastreamento e análise passiva; não foi executada exploração ativa |
 
 O ZAP foi executado com a imagem `zaproxy/zap-stable`, versão 2.17.0, e os relatórios
-foram salvos em <a href="../evidencias/etapa-5/relatorio-zap.html" target="_blank" rel="noopener noreferrer">relatorio-zap.html</a> e
-[`relatorio-zap.json`](../evidencias/etapa-5/relatorio-zap.json). Os relatórios
+foram salvos em <a href="../../evidencias/etapa-5/relatorio-zap.html" target="_blank" rel="noopener noreferrer">relatorio-zap.html</a> e
+[`relatorio-zap.json`](../../evidencias/etapa-5/relatorio-zap.json). Os relatórios
 foram sanitizados para remover senhas que apareceram em URLs de demonstração.
 
 ### Evidências HTML
 
 Os arquivos HTML abaixo podem ser abertos em uma nova aba:
 
-- <a href="../evidencias/etapa-5/relatorio-zap.html" target="_blank" rel="noopener noreferrer">Relatório completo do OWASP ZAP</a>
-- <a href="../evidencias/etapa-5/default-home.html" target="_blank" rel="noopener noreferrer">Página inicial no perfil padrão</a>
-- <a href="../evidencias/etapa-5/prod-home.html" target="_blank" rel="noopener noreferrer">Página inicial no perfil de produção</a>
-- <a href="../evidencias/etapa-5/A01-h2-console.html" target="_blank" rel="noopener noreferrer">Console H2 no perfil padrão</a>
-- <a href="../evidencias/etapa-5/A01-prod-h2-console.html" target="_blank" rel="noopener noreferrer">Console H2 no perfil de produção</a>
+- <a href="../../evidencias/etapa-5/relatorio-zap.html" target="_blank" rel="noopener noreferrer">Relatório completo do OWASP ZAP</a>
+- <a href="../../evidencias/etapa-5/default-home.html" target="_blank" rel="noopener noreferrer">Página inicial no perfil padrão</a>
+- <a href="../../evidencias/etapa-5/prod-home.html" target="_blank" rel="noopener noreferrer">Página inicial no perfil de produção</a>
+- <a href="../../evidencias/etapa-5/A01-h2-console.html" target="_blank" rel="noopener noreferrer">Console H2 no perfil padrão</a>
+- <a href="../../evidencias/etapa-5/A01-prod-h2-console.html" target="_blank" rel="noopener noreferrer">Console H2 no perfil de produção</a>
 
 ### Comandos para liberar e executar o ZAP no Fedora
 
@@ -186,9 +186,9 @@ selecionados para análise detalhada conforme o entregável mínimo da Etapa 5.
 
 | ID | Alerta do ZAP | Evidência | Possível impacto | Relação com OWASP ou CWE | Correção proposta |
 |---|---|---|---|---|---|
-| **Z01** | Cabeçalho Content-Security-Policy não definido — **Médio**, confiança alta | [`relatorio-zap.json`](../evidencias/etapa-5/relatorio-zap.json), alerta `10038`, 5 ocorrências; a página inicial não retornou `Content-Security-Policy` | Maior exposição a XSS e injeção de conteúdo caso uma entrada não confiável alcance o HTML ou um recurso incorporado | OWASP Top 10 **A05 — Configuração de segurança inadequada**; CWE-693 | Definir uma política CSP explícita em `SecurityConfig`, começando por `default-src 'self'`, restringindo scripts, estilos, imagens e frames; revisar os recursos inline antes de remover exceções |
-| **Z02** | Cookie sem atributo SameSite — **Baixo**, confiança média | <a href="../evidencias/etapa-5/relatorio-zap.html" target="_blank" rel="noopener noreferrer">relatorio-zap.html</a>, alerta `10054`, 2 ocorrências | O navegador pode enviar o cookie em contextos entre sites, aumentando o risco de requisições cross-site e contribuindo para ataques CSRF | OWASP Top 10 **A05 — Configuração de segurança inadequada**; CWE-1275 | Configurar `SameSite=Lax` ou `Strict`, além de `Secure` em HTTPS e `HttpOnly`; manter e testar a proteção CSRF do Spring Security |
-| **Z03** | Cabeçalhos de isolamento entre origens ausentes ou inválidos — **Baixo**, confiança média | [`relatorio-zap.json`](../evidencias/etapa-5/relatorio-zap.json), alertas `90004-1`, `90004-2` e `90004-3`; ocorrências em páginas públicas e login | Reduz as garantias contra interação indevida entre origens e alguns cenários de vazamento lateral entre documentos e recursos | OWASP Top 10 **A05 — Configuração de segurança inadequada**; CWE-693 | Avaliar e configurar `Cross-Origin-Opener-Policy: same-origin`, `Cross-Origin-Resource-Policy: same-origin` e `Cross-Origin-Embedder-Policy` conforme os recursos necessários; validar compatibilidade antes de aplicar |
+| **Z01** | Cabeçalho Content-Security-Policy não definido — **Médio**, confiança alta | [`relatorio-zap.json`](../../evidencias/etapa-5/relatorio-zap.json), alerta `10038`, 5 ocorrências; a página inicial não retornou `Content-Security-Policy` | Maior exposição a XSS e injeção de conteúdo caso uma entrada não confiável alcance o HTML ou um recurso incorporado | OWASP Top 10 **A05 — Configuração de segurança inadequada**; CWE-693 | Definir uma política CSP explícita em `SecurityConfig`, começando por `default-src 'self'`, restringindo scripts, estilos, imagens e frames; revisar os recursos inline antes de remover exceções |
+| **Z02** | Cookie sem atributo SameSite — **Baixo**, confiança média | <a href="../../evidencias/etapa-5/relatorio-zap.html" target="_blank" rel="noopener noreferrer">relatorio-zap.html</a>, alerta `10054`, 2 ocorrências | O navegador pode enviar o cookie em contextos entre sites, aumentando o risco de requisições cross-site e contribuindo para ataques CSRF | OWASP Top 10 **A05 — Configuração de segurança inadequada**; CWE-1275 | Configurar `SameSite=Lax` ou `Strict`, além de `Secure` em HTTPS e `HttpOnly`; manter e testar a proteção CSRF do Spring Security |
+| **Z03** | Cabeçalhos de isolamento entre origens ausentes ou inválidos — **Baixo**, confiança média | [`relatorio-zap.json`](../../evidencias/etapa-5/relatorio-zap.json), alertas `90004-1`, `90004-2` e `90004-3`; ocorrências em páginas públicas e login | Reduz as garantias contra interação indevida entre origens e alguns cenários de vazamento lateral entre documentos e recursos | OWASP Top 10 **A05 — Configuração de segurança inadequada**; CWE-693 | Avaliar e configurar `Cross-Origin-Opener-Policy: same-origin`, `Cross-Origin-Resource-Policy: same-origin` e `Cross-Origin-Embedder-Policy` conforme os recursos necessários; validar compatibilidade antes de aplicar |
 
 ### Alertas informativos e resultados não priorizados
 
