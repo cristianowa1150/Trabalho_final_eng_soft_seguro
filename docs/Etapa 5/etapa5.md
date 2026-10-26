@@ -1,3 +1,7 @@
+# LINK PARA VERIFICAÇÃO DESTE RELATÓRIO COM OS LINKS HTML CLICÁVEIS
+
+https://cristianowa1150.github.io/Trabalho_final_eng_soft_seguro/docs/Etapa%205/etapa5.html
+
 # Etapa 5 — Verificação de Segurança com Ferramenta
 
 **Sistema:** Artifício — Catálogo e Gestão de Comissões Artísticas
@@ -225,17 +229,3 @@ cabeçalhos em uma correção posterior.
 | Cristiano Silveira Silva | Inventário do código, configurações de execução e consolidação dos achados |
 | Eduardo Nascimento de Souza Rolim | Análise dos impactos e relacionamento com OWASP/CWE |
 | Luan Diniz Mazaro Rodovalho | Revisão das propostas de correção e limitações da verificação |
-
-## Checklist da Etapa 5
-
-- [x] Sistema próprio identificado e autorizado para análise.
-- [x] Ambiente e escopo documentados.
-- [x] Configuração analisada e limitações registradas.
-- [x] Sessão dinâmica com ZAP executada contra o sistema próprio.
-- [x] Relatórios HTML e JSON do ZAP armazenados em `evidencias/etapa-5/`.
-- [x] Verificação HTTP local executada nos perfis padrão e `prod`.
-- [x] Três achados relevantes analisados.
-- [x] Relação dos achados com OWASP/CWE apresentada.
-- [x] Proposta de correção para cada achado apresentada.
-- [x] Possíveis falsos positivos e resultados descartados explicados.
-- [x] Capturas e relatório da verificação armazenados em `evidencias/etapa-5/`.
