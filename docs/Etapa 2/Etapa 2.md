@@ -640,6 +640,31 @@ As justificativas explicam como cada risco pode ocorrer, quem ou o que pode ser 
 
 ### 13.6 Priorização dos riscos
 
+A prioridade dos riscos foi definida a partir das pontuações da seção 13.4 e das justificativas da seção 13.5. Além da classificação, foram considerados os prejuízos aos usuários, a importância dos dados e das funcionalidades afetadas, a quantidade de pessoas que podem ser atingidas e a dificuldade de recuperação.
+
+Os riscos críticos recebem atenção primeiro. Entre riscos de mesmo nível, têm maior prioridade aqueles que podem comprometer a administração, atingir vários usuários ou causar danos difíceis de reverter, como o vazamento de informações privadas.
+
+A tabela apresenta a ordem inicial de atenção aos riscos. Os riscos reunidos na mesma linha possuem prioridade semelhante e podem ser tratados em conjunto.
+
+| Ordem | Riscos | Pontuação e nível | Justificativa da prioridade |
+|---:|---|---|---|
+| **1** | **R36 - Coleta em massa de dados privados pela busca** | **12 - Crítico** | Pode expor informações de muitos usuários. Mesmo após corrigir a falha, os dados já copiados podem continuar circulando, dificultando a recuperação dos danos. |
+| **2** | **R21 e R22 - Sobrecarga da autenticação e da busca** | **12 - Crítico** | Afetam funções necessárias para acessar a plataforma e encontrar artistas. A facilidade de automatizar as requisições pode causar interrupções para vários usuários. |
+| **3** | **R25 - Excesso de solicitações contra um artista** | **12 - Crítico** | Pode impedir o atendimento de pedidos legítimos e prejudicar diretamente a renda do artista. Embora o cenário seja direcionado a uma conta, a repetição automatizada torna o abuso fácil quando faltam limites. |
+| **4** | **R28, R29 e R32 - Acesso indevido a funções administrativas** | **8 - Alto** | Podem dar acesso a dados e operações de vários usuários. Apesar da pontuação menor que a de outros riscos altos, o alcance das permissões administrativas justifica antecipar seu tratamento. |
+| **5** | **R08, R18 e R13 - Comprometimento do servidor, extração de dados e adulteração da auditoria** | **8 - Alto** | Podem atingir recursos centrais da plataforma, expor muitos dados ou eliminar evidências necessárias à investigação. Esses efeitos dificultam a identificação do problema e a recuperação do sistema. |
+| **6** | **R01, R02 e R34 - Tomada de conta, perfil falso e transferência indevida de identidade** | **9 - Alto** | Permitem fraudes em nome de artistas e prejudicam clientes que confiam na identidade e no histórico dos perfis. Também podem causar perda de reputação e exposição de negociações. |
+| **7** | **R15 e R20 - Exposição de localização e rotina do artista** | **9 - Alto** | Podem revelar informações pessoais e facilitar o acompanhamento indevido do artista. A retirada dessas informações da plataforma não elimina o que já foi coletado por terceiros. |
+| **8** | **R23 e R24 - Sobrecarga por uploads e processamento de imagens** | **9 - Alto** | Afetam a publicação de portfólios, as entregas e os recursos usados por outras funções. Devem ser tratados junto às regras de segurança dos arquivos enviados. |
+| **9** | **R07, R10, R11 e R12 - Manipulação de avaliações e falta de comprovação dos acordos** | **9 - Alto** | Prejudicam a confiança nas avaliações e a resolução de conflitos sobre propostas, mensagens e entregas. Podem causar perdas financeiras e dificultar a identificação das responsabilidades. |
+| **10** | **R03, R16, R17, R19, R30, R31 e R35 - Acesso indevido, exposição de dados e falhas na proteção de sessões e comunicação** | **6 - Médio** | Dependem de condições específicas, mas podem comprometer informações privadas e permitir a continuidade de acessos indevidos. Seus controles podem ser antecipados junto à proteção de contas e permissões. |
+| **11** | **R05, R06, R14, R33 e R37 - Alterações indevidas e perda de registros de contratação** | **6 - Médio** | Afetam preços, prazos, autorizações e evidências das contratações. Devem ser considerados na implementação das regras de negócio e da preservação do histórico. |
+| **12** | **R04 e R26 - Comprometimento da autenticação externa e reservas abusivas** | **6 - Médio** | Dependem da existência dessas funcionalidades. Caso sejam adotadas, os controles devem ser planejados antes de sua disponibilização aos usuários. |
+| **13** | **R09 e R27 - Inconsistência por operações simultâneas e falha do provedor externo** | **4 - Médio** | Nos cenários avaliados, os efeitos são limitados e recuperáveis. A prioridade deverá aumentar se as inconsistências causarem perdas relevantes ou se a falha do provedor impedir o acesso de muitos usuários por um período prolongado. |
+
+Essa ordem indica a importância de tratar os riscos, mas não obriga que os controles sejam implementados exatamente na mesma sequência. Por exemplo, a autorização no backend precisa estar disponível para que outros controles consigam distinguir usuários e proteger seus dados. Da mesma forma, os controles de segurança de uma funcionalidade devem acompanhar sua implementação. A posição dos riscos de upload na tabela, por exemplo, não significa que o envio de arquivos possa ser disponibilizado antes das validações necessárias.
+
+A prioridade deverá ser revista quando houver mudanças no sistema, resultados de testes ou novas informações sobre os riscos. A presença de um controle no código, por si só, não reduz automaticamente a prioridade: é necessário verificar se ele protege o cenário analisado.
 
 ## 14. Tratamento dos riscos com o NIST CSF 2.0
 
