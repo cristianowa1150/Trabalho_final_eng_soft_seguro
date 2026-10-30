@@ -993,19 +993,19 @@ Serão considerados:
 
 ## 📋 Checklist de execução — Etapa 6
 
-> Marque `- [x]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
+> Marque `- [🟢]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
 
-- [x] 27. Objetivo
-- [x] Criar `roteiros/etapa-6-deteccao-de-intrusoes.md`
-- [x] Explicar o que é detecção de intrusões
-- [x] Explicar a diferença entre prevenir e detectar
-- [x] Identificar quais eventos do sistema deveriam ser registrados
-- [x] Criar três regras simples de detecção
-- [x] Definir risco observado para cada regra
-- [x] Definir fonte de dados para cada regra
-- [x] Definir condição de alerta para cada regra
-- [x] Definir resposta inicial para cada regra
-- [x] 29. Critérios de avaliação da Etapa 6
+- [🟢] 27. Objetivo
+- [🟢] Criar `roteiros/etapa-6-deteccao-de-intrusoes.md`
+- [🟢] Explicar o que é detecção de intrusões
+- [🟢] Explicar a diferença entre prevenir e detectar
+- [🟢] Identificar quais eventos do sistema deveriam ser registrados
+- [🟢] Criar três regras simples de detecção
+- [🟢] Definir risco observado para cada regra
+- [🟢] Definir fonte de dados para cada regra
+- [🟢] Definir condição de alerta para cada regra
+- [🟢] Definir resposta inicial para cada regra
+- [🟢] 29. Critérios de avaliação da Etapa 6
 
 
 ## 27\. Objetivo
@@ -1063,23 +1063,23 @@ Serão considerados:
 
 ## 📋 Checklist de execução — Etapa 7
 
-> Marque `- [x]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
+> Marque `- [🟢]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
 
-- [x] 30. Objetivo
-- [x] Criar descrição textual ou diagrama de um pipeline DevSecOps
+- [🟢] 30. Objetivo
+- [🟢] Criar descrição textual ou diagrama de um pipeline DevSecOps
 - [x] Criar roteiro do vídeo/apresentação final
-- [x] Incluir planejamento e análise de ameaças
-- [x] Incluir requisitos e decisões de arquitetura
-- [x] Incluir implementação segura
-- [x] Incluir testes automatizados
-- [x] Incluir análise de código e dependências
-- [x] Incluir teste dinâmico ou pentest
-- [x] Incluir implantação
-- [x] Incluir monitoramento e resposta
-- [x] Definir pelo menos três condições que impediriam a continuidade do pipeline
-- [x] Criar `roteiros/etapa-7-devsecops-e-video-final.md`
+- [🟢] Incluir planejamento e análise de ameaças
+- [🟢] Incluir requisitos e decisões de arquitetura
+- [🟢] Incluir implementação segura
+- [🟢] Incluir testes automatizados
+- [🟢] Incluir análise de código e dependências
+- [🟢] Incluir teste dinâmico ou pentest
+- [🟢] Incluir implantação
+- [🟢] Incluir monitoramento e resposta
+- [🟢] Definir pelo menos três condições que impediriam a continuidade do pipeline
+- [🟢] Criar `roteiros/etapa-7-devsecops-e-video-final.md`
 - [x] Preparar roteiro da apresentação final de 10 a 15 minutos
-- [x] 33. Critérios de avaliação da Etapa 7
+- [🟢] 33. Critérios de avaliação da Etapa 7
 
 
 ## 30\. Objetivo
