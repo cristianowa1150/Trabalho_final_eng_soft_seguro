@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuditoriaService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.auditoria</a> &gt; <span class="el_source">AuditoriaService.java</span></div><h1>AuditoriaService.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.auditoria;
+
+import com.github.trabalhoengsoftseguro.artificio.artista.ObraPortfolio;
+import com.github.trabalhoengsoftseguro.artificio.artista.TipoComissao;
+import com.github.trabalhoengsoftseguro.artificio.avaliacao.Avaliacao;
+import com.github.trabalhoengsoftseguro.artificio.comissao.PedidoComissao;
+import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.DefaultRevisionEntity;
+import org.hibernate.envers.RevisionType;
+import org.hibernate.envers.query.AuditEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Serviço responsável por consultar e consolidar a trilha de auditoria forense do Hibernate Envers.
+ */
+@Service
+@Transactional(readOnly = true)
+<span class="fc" id="L33">public class AuditoriaService {</span>
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Page&lt;RegistroAuditoriaDto&gt; listarRevisoesPaginadas(int pagina, int tamanho) {
+<span class="nc" id="L39">        return listarRevisoesPaginadas(pagina, tamanho, null);</span>
+    }
+
+    public Page&lt;RegistroAuditoriaDto&gt; listarRevisoesPaginadas(int pagina, int tamanho, String termoBusca) {
+<span class="nc" id="L43">        List&lt;RegistroAuditoriaDto&gt; todos = listarUltimasRevisoes(500);</span>
+
+<span class="nc bnc" id="L45" title="All 4 branches missed.">        if (termoBusca != null &amp;&amp; !termoBusca.isBlank()) {</span>
+<span class="nc" id="L46">            String termo = termoBusca.trim().toLowerCase();</span>
+<span class="nc" id="L47">            todos = todos.stream()</span>
+<span class="nc bnc" id="L48" title="All 4 branches missed.">                    .filter(r -&gt; (r.entidade() != null &amp;&amp; r.entidade().toLowerCase().contains(termo))</span>
+<span class="nc bnc" id="L49" title="All 4 branches missed.">                            || (r.autor() != null &amp;&amp; r.autor().toLowerCase().contains(termo))</span>
+<span class="nc bnc" id="L50" title="All 4 branches missed.">                            || (r.operacao() != null &amp;&amp; r.operacao().toLowerCase().contains(termo))</span>
+<span class="nc bnc" id="L51" title="All 4 branches missed.">                            || (r.identificador() != null &amp;&amp; r.identificador().toLowerCase().contains(termo))</span>
+<span class="nc bnc" id="L52" title="All 4 branches missed.">                            || (r.resumo() != null &amp;&amp; r.resumo().toLowerCase().contains(termo))</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                            || (String.valueOf(r.numeroRevisao()).contains(termo)))</span>
+<span class="nc" id="L54">                    .toList();</span>
+        }
+
+<span class="nc" id="L57">        int total = todos.size();</span>
+<span class="nc" id="L58">        int safePage = Math.max(0, pagina);</span>
+<span class="nc" id="L59">        int safeSize = Math.max(1, tamanho);</span>
+<span class="nc" id="L60">        long offset = (long) safePage * safeSize;</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        int inicio = (offset &gt; total) ? total : (int) offset;</span>
+<span class="nc" id="L62">        int fim = (int) Math.min((long) inicio + safeSize, (long) total);</span>
+<span class="nc" id="L63">        List&lt;RegistroAuditoriaDto&gt; sublista = todos.subList(inicio, fim);</span>
+<span class="nc" id="L64">        Pageable pageable = PageRequest.of(safePage, safeSize);</span>
+<span class="nc" id="L65">        return new PageImpl&lt;&gt;(sublista, pageable, total);</span>
+    }
+
+    public List&lt;RegistroAuditoriaDto&gt; listarUltimasRevisoes(int limite) {
+<span class="nc" id="L69">        AuditReader reader = AuditReaderFactory.get(entityManager);</span>
+<span class="nc" id="L70">        List&lt;RegistroAuditoriaDto&gt; registros = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L72">        adicionarRevisoes(reader, PedidoComissao.class, &quot;Pedido de Comissão&quot;, registros);</span>
+<span class="nc" id="L73">        adicionarRevisoes(reader, Usuario.class, &quot;Usuário&quot;, registros);</span>
+<span class="nc" id="L74">        adicionarRevisoes(reader, Avaliacao.class, &quot;Avaliação&quot;, registros);</span>
+<span class="nc" id="L75">        adicionarRevisoes(reader, TipoComissao.class, &quot;Tipo de Comissão&quot;, registros);</span>
+<span class="nc" id="L76">        adicionarRevisoes(reader, ObraPortfolio.class, &quot;Obra do Portfólio&quot;, registros);</span>
+
+<span class="nc" id="L78">        return registros.stream()</span>
+<span class="nc" id="L79">                .sorted((r1, r2) -&gt; Long.compare(r2.numeroRevisao(), r1.numeroRevisao()))</span>
+<span class="nc" id="L80">                .limit(limite)</span>
+<span class="nc" id="L81">                .toList();</span>
+    }
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    private &lt;T&gt; void adicionarRevisoes(AuditReader reader, Class&lt;T&gt; entityClass, String nomeAmigavel, List&lt;RegistroAuditoriaDto&gt; registros) {
+        try {
+<span class="nc" id="L87">            List&lt;Object[]&gt; resultados = reader.createQuery()</span>
+<span class="nc" id="L88">                    .forRevisionsOfEntity(entityClass, false, true)</span>
+<span class="nc" id="L89">                    .addOrder(AuditEntity.revisionNumber().desc())</span>
+<span class="nc" id="L90">                    .setMaxResults(30)</span>
+<span class="nc" id="L91">                    .getResultList();</span>
+
+<span class="nc bnc" id="L93" title="All 2 branches missed.">            for (Object[] row : resultados) {</span>
+<span class="nc" id="L94">                T entidade = (T) row[0];</span>
+<span class="nc" id="L95">                DefaultRevisionEntity revEntity = (DefaultRevisionEntity) row[1];</span>
+<span class="nc" id="L96">                RevisionType revType = (RevisionType) row[2];</span>
+
+<span class="nc" id="L98">                Long revId = (long) revEntity.getId();</span>
+<span class="nc" id="L99">                LocalDateTime dataHora = LocalDateTime.ofInstant(</span>
+<span class="nc" id="L100">                        Instant.ofEpochMilli(revEntity.getTimestamp()),</span>
+<span class="nc" id="L101">                        ZoneId.systemDefault()</span>
+                );
+
+                String operacao;
+                String badgeClass;
+<span class="nc bnc" id="L106" title="All 4 branches missed.">                switch (revType) {</span>
+                    case ADD -&gt; {
+<span class="nc" id="L108">                        operacao = &quot;CRIAÇÃO&quot;;</span>
+<span class="nc" id="L109">                        badgeClass = &quot;badge-aceita&quot;;</span>
+<span class="nc" id="L110">                    }</span>
+                    case MOD -&gt; {
+<span class="nc" id="L112">                        operacao = &quot;MODIFICAÇÃO&quot;;</span>
+<span class="nc" id="L113">                        badgeClass = &quot;badge-em_andamento&quot;;</span>
+<span class="nc" id="L114">                    }</span>
+                    case DEL -&gt; {
+<span class="nc" id="L116">                        operacao = &quot;EXCLUSÃO&quot;;</span>
+<span class="nc" id="L117">                        badgeClass = &quot;badge-recusada&quot;;</span>
+<span class="nc" id="L118">                    }</span>
+                    default -&gt; {
+<span class="nc" id="L120">                        operacao = revType.name();</span>
+<span class="nc" id="L121">                        badgeClass = &quot;badge-solicitada&quot;;</span>
+                    }
+                }
+
+<span class="nc" id="L125">                String autor = &quot;SISTEMA&quot;;</span>
+<span class="nc" id="L126">                String identificador = &quot;-&quot;;</span>
+<span class="nc" id="L127">                String resumo = &quot;-&quot;;</span>
+
+<span class="nc bnc" id="L129" title="All 2 branches missed.">                if (entidade instanceof EntidadeAuditavel auditavel) {</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">                    if (auditavel.getAtualizadoPor() != null) {</span>
+<span class="nc" id="L131">                        autor = auditavel.getAtualizadoPor();</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">                    } else if (auditavel.getCriadoPor() != null) {</span>
+<span class="nc" id="L133">                        autor = auditavel.getCriadoPor();</span>
+                    }
+                }
+
+<span class="nc bnc" id="L137" title="All 2 branches missed.">                if (entidade instanceof PedidoComissao pedido) {</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                    identificador = pedido.getId() != null ? pedido.getId().toString() : &quot;-&quot;;</span>
+<span class="nc" id="L139">                    resumo = &quot;Status: &quot; + pedido.getStatus() + &quot; | Valor: R$ &quot; + pedido.getValorFinal() +</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">                             (pedido.getCliente() != null ? &quot; | Cliente: &quot; + pedido.getCliente().getNome() : &quot;&quot;);</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">                } else if (entidade instanceof Usuario user) {</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">                    identificador = user.getId() != null ? user.getId().toString() : &quot;-&quot;;</span>
+<span class="nc" id="L143">                    resumo = user.getNome() + &quot; (&quot; + user.getEmail() + &quot;) - &quot; + user.getRole();</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">                } else if (entidade instanceof Avaliacao avaliacao) {</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">                    identificador = avaliacao.getId() != null ? avaliacao.getId().toString() : &quot;-&quot;;</span>
+<span class="nc" id="L146">                    resumo = &quot;Nota: &quot; + avaliacao.getNota() + &quot;⭐ | Comentário: &quot; + avaliacao.getComentario();</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">                } else if (entidade instanceof TipoComissao tipo) {</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">                    identificador = tipo.getId() != null ? tipo.getId().toString() : &quot;-&quot;;</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">                    resumo = tipo.getTitulo() + &quot; | R$ &quot; + tipo.getPrecoBase() + (tipo.isAtivo() ? &quot; (Ativo)&quot; : &quot; (Pausado)&quot;);</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">                } else if (entidade instanceof ObraPortfolio obra) {</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">                    identificador = obra.getId() != null ? obra.getId().toString() : &quot;-&quot;;</span>
+<span class="nc" id="L152">                    resumo = obra.getTitulo() + &quot; (&quot; + obra.getCategoria() + &quot;)&quot;;</span>
+                }
+
+<span class="nc" id="L155">                registros.add(new RegistroAuditoriaDto(</span>
+                        revId,
+                        dataHora,
+                        nomeAmigavel,
+<span class="nc" id="L159">                        entityClass.getSimpleName(),</span>
+                        operacao,
+                        badgeClass,
+                        autor,
+                        identificador,
+                        resumo
+                ));
+<span class="nc" id="L166">            }</span>
+<span class="nc" id="L167">        } catch (Exception ignored) {</span>
+            // Tratamento defensivo caso o banco ainda não possua revisões da entidade
+<span class="nc" id="L169">        }</span>
+<span class="nc" id="L170">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

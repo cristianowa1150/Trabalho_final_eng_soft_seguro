@@ -1,0 +1,9 @@
+
+Path        Status DemoButton DemoPassword H2Console
+----        ------ ---------- ------------ ---------
+/              200      False        False     False
+/login         200      False        False     False
+/h2-console    404      False        False     False
+
+
+

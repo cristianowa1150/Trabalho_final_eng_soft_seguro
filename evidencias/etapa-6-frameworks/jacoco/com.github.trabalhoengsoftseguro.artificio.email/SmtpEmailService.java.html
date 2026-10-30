@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SmtpEmailService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.email</a> &gt; <span class="el_source">SmtpEmailService.java</span></div><h1>SmtpEmailService.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.email;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Service;
+
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+
+/**
+ * Implementação de envio de e-mails para ambiente de produção (prod).
+ * Conecta a um servidor SMTP / submission configurado via properties.
+ */
+@Service
+@Profile(&quot;prod&quot;)
+<span class="nc" id="L19">public class SmtpEmailService implements EmailService {</span>
+
+<span class="nc" id="L21">    private static final Logger log = LoggerFactory.getLogger(SmtpEmailService.class);</span>
+
+    @Value(&quot;${artificio.mail.smtp.host:localhost}&quot;)
+    private String smtpHost;
+
+    @Value(&quot;${artificio.mail.smtp.port:587}&quot;)
+    private int smtpPort;
+
+    @Value(&quot;${artificio.mail.from:noreply@artificio.local}&quot;)
+    private String remetente;
+
+    @Override
+    public void enviarEmailConfirmacao(String destinatario, String nomeUsuario, String linkAtivacao) {
+<span class="nc" id="L34">        log.info(&quot;Enviando e-mail de ativação via SMTP {}:{} para {}&quot;, smtpHost, smtpPort, destinatario);</span>
+<span class="nc" id="L35">        try (Socket socket = new Socket(smtpHost, smtpPort);</span>
+<span class="nc" id="L36">             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true, StandardCharsets.UTF_8)) {</span>
+<span class="nc" id="L37">            writer.println(&quot;HELO artificio.local&quot;);</span>
+<span class="nc" id="L38">            writer.println(&quot;MAIL FROM:&lt;&quot; + remetente + &quot;&gt;&quot;);</span>
+<span class="nc" id="L39">            writer.println(&quot;RCPT TO:&lt;&quot; + destinatario + &quot;&gt;&quot;);</span>
+<span class="nc" id="L40">            writer.println(&quot;DATA&quot;);</span>
+<span class="nc" id="L41">            writer.println(&quot;Subject: Ative sua conta no Artificio&quot;);</span>
+<span class="nc" id="L42">            writer.println(&quot;From: &quot; + remetente);</span>
+<span class="nc" id="L43">            writer.println(&quot;To: &quot; + destinatario);</span>
+<span class="nc" id="L44">            writer.println();</span>
+<span class="nc" id="L45">            writer.println(&quot;Ola &quot; + nomeUsuario + &quot;,&quot;);</span>
+<span class="nc" id="L46">            writer.println(&quot;Para ativar sua conta na plataforma Artificio, acesse o link abaixo:&quot;);</span>
+<span class="nc" id="L47">            writer.println(linkAtivacao);</span>
+<span class="nc" id="L48">            writer.println(&quot;.&quot;);</span>
+<span class="nc" id="L49">            writer.println(&quot;QUIT&quot;);</span>
+<span class="nc" id="L50">            log.info(&quot;E-mail de ativação enviado com sucesso para {}&quot;, destinatario);</span>
+<span class="nc" id="L51">        } catch (Exception ex) {</span>
+<span class="nc" id="L52">            log.error(&quot;Erro ao enviar e-mail via servidor SMTP {}:{}. Detalhes: {}&quot;, smtpHost, smtpPort, ex.getMessage());</span>
+<span class="nc" id="L53">        }</span>
+<span class="nc" id="L54">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>NovoTipoComissaoDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.artista</a> &gt; <span class="el_source">NovoTipoComissaoDto.java</span></div><h1>NovoTipoComissaoDto.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.artista;
+
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
+
+/**
+ * DTO para cadastro de novas modalidades de comissão por um artista.
+ */
+<span class="nc" id="L15">public record NovoTipoComissaoDto(</span>
+        @NotBlank(message = &quot;O título é obrigatório&quot;)
+        @Size(min = 2, max = 150, message = &quot;O título deve ter entre 2 e 150 caracteres&quot;)
+        String titulo,
+
+        @Size(max = 2000, message = &quot;A descrição deve ter no máximo 2000 caracteres&quot;)
+        String descricao,
+
+        @NotBlank(message = &quot;A categoria é obrigatória&quot;)
+        @Size(min = 2, max = 80, message = &quot;A categoria deve ter entre 2 e 80 caracteres&quot;)
+        String categoria,
+
+        @NotNull(message = &quot;O preço base é obrigatório&quot;)
+        @DecimalMin(value = &quot;0.01&quot;, message = &quot;O preço base deve ser no mínimo R$ 0,01&quot;)
+        @DecimalMax(value = &quot;99999999.99&quot;, message = &quot;O preço base não pode exceder R$ 99.999.999,99&quot;)
+        BigDecimal precoBase,
+
+        @NotNull(message = &quot;O prazo estimado é obrigatório&quot;)
+        @Min(value = 1, message = &quot;O prazo deve ser de pelo menos 1 dia&quot;)
+        @Max(value = 365, message = &quot;O prazo não pode exceder 365 dias&quot;)
+        Integer prazoEstimadoDias
+) {
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

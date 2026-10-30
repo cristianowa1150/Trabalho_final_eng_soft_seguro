@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalModelAdvice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.config</a> &gt; <span class="el_source">GlobalModelAdvice.java</span></div><h1>GlobalModelAdvice.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ModelAttribute;
+
+/**
+ * Fornece atributos globais compartilhados por todas as views Thymeleaf.
+ * Controla a visibilidade dos facilitadores de teste/demonstração com base no ambiente.
+ */
+@ControllerAdvice
+public class GlobalModelAdvice {
+
+    private final boolean exibirCredenciaisDemo;
+
+    public GlobalModelAdvice(
+            Environment environment,
+<span class="fc" id="L20">            @Value(&quot;${artificio.demo.exibir-credenciais:true}&quot;) boolean exibirCredenciaisConfig) {</span>
+<span class="fc" id="L21">        boolean isProd = environment.acceptsProfiles(Profiles.of(&quot;prod&quot;));</span>
+<span class="pc bpc" id="L22" title="2 of 4 branches missed.">        this.exibirCredenciaisDemo = !isProd &amp;&amp; exibirCredenciaisConfig;</span>
+<span class="fc" id="L23">    }</span>
+
+    @ModelAttribute(&quot;exibirCredenciaisDemo&quot;)
+    public boolean getExibirCredenciaisDemo() {
+<span class="fc" id="L27">        return exibirCredenciaisDemo;</span>
+    }
+
+    @ModelAttribute(&quot;senhaAdminDemo&quot;)
+    public String getSenhaAdminDemo() {
+<span class="fc" id="L32">        return AdminInitializer.getSenhaAdminGerada();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

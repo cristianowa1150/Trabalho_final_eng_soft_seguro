@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ComissaoService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.comissao</a> &gt; <span class="el_source">ComissaoService.java</span></div><h1>ComissaoService.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.comissao;
+
+import com.github.trabalhoengsoftseguro.artificio.artista.TipoComissao;
+import com.github.trabalhoengsoftseguro.artificio.artista.TipoComissaoRepository;
+import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
+import com.github.trabalhoengsoftseguro.artificio.usuario.UsuarioRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@Transactional(readOnly = true)
+public class ComissaoService {
+
+    private final PedidoComissaoRepository pedidoRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final TipoComissaoRepository tipoComissaoRepository;
+
+    public ComissaoService(PedidoComissaoRepository pedidoRepository,
+                           UsuarioRepository usuarioRepository,
+<span class="fc" id="L24">                           TipoComissaoRepository tipoComissaoRepository) {</span>
+<span class="fc" id="L25">        this.pedidoRepository = pedidoRepository;</span>
+<span class="fc" id="L26">        this.usuarioRepository = usuarioRepository;</span>
+<span class="fc" id="L27">        this.tipoComissaoRepository = tipoComissaoRepository;</span>
+<span class="fc" id="L28">    }</span>
+
+    @Transactional
+    public PedidoComissao criarSolicitacao(UUID clienteId, SolicitacaoComissaoDto dto) {
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">        if (dto == null) {</span>
+<span class="nc" id="L33">            throw new IllegalArgumentException(&quot;Dados da solicitação não podem ser nulos&quot;);</span>
+        }
+
+<span class="fc" id="L36">        Usuario cliente = usuarioRepository.findById(clienteId)</span>
+<span class="pc" id="L37">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Cliente não encontrado com ID: &quot; + clienteId));</span>
+
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if (cliente.isAdmin()) {</span>
+<span class="fc" id="L40">            throw new IllegalArgumentException(&quot;Contas administrativas não têm permissão para contratar comissões&quot;);</span>
+        }
+
+<span class="fc" id="L43">        TipoComissao tipo = tipoComissaoRepository.findById(dto.tipoComissaoId())</span>
+<span class="pc" id="L44">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Tipo de comissão não encontrado com ID: &quot; + dto.tipoComissaoId()));</span>
+
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if (!tipo.isAtivo()) {</span>
+<span class="nc" id="L47">            throw new IllegalArgumentException(&quot;Esta modalidade de serviço não está mais disponível para novas encomendas&quot;);</span>
+        }
+
+<span class="fc" id="L50">        Usuario artista = tipo.getArtista();</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (artista.getId().equals(clienteId)) {</span>
+<span class="fc" id="L52">            throw new IllegalArgumentException(&quot;Você não pode solicitar uma comissão para si próprio&quot;);</span>
+        }
+
+<span class="fc" id="L55">        PedidoComissao pedido = new PedidoComissao(</span>
+<span class="fc" id="L56">                dto.briefing(),</span>
+<span class="fc" id="L57">                tipo.getPrecoBase(),</span>
+<span class="fc" id="L58">                tipo.getPrazoEstimadoDias(),</span>
+                cliente,
+                artista,
+                tipo
+        );
+
+<span class="fc" id="L64">        return pedidoRepository.save(pedido);</span>
+    }
+
+    @Transactional
+    public PedidoComissao aceitarPedido(UUID pedidoId, UUID artistaId) {
+<span class="fc" id="L69">        PedidoComissao pedido = buscarPorId(pedidoId);</span>
+
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (!pedido.getArtista().getId().equals(artistaId)) {</span>
+<span class="fc" id="L72">            throw new IllegalArgumentException(&quot;Apenas o artista destinatário pode aceitar este pedido&quot;);</span>
+        }
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if (pedido.getStatus() != StatusComissao.SOLICITADA) {</span>
+<span class="nc" id="L75">            throw new IllegalStateException(&quot;Apenas pedidos em estado SOLICITADA podem ser aceitos&quot;);</span>
+        }
+
+<span class="fc" id="L78">        pedido.setStatus(StatusComissao.AGUARDANDO_PAGAMENTO);</span>
+<span class="fc" id="L79">        pedido.setCodigoPixSimulado(&quot;00020126580014BR.GOV.BCB.PIX0136&quot; + UUID.randomUUID().toString().replace(&quot;-&quot;, &quot;&quot;));</span>
+
+<span class="fc" id="L81">        return pedidoRepository.save(pedido);</span>
+    }
+
+    @Transactional
+    public PedidoComissao recusarPedido(UUID pedidoId, UUID artistaId) {
+<span class="nc" id="L86">        PedidoComissao pedido = buscarPorId(pedidoId);</span>
+
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (!pedido.getArtista().getId().equals(artistaId)) {</span>
+<span class="nc" id="L89">            throw new IllegalArgumentException(&quot;Apenas o artista destinatário pode recusar este pedido&quot;);</span>
+        }
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        if (pedido.getStatus() != StatusComissao.SOLICITADA) {</span>
+<span class="nc" id="L92">            throw new IllegalStateException(&quot;Apenas pedidos em estado SOLICITADA podem ser recusados&quot;);</span>
+        }
+
+<span class="nc" id="L95">        pedido.setStatus(StatusComissao.RECUSADA);</span>
+<span class="nc" id="L96">        return pedidoRepository.save(pedido);</span>
+    }
+
+    @Transactional
+    public PedidoComissao cancelarPedido(UUID pedidoId, UUID clienteId) {
+<span class="nc" id="L101">        PedidoComissao pedido = buscarPorId(pedidoId);</span>
+
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (!pedido.getCliente().getId().equals(clienteId)) {</span>
+<span class="nc" id="L104">            throw new IllegalArgumentException(&quot;Apenas o cliente solicitante pode cancelar este pedido&quot;);</span>
+        }
+<span class="nc bnc" id="L106" title="All 4 branches missed.">        if (pedido.getStatus() != StatusComissao.SOLICITADA &amp;&amp; pedido.getStatus() != StatusComissao.AGUARDANDO_PAGAMENTO) {</span>
+<span class="nc" id="L107">            throw new IllegalStateException(&quot;O pedido não pode ser cancelado após o início da produção ou pagamento&quot;);</span>
+        }
+
+<span class="nc" id="L110">        pedido.setStatus(StatusComissao.CANCELADA);</span>
+<span class="nc" id="L111">        return pedidoRepository.save(pedido);</span>
+    }
+
+    @Transactional
+    public PedidoComissao registrarPagamentoSimulado(UUID pedidoId, UUID clienteId) {
+<span class="fc" id="L116">        PedidoComissao pedido = buscarPorId(pedidoId);</span>
+
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if (!pedido.getCliente().getId().equals(clienteId)) {</span>
+<span class="nc" id="L119">            throw new IllegalArgumentException(&quot;Apenas o cliente solicitante pode confirmar o pagamento&quot;);</span>
+        }
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if (pedido.getStatus() != StatusComissao.AGUARDANDO_PAGAMENTO) {</span>
+<span class="nc" id="L122">            throw new IllegalStateException(&quot;O pedido não está aguardando pagamento&quot;);</span>
+        }
+
+<span class="fc" id="L125">        pedido.setStatus(StatusComissao.PAGO);</span>
+<span class="fc" id="L126">        return pedidoRepository.save(pedido);</span>
+    }
+
+    @Transactional
+    public PedidoComissao iniciarProducao(UUID pedidoId, UUID artistaId) {
+<span class="nc" id="L131">        PedidoComissao pedido = buscarPorId(pedidoId);</span>
+
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (!pedido.getArtista().getId().equals(artistaId)) {</span>
+<span class="nc" id="L134">            throw new IllegalArgumentException(&quot;Apenas o artista pode iniciar a produção do trabalho&quot;);</span>
+        }
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        if (pedido.getStatus() != StatusComissao.PAGO) {</span>
+<span class="nc" id="L137">            throw new IllegalStateException(&quot;Apenas pedidos pagos podem ter a produção iniciada&quot;);</span>
+        }
+
+<span class="nc" id="L140">        pedido.setStatus(StatusComissao.EM_ANDAMENTO);</span>
+<span class="nc" id="L141">        return pedidoRepository.save(pedido);</span>
+    }
+
+    @Transactional
+    public PedidoComissao registrarEntrega(UUID pedidoId, String linkEntrega, UUID artistaId) {
+<span class="pc bpc" id="L146" title="2 of 4 branches missed.">        if (linkEntrega == null || linkEntrega.isBlank()) {</span>
+<span class="nc" id="L147">            throw new IllegalArgumentException(&quot;O link ou endereço do arquivo de entrega é obrigatório&quot;);</span>
+        }
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">        if (linkEntrega.trim().length() &gt; 1000) {</span>
+<span class="nc" id="L150">            throw new IllegalArgumentException(&quot;O link de entrega deve conter no máximo 1000 caracteres&quot;);</span>
+        }
+
+<span class="fc" id="L153">        PedidoComissao pedido = buscarPorId(pedidoId);</span>
+
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">        if (!pedido.getArtista().getId().equals(artistaId)) {</span>
+<span class="nc" id="L156">            throw new IllegalArgumentException(&quot;Apenas o artista pode registrar a entrega do trabalho&quot;);</span>
+        }
+<span class="pc bpc" id="L158" title="3 of 4 branches missed.">        if (pedido.getStatus() != StatusComissao.EM_ANDAMENTO &amp;&amp; pedido.getStatus() != StatusComissao.PAGO) {</span>
+<span class="nc" id="L159">            throw new IllegalStateException(&quot;O pedido deve estar em andamento para receber uma entrega&quot;);</span>
+        }
+
+<span class="fc" id="L162">        pedido.setLinkEntrega(linkEntrega.trim());</span>
+<span class="fc" id="L163">        pedido.setStatus(StatusComissao.ENTREGUE);</span>
+
+<span class="fc" id="L165">        return pedidoRepository.save(pedido);</span>
+    }
+
+    @Transactional
+    public PedidoComissao solicitarRevisao(UUID pedidoId, UUID clienteId) {
+<span class="nc" id="L170">        PedidoComissao pedido = buscarPorId(pedidoId);</span>
+
+<span class="nc bnc" id="L172" title="All 2 branches missed.">        if (!pedido.getCliente().getId().equals(clienteId)) {</span>
+<span class="nc" id="L173">            throw new IllegalArgumentException(&quot;Apenas o cliente pode solicitar revisão da arte entregue&quot;);</span>
+        }
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        if (pedido.getStatus() != StatusComissao.ENTREGUE) {</span>
+<span class="nc" id="L176">            throw new IllegalStateException(&quot;Apenas pedidos entregues podem ter revisão solicitada&quot;);</span>
+        }
+
+<span class="nc" id="L179">        pedido.setStatus(StatusComissao.EM_ANDAMENTO);</span>
+<span class="nc" id="L180">        return pedidoRepository.save(pedido);</span>
+    }
+
+    @Transactional
+    public PedidoComissao aprovarConclusao(UUID pedidoId, UUID clienteId) {
+<span class="fc" id="L185">        PedidoComissao pedido = buscarPorId(pedidoId);</span>
+
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">        if (!pedido.getCliente().getId().equals(clienteId)) {</span>
+<span class="nc" id="L188">            throw new IllegalArgumentException(&quot;Apenas o cliente pode aprovar a conclusão da comissão&quot;);</span>
+        }
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">        if (pedido.getStatus() != StatusComissao.ENTREGUE) {</span>
+<span class="nc" id="L191">            throw new IllegalStateException(&quot;Apenas pedidos com arte entregue podem ser concluídos e aprovados&quot;);</span>
+        }
+
+<span class="fc" id="L194">        pedido.setStatus(StatusComissao.CONCLUIDA);</span>
+<span class="fc" id="L195">        pedido.setDataConclusao(LocalDateTime.now());</span>
+
+<span class="fc" id="L197">        return pedidoRepository.save(pedido);</span>
+    }
+
+    public PedidoComissao buscarPorId(UUID pedidoId) {
+<span class="fc" id="L201">        return pedidoRepository.findById(pedidoId)</span>
+<span class="pc" id="L202">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Pedido de comissão não encontrado com ID: &quot; + pedidoId));</span>
+    }
+
+    public List&lt;PedidoComissao&gt; listarPorCliente(UUID clienteId) {
+<span class="nc" id="L206">        return pedidoRepository.findByClienteIdOrderByDataSolicitacaoDesc(clienteId);</span>
+    }
+
+    public List&lt;PedidoComissao&gt; listarPorArtista(UUID artistaId) {
+<span class="nc" id="L210">        return pedidoRepository.findByArtistaIdOrderByDataSolicitacaoDesc(artistaId);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ArtistaService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.artista</a> &gt; <span class="el_source">ArtistaService.java</span></div><h1>ArtistaService.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.artista;
+
+import com.github.trabalhoengsoftseguro.artificio.avaliacao.AvaliacaoRepository;
+import com.github.trabalhoengsoftseguro.artificio.imagem.ImagemService;
+import com.github.trabalhoengsoftseguro.artificio.usuario.Role;
+import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
+import com.github.trabalhoengsoftseguro.artificio.usuario.UsuarioRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@Transactional(readOnly = true)
+public class ArtistaService {
+
+    private final UsuarioRepository usuarioRepository;
+    private final ObraPortfolioRepository obraPortfolioRepository;
+    private final TipoComissaoRepository tipoComissaoRepository;
+    private final AvaliacaoRepository avaliacaoRepository;
+    private final ImagemService imagemService;
+
+    public ArtistaService(UsuarioRepository usuarioRepository,
+                          ObraPortfolioRepository obraPortfolioRepository,
+                          TipoComissaoRepository tipoComissaoRepository,
+                          AvaliacaoRepository avaliacaoRepository,
+<span class="fc" id="L28">                          ImagemService imagemService) {</span>
+<span class="fc" id="L29">        this.usuarioRepository = usuarioRepository;</span>
+<span class="fc" id="L30">        this.obraPortfolioRepository = obraPortfolioRepository;</span>
+<span class="fc" id="L31">        this.tipoComissaoRepository = tipoComissaoRepository;</span>
+<span class="fc" id="L32">        this.avaliacaoRepository = avaliacaoRepository;</span>
+<span class="fc" id="L33">        this.imagemService = imagemService;</span>
+<span class="fc" id="L34">    }</span>
+
+    public List&lt;Usuario&gt; buscarArtistasComFiltros(String categoria, String termo) {
+<span class="nc bnc" id="L37" title="All 4 branches missed.">        String catNorm = (categoria != null &amp;&amp; !categoria.isBlank()) ? categoria.trim() : null;</span>
+<span class="nc bnc" id="L38" title="All 4 branches missed.">        String termoNorm = (termo != null &amp;&amp; !termo.isBlank()) ? termo.trim() : null;</span>
+
+<span class="nc" id="L40">        return usuarioRepository.buscarArtistasFiltrados(Role.ROLE_ARTISTA, catNorm, termoNorm);</span>
+    }
+
+    public ArtistaPerfilDto obterPerfilCompleto(UUID artistaId) {
+<span class="nc" id="L44">        Usuario artista = usuarioRepository.findById(artistaId)</span>
+<span class="nc" id="L45">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Artista não encontrado com ID: &quot; + artistaId));</span>
+
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        if (!artista.isArtista()) {</span>
+<span class="nc" id="L48">            throw new IllegalArgumentException(&quot;O usuário informado não possui perfil de artista&quot;);</span>
+        }
+
+<span class="nc" id="L51">        List&lt;ObraPortfolio&gt; obras = obraPortfolioRepository.findByArtistaIdOrderByDataCriacaoDesc(artistaId);</span>
+<span class="nc" id="L52">        List&lt;TipoComissao&gt; tipos = tipoComissaoRepository.findByArtistaIdAndAtivoTrue(artistaId);</span>
+<span class="nc" id="L53">        Double media = avaliacaoRepository.calcularMediaNotasPorArtista(artistaId);</span>
+<span class="nc" id="L54">        long total = avaliacaoRepository.countByArtistaId(artistaId);</span>
+
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        return new ArtistaPerfilDto(artista, obras, tipos, media != null ? media : 0.0, total);</span>
+    }
+
+    @Transactional
+    public ObraPortfolio adicionarObra(UUID artistaId, NovaObraDto dto, byte[] bytesArquivo, String nomeArquivo, String contentType) {
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (dto == null) {</span>
+<span class="nc" id="L62">            throw new IllegalArgumentException(&quot;Dados da obra não podem ser nulos&quot;);</span>
+        }
+<span class="nc" id="L64">        Usuario artista = usuarioRepository.findById(artistaId)</span>
+<span class="nc" id="L65">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Artista não encontrado com ID: &quot; + artistaId));</span>
+
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (!artista.isArtista()) {</span>
+<span class="nc" id="L68">            throw new IllegalArgumentException(&quot;Apenas contas com papel de Artista podem publicar obras&quot;);</span>
+        }
+
+<span class="nc" id="L71">        String imagemId = imagemService.salvar(bytesArquivo, nomeArquivo, contentType);</span>
+<span class="nc" id="L72">        ObraPortfolio obra = new ObraPortfolio(dto.titulo(), dto.descricao(), dto.categoria(), imagemId, artista);</span>
+
+<span class="nc" id="L74">        return obraPortfolioRepository.save(obra);</span>
+    }
+
+    @Transactional
+    public void removerObra(UUID artistaId, UUID obraId) {
+<span class="nc" id="L79">        ObraPortfolio obra = obraPortfolioRepository.findById(obraId)</span>
+<span class="nc" id="L80">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Obra não encontrada com ID: &quot; + obraId));</span>
+
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (!obra.getArtista().getId().equals(artistaId)) {</span>
+<span class="nc" id="L83">            throw new IllegalArgumentException(&quot;A obra não pertence ao artista logado&quot;);</span>
+        }
+
+<span class="nc" id="L86">        imagemService.remover(obra.getImagemId());</span>
+<span class="nc" id="L87">        obraPortfolioRepository.delete(obra);</span>
+<span class="nc" id="L88">    }</span>
+
+    @Transactional
+    public TipoComissao salvarTipoComissao(UUID artistaId, NovoTipoComissaoDto dto) {
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (dto == null) {</span>
+<span class="nc" id="L93">            throw new IllegalArgumentException(&quot;Dados do tipo de comissão não podem ser nulos&quot;);</span>
+        }
+<span class="nc" id="L95">        Usuario artista = usuarioRepository.findById(artistaId)</span>
+<span class="nc" id="L96">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Artista não encontrado com ID: &quot; + artistaId));</span>
+
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        if (!artista.isArtista()) {</span>
+<span class="nc" id="L99">            throw new IllegalArgumentException(&quot;Apenas contas com papel de Artista podem cadastrar modalidades de comissão&quot;);</span>
+        }
+
+<span class="nc" id="L102">        TipoComissao tipo = new TipoComissao(</span>
+<span class="nc" id="L103">                dto.titulo(),</span>
+<span class="nc" id="L104">                dto.descricao(),</span>
+<span class="nc" id="L105">                dto.categoria(),</span>
+<span class="nc" id="L106">                dto.precoBase(),</span>
+<span class="nc" id="L107">                dto.prazoEstimadoDias(),</span>
+                artista
+        );
+
+<span class="nc" id="L111">        return tipoComissaoRepository.save(tipo);</span>
+    }
+
+    @Transactional
+    public void alternarStatusTipoComissao(UUID artistaId, UUID tipoId, boolean ativo) {
+<span class="nc" id="L116">        TipoComissao tipo = tipoComissaoRepository.findById(tipoId)</span>
+<span class="nc" id="L117">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Tipo de comissão não encontrado com ID: &quot; + tipoId));</span>
+
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (!tipo.getArtista().getId().equals(artistaId)) {</span>
+<span class="nc" id="L120">            throw new IllegalArgumentException(&quot;O serviço não pertence ao artista logado&quot;);</span>
+        }
+
+<span class="nc" id="L123">        tipo.setAtivo(ativo);</span>
+<span class="nc" id="L124">        tipoComissaoRepository.save(tipo);</span>
+<span class="nc" id="L125">    }</span>
+
+    public List&lt;ObraPortfolio&gt; listarObrasDoArtista(UUID artistaId) {
+<span class="nc" id="L128">        return obraPortfolioRepository.findByArtistaIdOrderByDataCriacaoDesc(artistaId);</span>
+    }
+
+    public List&lt;TipoComissao&gt; listarTiposComissaoDoArtista(UUID artistaId) {
+<span class="nc" id="L132">        return tipoComissaoRepository.findByArtistaId(artistaId);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

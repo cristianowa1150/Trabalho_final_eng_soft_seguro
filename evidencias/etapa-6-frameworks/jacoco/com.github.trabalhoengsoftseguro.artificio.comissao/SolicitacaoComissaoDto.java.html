@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SolicitacaoComissaoDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.comissao</a> &gt; <span class="el_source">SolicitacaoComissaoDto.java</span></div><h1>SolicitacaoComissaoDto.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.comissao;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import java.util.UUID;
+
+/**
+ * DTO para submissão de nova proposta/solicitação de comissão por um cliente.
+ */
+<span class="fc" id="L11">public record SolicitacaoComissaoDto(</span>
+        @NotNull(message = &quot;O tipo de comissão deve ser selecionado&quot;)
+        UUID tipoComissaoId,
+
+        @NotBlank(message = &quot;O briefing detalhando seu pedido é obrigatório&quot;)
+        @Size(min = 10, max = 4000, message = &quot;O briefing deve conter entre 10 e 4000 caracteres&quot;)
+        String briefing
+) {
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

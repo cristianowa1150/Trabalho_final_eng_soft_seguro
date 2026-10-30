@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DataInitializer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.config</a> &gt; <span class="el_source">DataInitializer.java</span></div><h1>DataInitializer.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.config;
+
+import com.github.trabalhoengsoftseguro.artificio.artista.ObraPortfolio;
+import com.github.trabalhoengsoftseguro.artificio.artista.ObraPortfolioRepository;
+import com.github.trabalhoengsoftseguro.artificio.artista.TipoComissao;
+import com.github.trabalhoengsoftseguro.artificio.artista.TipoComissaoRepository;
+import com.github.trabalhoengsoftseguro.artificio.avaliacao.Avaliacao;
+import com.github.trabalhoengsoftseguro.artificio.avaliacao.AvaliacaoRepository;
+import com.github.trabalhoengsoftseguro.artificio.comissao.PedidoComissao;
+import com.github.trabalhoengsoftseguro.artificio.comissao.PedidoComissaoRepository;
+import com.github.trabalhoengsoftseguro.artificio.comissao.StatusComissao;
+import com.github.trabalhoengsoftseguro.artificio.imagem.ImagemService;
+import com.github.trabalhoengsoftseguro.artificio.usuario.Role;
+import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
+import com.github.trabalhoengsoftseguro.artificio.usuario.UsuarioRepository;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
+
+/**
+ * Carga inicial de demonstração (seed) para o MVP da plataforma Artifício.
+ * Configura integrantes, catálogo e cenários de ciclo de vida para auditoria forense.
+ * Ativo exclusivamente em ambiente de desenvolvimento/avaliação (!prod).
+ */
+@Component
+@Order(2)
+@Profile(&quot;!prod&quot;)
+@ConditionalOnProperty(name = &quot;artificio.seed.enabled&quot;, havingValue = &quot;true&quot;, matchIfMissing = true)
+public class DataInitializer implements CommandLineRunner {
+
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final ImagemService imagemService;
+    private final ObraPortfolioRepository obraPortfolioRepository;
+    private final TipoComissaoRepository tipoComissaoRepository;
+    private final PedidoComissaoRepository pedidoComissaoRepository;
+    private final AvaliacaoRepository avaliacaoRepository;
+    private final PlatformTransactionManager transactionManager;
+
+    public DataInitializer(UsuarioRepository usuarioRepository,
+                           PasswordEncoder passwordEncoder,
+                           ImagemService imagemService,
+                           ObraPortfolioRepository obraPortfolioRepository,
+                           TipoComissaoRepository tipoComissaoRepository,
+                           PedidoComissaoRepository pedidoComissaoRepository,
+                           AvaliacaoRepository avaliacaoRepository,
+<span class="fc" id="L66">                           PlatformTransactionManager transactionManager) {</span>
+<span class="fc" id="L67">        this.usuarioRepository = usuarioRepository;</span>
+<span class="fc" id="L68">        this.passwordEncoder = passwordEncoder;</span>
+<span class="fc" id="L69">        this.imagemService = imagemService;</span>
+<span class="fc" id="L70">        this.obraPortfolioRepository = obraPortfolioRepository;</span>
+<span class="fc" id="L71">        this.tipoComissaoRepository = tipoComissaoRepository;</span>
+<span class="fc" id="L72">        this.pedidoComissaoRepository = pedidoComissaoRepository;</span>
+<span class="fc" id="L73">        this.avaliacaoRepository = avaliacaoRepository;</span>
+<span class="fc" id="L74">        this.transactionManager = transactionManager;</span>
+<span class="fc" id="L75">    }</span>
+
+    private void executarEmTransacaoComo(String email, Role role, Consumer&lt;TransactionStatus&gt; acao) {
+<span class="fc" id="L78">        SecurityContext context = SecurityContextHolder.createEmptyContext();</span>
+<span class="pc bpc" id="L79" title="1 of 4 branches missed.">        if (email != null &amp;&amp; role != null) {</span>
+<span class="fc" id="L80">            Authentication auth = new UsernamePasswordAuthenticationToken(email, &quot;N/A&quot;, List.of(new SimpleGrantedAuthority(role.name())));</span>
+<span class="fc" id="L81">            context.setAuthentication(auth);</span>
+        }
+<span class="fc" id="L83">        SecurityContextHolder.setContext(context);</span>
+        try {
+<span class="fc" id="L85">            TransactionTemplate template = new TransactionTemplate(transactionManager);</span>
+<span class="fc" id="L86">            template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);</span>
+<span class="fc" id="L87">            template.executeWithoutResult(acao);</span>
+        } finally {
+<span class="fc" id="L89">            SecurityContextHolder.clearContext();</span>
+        }
+<span class="fc" id="L91">    }</span>
+
+    @Override
+    public void run(String... args) {
+<span class="fc" id="L95">        executarEmTransacaoComo(null, null, s -&gt; inicializarUsuariosECatalogo());</span>
+
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (pedidoComissaoRepository.count() &lt;= 1) {</span>
+<span class="fc" id="L98">            inicializarCenariosAuditoria();</span>
+        }
+<span class="fc" id="L100">    }</span>
+
+    private void inicializarUsuariosECatalogo() {
+        // 1. Artista 1 - Anna Letycia Fernandes Reis (Aquarela e Botânica)
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if (!usuarioRepository.existsByEmail(&quot;anna@artificio.local&quot;)) {</span>
+<span class="fc" id="L105">            Usuario anna = new Usuario(</span>
+                    &quot;Anna Letycia Fernandes Reis&quot;,
+                    &quot;anna@artificio.local&quot;,
+<span class="fc" id="L108">                    passwordEncoder.encode(&quot;Anna@Arte2026&quot;),</span>
+                    Role.ROLE_ARTISTA,
+                    &quot;Ilustradora e artista visual. Especializada em pintura digital botânica, flora e aquarela estilizada.&quot;,
+                    &quot;anna@pix.local&quot;
+            );
+<span class="fc" id="L113">            anna = usuarioRepository.save(anna);</span>
+
+<span class="fc" id="L115">            String svgFlor = gerarSvgDemo(&quot;Jardim de Magnólias&quot;, &quot;#e87a90&quot;, &quot;#2d3748&quot;);</span>
+<span class="fc" id="L116">            String imgFlorId = imagemService.salvar(svgFlor.getBytes(StandardCharsets.UTF_8), &quot;magnolias.svg&quot;, &quot;image/svg+xml&quot;);</span>
+<span class="fc" id="L117">            ObraPortfolio obraFlor = new ObraPortfolio(&quot;Jardim de Magnólias&quot;, &quot;Pintura botânica tradicional digitalizada&quot;, &quot;Aquarela&quot;, imgFlorId, anna);</span>
+<span class="fc" id="L118">            obraPortfolioRepository.save(obraFlor);</span>
+
+<span class="fc" id="L120">            String svgRaposa = gerarSvgDemo(&quot;Raposa da Floresta&quot;, &quot;#dd6b20&quot;, &quot;#1a202c&quot;);</span>
+<span class="fc" id="L121">            String imgRaposaId = imagemService.salvar(svgRaposa.getBytes(StandardCharsets.UTF_8), &quot;raposa.svg&quot;, &quot;image/svg+xml&quot;);</span>
+<span class="fc" id="L122">            ObraPortfolio obraRaposa = new ObraPortfolio(&quot;Raposa da Floresta&quot;, &quot;Ilustração infantil aquarelada&quot;, &quot;Aquarela&quot;, imgRaposaId, anna);</span>
+<span class="fc" id="L123">            obraPortfolioRepository.save(obraRaposa);</span>
+
+<span class="fc" id="L125">            TipoComissao tcBotanica = new TipoComissao(&quot;Retrato Botânico Personalizado&quot;, &quot;Pintura detalhada de flores, plantas e folhagens&quot;, &quot;Aquarela&quot;, new BigDecimal(&quot;180.00&quot;), 5, anna);</span>
+<span class="fc" id="L126">            tipoComissaoRepository.save(tcBotanica);</span>
+
+<span class="fc" id="L128">            TipoComissao tcPet = new TipoComissao(&quot;Retrato Aquarelado de Pet&quot;, &quot;Seu cão ou gato imortalizado em aquarela estilizada&quot;, &quot;Aquarela&quot;, new BigDecimal(&quot;150.00&quot;), 4, anna);</span>
+<span class="fc" id="L129">            tipoComissaoRepository.save(tcPet);</span>
+        }
+
+        // 2. Artista 2 - Cristiano Silveira Silva (Pixel Art)
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        if (!usuarioRepository.existsByEmail(&quot;cristiano@artificio.local&quot;)) {</span>
+<span class="fc" id="L134">            Usuario cristiano = new Usuario(</span>
+                    &quot;Cristiano Silveira Silva&quot;,
+                    &quot;cristiano@artificio.local&quot;,
+<span class="fc" id="L137">                    passwordEncoder.encode(&quot;Cris#Pixel2026&quot;),</span>
+                    Role.ROLE_ARTISTA,
+                    &quot;Pixel artist e designer de jogos. Focado em retrogaming, estética cyberpunk e animação 16-bits.&quot;,
+                    &quot;cristiano@pix.local&quot;
+            );
+<span class="fc" id="L142">            cristiano = usuarioRepository.save(cristiano);</span>
+
+<span class="fc" id="L144">            String svgCyber = gerarSvgDemo(&quot;Cyber City 2099&quot;, &quot;#805ad5&quot;, &quot;#0f172a&quot;);</span>
+<span class="fc" id="L145">            String imgCyberId = imagemService.salvar(svgCyber.getBytes(StandardCharsets.UTF_8), &quot;cyber_city.svg&quot;, &quot;image/svg+xml&quot;);</span>
+<span class="fc" id="L146">            ObraPortfolio obraCyber = new ObraPortfolio(&quot;Cyber City 2099&quot;, &quot;Cenário noturno futurista em pixel art&quot;, &quot;Pixel Art&quot;, imgCyberId, cristiano);</span>
+<span class="fc" id="L147">            obraPortfolioRepository.save(obraCyber);</span>
+
+<span class="fc" id="L149">            String svgKnight = gerarSvgDemo(&quot;Cavaleiro Rúnico&quot;, &quot;#319795&quot;, &quot;#111827&quot;);</span>
+<span class="fc" id="L150">            String imgKnightId = imagemService.salvar(svgKnight.getBytes(StandardCharsets.UTF_8), &quot;cavaleiro.svg&quot;, &quot;image/svg+xml&quot;);</span>
+<span class="fc" id="L151">            ObraPortfolio obraKnight = new ObraPortfolio(&quot;Cavaleiro Rúnico&quot;, &quot;Sprite de combate animado em 16-bits&quot;, &quot;Pixel Art&quot;, imgKnightId, cristiano);</span>
+<span class="fc" id="L152">            obraPortfolioRepository.save(obraKnight);</span>
+
+<span class="fc" id="L154">            TipoComissao tcSprite = new TipoComissao(&quot;Sprite de Personagem (32x32)&quot;, &quot;Criação de spritesheets estáticos ou com poses básicas&quot;, &quot;Pixel Art&quot;, new BigDecimal(&quot;95.00&quot;), 3, cristiano);</span>
+<span class="fc" id="L155">            tipoComissaoRepository.save(tcSprite);</span>
+
+<span class="fc" id="L157">            TipoComissao tcCenario = new TipoComissao(&quot;Cenário Completo Pixel Art&quot;, &quot;Background detalhado para streams, wallpapers ou jogos&quot;, &quot;Pixel Art&quot;, new BigDecimal(&quot;260.00&quot;), 7, cristiano);</span>
+<span class="fc" id="L158">            tipoComissaoRepository.save(tcCenario);</span>
+        }
+
+        // 3. Artista 3 - Marina Duarte (Ilustração Vetorial)
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        if (!usuarioRepository.existsByEmail(&quot;marina@artificio.local&quot;)) {</span>
+<span class="fc" id="L163">            Usuario marina = new Usuario(</span>
+                    &quot;Marina Duarte&quot;,
+                    &quot;marina@artificio.local&quot;,
+<span class="fc" id="L166">                    passwordEncoder.encode(&quot;Marina*Vetor2026&quot;),</span>
+                    Role.ROLE_ARTISTA,
+                    &quot;Ilustradora vetorial e designer de personagens para mídias digitais e capas autorais.&quot;,
+                    &quot;marina@pix.local&quot;
+            );
+<span class="fc" id="L171">            marina = usuarioRepository.save(marina);</span>
+
+<span class="fc" id="L173">            String svgSolar = gerarSvgDemo(&quot;Guerreira Solar&quot;, &quot;#d69e2e&quot;, &quot;#171923&quot;);</span>
+<span class="fc" id="L174">            String imgSolarId = imagemService.salvar(svgSolar.getBytes(StandardCharsets.UTF_8), &quot;guerreira_solar.svg&quot;, &quot;image/svg+xml&quot;);</span>
+<span class="fc" id="L175">            ObraPortfolio obraSolar = new ObraPortfolio(&quot;Guerreira Solar&quot;, &quot;Ilustração vetorial de personagem em alta definição&quot;, &quot;Arte Vetorial&quot;, imgSolarId, marina);</span>
+<span class="fc" id="L176">            obraPortfolioRepository.save(obraSolar);</span>
+
+<span class="fc" id="L178">            TipoComissao tcVetor = new TipoComissao(&quot;Ilustração Vetorial de Personagem&quot;, &quot;Arte vetorial limpa com linhas suaves e paleta vibrante&quot;, &quot;Arte Vetorial&quot;, new BigDecimal(&quot;130.00&quot;), 4, marina);</span>
+<span class="fc" id="L179">            tipoComissaoRepository.save(tcVetor);</span>
+        }
+
+        // 4. Clientes
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (!usuarioRepository.existsByEmail(&quot;eduardo@artificio.local&quot;)) {</span>
+<span class="fc" id="L184">            Usuario eduardo = new Usuario(</span>
+                    &quot;Eduardo Rolim&quot;,
+                    &quot;eduardo@artificio.local&quot;,
+<span class="fc" id="L187">                    passwordEncoder.encode(&quot;Eduardo&amp;Cliente2026&quot;),</span>
+                    Role.ROLE_CLIENTE,
+                    &quot;Entusiasta de arte digital, desenvolvimento seguro e encomendas autorais personalizadas.&quot;,
+                    null
+            );
+<span class="fc" id="L192">            usuarioRepository.save(eduardo);</span>
+        }
+
+<span class="fc bfc" id="L195" title="All 2 branches covered.">        if (!usuarioRepository.existsByEmail(&quot;luan@artificio.local&quot;)) {</span>
+<span class="fc" id="L196">            Usuario luan = new Usuario(</span>
+                    &quot;Luan Diniz&quot;,
+                    &quot;luan@artificio.local&quot;,
+<span class="fc" id="L199">                    passwordEncoder.encode(&quot;Luan$Cliente2026&quot;),</span>
+                    Role.ROLE_CLIENTE,
+                    &quot;Colecionador de ilustrações autorais e apoiador de artistas independentes.&quot;,
+                    null
+            );
+<span class="fc" id="L204">            usuarioRepository.save(luan);</span>
+        }
+<span class="fc" id="L206">    }</span>
+
+    private void inicializarCenariosAuditoria() {
+<span class="fc" id="L209">        Usuario anna = usuarioRepository.findByEmail(&quot;anna@artificio.local&quot;).orElse(null);</span>
+<span class="fc" id="L210">        Usuario cristiano = usuarioRepository.findByEmail(&quot;cristiano@artificio.local&quot;).orElse(null);</span>
+<span class="fc" id="L211">        Usuario marina = usuarioRepository.findByEmail(&quot;marina@artificio.local&quot;).orElse(null);</span>
+<span class="fc" id="L212">        Usuario eduardo = usuarioRepository.findByEmail(&quot;eduardo@artificio.local&quot;).orElse(null);</span>
+<span class="fc" id="L213">        Usuario luan = usuarioRepository.findByEmail(&quot;luan@artificio.local&quot;).orElse(null);</span>
+
+<span class="pc bpc" id="L215" title="4 of 8 branches missed.">        if (anna == null || cristiano == null || eduardo == null || luan == null) {</span>
+<span class="nc" id="L216">            return;</span>
+        }
+
+<span class="fc" id="L219">        TipoComissao tcBotanica = tipoComissaoRepository.findByArtistaId(anna.getId()).stream().findFirst().orElse(null);</span>
+<span class="fc" id="L220">        TipoComissao tcSprite = tipoComissaoRepository.findByArtistaId(cristiano.getId()).stream().findFirst().orElse(null);</span>
+<span class="fc" id="L221">        TipoComissao tcCenario = tipoComissaoRepository.findByArtistaId(cristiano.getId()).stream()</span>
+<span class="fc" id="L222">                .filter(tc -&gt; tc.getTitulo().contains(&quot;Cenário&quot;)).findFirst().orElse(null);</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">        TipoComissao tcVetor = marina != null ? tipoComissaoRepository.findByArtistaId(marina.getId()).stream().findFirst().orElse(null) : null;</span>
+
+        // CENÁRIO 1: Encomenda Completa e Avaliada (Orquídeas Azuis)
+<span class="pc bpc" id="L226" title="2 of 4 branches missed.">        if (tcBotanica != null &amp;&amp; pedidoComissaoRepository.count() == 0) {</span>
+<span class="fc" id="L227">            final UUID[] idPedidoHolder = new UUID[1];</span>
+
+            // 1.1 Eduardo solicita encomenda
+<span class="fc" id="L230">            executarEmTransacaoComo(&quot;eduardo@artificio.local&quot;, Role.ROLE_CLIENTE, s -&gt; {</span>
+<span class="fc" id="L231">                PedidoComissao p = new PedidoComissao(</span>
+                        &quot;Quero um arranjo de orquídeas azuis com um beija-flor em voo.&quot;,
+<span class="fc" id="L233">                        tcBotanica.getPrecoBase(),</span>
+<span class="fc" id="L234">                        tcBotanica.getPrazoEstimadoDias(),</span>
+                        eduardo,
+                        anna,
+                        tcBotanica
+                );
+<span class="fc" id="L239">                p.setStatus(StatusComissao.SOLICITADA);</span>
+<span class="fc" id="L240">                p = pedidoComissaoRepository.save(p);</span>
+<span class="fc" id="L241">                idPedidoHolder[0] = p.getId();</span>
+<span class="fc" id="L242">            });</span>
+
+            // 1.2 Anna aceita a encomenda
+<span class="fc" id="L245">            executarEmTransacaoComo(&quot;anna@artificio.local&quot;, Role.ROLE_ARTISTA, s -&gt; {</span>
+<span class="fc" id="L246">                PedidoComissao p = pedidoComissaoRepository.findById(idPedidoHolder[0]).orElseThrow();</span>
+<span class="fc" id="L247">                p.setStatus(StatusComissao.EM_ANDAMENTO);</span>
+<span class="fc" id="L248">                pedidoComissaoRepository.save(p);</span>
+<span class="fc" id="L249">            });</span>
+
+            // 1.3 Anna conclui a encomenda e entrega o link
+<span class="fc" id="L252">            executarEmTransacaoComo(&quot;anna@artificio.local&quot;, Role.ROLE_ARTISTA, s -&gt; {</span>
+<span class="fc" id="L253">                PedidoComissao p = pedidoComissaoRepository.findById(idPedidoHolder[0]).orElseThrow();</span>
+<span class="fc" id="L254">                p.setStatus(StatusComissao.CONCLUIDA);</span>
+<span class="fc" id="L255">                p.setLinkEntrega(&quot;https://drive.google.com/exemplo-arte-botanica-final.png&quot;);</span>
+<span class="fc" id="L256">                p.setDataConclusao(LocalDateTime.now().minusDays(1));</span>
+<span class="fc" id="L257">                pedidoComissaoRepository.save(p);</span>
+<span class="fc" id="L258">            });</span>
+
+            // 1.4 Eduardo avalia com nota 5
+<span class="fc" id="L261">            executarEmTransacaoComo(&quot;eduardo@artificio.local&quot;, Role.ROLE_CLIENTE, s -&gt; {</span>
+<span class="fc" id="L262">                PedidoComissao p = pedidoComissaoRepository.findById(idPedidoHolder[0]).orElseThrow();</span>
+<span class="fc" id="L263">                p.setStatus(StatusComissao.AVALIADA);</span>
+<span class="fc" id="L264">                pedidoComissaoRepository.save(p);</span>
+
+<span class="fc" id="L266">                Avaliacao avaliacao = new Avaliacao(</span>
+<span class="fc" id="L267">                        5,</span>
+                        &quot;A arte ficou maravilhosa! Cores vivas, detalhes impressionantes e entrega antes do prazo.&quot;,
+                        p,
+                        eduardo,
+                        anna
+                );
+<span class="fc" id="L273">                avaliacaoRepository.save(avaliacao);</span>
+<span class="fc" id="L274">            });</span>
+        }
+
+        // CENÁRIO 2: Encomenda em Andamento (Sprite de Combate)
+<span class="pc bpc" id="L278" title="1 of 2 branches missed.">        if (tcSprite != null) {</span>
+<span class="fc" id="L279">            final UUID[] idHolder = new UUID[1];</span>
+<span class="fc" id="L280">            executarEmTransacaoComo(&quot;luan@artificio.local&quot;, Role.ROLE_CLIENTE, s -&gt; {</span>
+<span class="fc" id="L281">                PedidoComissao p = new PedidoComissao(</span>
+                        &quot;Sprite animado de cavaleiro medieval com espada de fogo (poses de combate).&quot;,
+<span class="fc" id="L283">                        tcSprite.getPrecoBase(),</span>
+<span class="fc" id="L284">                        tcSprite.getPrazoEstimadoDias(),</span>
+                        luan,
+                        cristiano,
+                        tcSprite
+                );
+<span class="fc" id="L289">                p.setStatus(StatusComissao.SOLICITADA);</span>
+<span class="fc" id="L290">                p = pedidoComissaoRepository.save(p);</span>
+<span class="fc" id="L291">                idHolder[0] = p.getId();</span>
+<span class="fc" id="L292">            });</span>
+
+<span class="fc" id="L294">            executarEmTransacaoComo(&quot;cristiano@artificio.local&quot;, Role.ROLE_ARTISTA, s -&gt; {</span>
+<span class="fc" id="L295">                PedidoComissao p = pedidoComissaoRepository.findById(idHolder[0]).orElseThrow();</span>
+<span class="fc" id="L296">                p.setStatus(StatusComissao.EM_ANDAMENTO);</span>
+<span class="fc" id="L297">                pedidoComissaoRepository.save(p);</span>
+<span class="fc" id="L298">            });</span>
+        }
+
+        // CENÁRIO 3: Encomenda Pendente de Aceite (Capa Vetorial)
+<span class="pc bpc" id="L302" title="2 of 4 branches missed.">        if (tcVetor != null &amp;&amp; marina != null) {</span>
+<span class="fc" id="L303">            executarEmTransacaoComo(&quot;eduardo@artificio.local&quot;, Role.ROLE_CLIENTE, s -&gt; {</span>
+<span class="fc" id="L304">                PedidoComissao p = new PedidoComissao(</span>
+                        &quot;Arte conceitual vetorial para capa de podcast sobre segurança da informação.&quot;,
+<span class="fc" id="L306">                        tcVetor.getPrecoBase(),</span>
+<span class="fc" id="L307">                        tcVetor.getPrazoEstimadoDias(),</span>
+                        eduardo,
+                        marina,
+                        tcVetor
+                );
+<span class="fc" id="L312">                p.setStatus(StatusComissao.SOLICITADA);</span>
+<span class="fc" id="L313">                pedidoComissaoRepository.save(p);</span>
+<span class="fc" id="L314">            });</span>
+        }
+
+        // CENÁRIO 4: Encomenda Recusada pelo Artista (Prazo Incompatível)
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">        if (tcBotanica != null) {</span>
+<span class="fc" id="L319">            final UUID[] idHolder = new UUID[1];</span>
+<span class="fc" id="L320">            executarEmTransacaoComo(&quot;luan@artificio.local&quot;, Role.ROLE_CLIENTE, s -&gt; {</span>
+<span class="fc" id="L321">                PedidoComissao p = new PedidoComissao(</span>
+                        &quot;Ilustração com urgência para 24h de mural botânico gigante.&quot;,
+<span class="fc" id="L323">                        tcBotanica.getPrecoBase(),</span>
+<span class="fc" id="L324">                        1,</span>
+                        luan,
+                        anna,
+                        tcBotanica
+                );
+<span class="fc" id="L329">                p.setStatus(StatusComissao.SOLICITADA);</span>
+<span class="fc" id="L330">                p = pedidoComissaoRepository.save(p);</span>
+<span class="fc" id="L331">                idHolder[0] = p.getId();</span>
+<span class="fc" id="L332">            });</span>
+
+<span class="fc" id="L334">            executarEmTransacaoComo(&quot;anna@artificio.local&quot;, Role.ROLE_ARTISTA, s -&gt; {</span>
+<span class="fc" id="L335">                PedidoComissao p = pedidoComissaoRepository.findById(idHolder[0]).orElseThrow();</span>
+<span class="fc" id="L336">                p.setStatus(StatusComissao.RECUSADA);</span>
+<span class="fc" id="L337">                pedidoComissaoRepository.save(p);</span>
+<span class="fc" id="L338">            });</span>
+        }
+
+        // CENÁRIO 5: Encomenda Cancelada pelo Cliente
+<span class="pc bpc" id="L342" title="1 of 2 branches missed.">        if (tcCenario != null) {</span>
+<span class="fc" id="L343">            final UUID[] idHolder = new UUID[1];</span>
+<span class="fc" id="L344">            executarEmTransacaoComo(&quot;luan@artificio.local&quot;, Role.ROLE_CLIENTE, s -&gt; {</span>
+<span class="fc" id="L345">                PedidoComissao p = new PedidoComissao(</span>
+                        &quot;Cenário noturno futurista para background de live na Twitch.&quot;,
+<span class="fc" id="L347">                        tcCenario.getPrecoBase(),</span>
+<span class="fc" id="L348">                        tcCenario.getPrazoEstimadoDias(),</span>
+                        luan,
+                        cristiano,
+                        tcCenario
+                );
+<span class="fc" id="L353">                p.setStatus(StatusComissao.SOLICITADA);</span>
+<span class="fc" id="L354">                p = pedidoComissaoRepository.save(p);</span>
+<span class="fc" id="L355">                idHolder[0] = p.getId();</span>
+<span class="fc" id="L356">            });</span>
+
+<span class="fc" id="L358">            executarEmTransacaoComo(&quot;luan@artificio.local&quot;, Role.ROLE_CLIENTE, s -&gt; {</span>
+<span class="fc" id="L359">                PedidoComissao p = pedidoComissaoRepository.findById(idHolder[0]).orElseThrow();</span>
+<span class="fc" id="L360">                p.setStatus(StatusComissao.CANCELADA);</span>
+<span class="fc" id="L361">                pedidoComissaoRepository.save(p);</span>
+<span class="fc" id="L362">            });</span>
+        }
+
+        // CENÁRIO 6: Auditoria de Usuário - Promoção de Privilégios por Administrador
+<span class="fc" id="L366">        executarEmTransacaoComo(null, null, s -&gt; {</span>
+<span class="pc bpc" id="L367" title="1 of 2 branches missed.">            if (!usuarioRepository.existsByEmail(&quot;renato.ilustrador@artificio.local&quot;)) {</span>
+<span class="fc" id="L368">                Usuario renato = new Usuario(</span>
+                        &quot;Renato Silva&quot;,
+                        &quot;renato.ilustrador@artificio.local&quot;,
+<span class="fc" id="L371">                        passwordEncoder.encode(&quot;Renato#2026&quot;),</span>
+                        Role.ROLE_CLIENTE,
+                        &quot;Designer aspirante a artista oficial da plataforma.&quot;,
+                        null
+                );
+<span class="fc" id="L376">                usuarioRepository.save(renato);</span>
+            }
+<span class="fc" id="L378">        });</span>
+
+<span class="fc" id="L380">        executarEmTransacaoComo(&quot;admin@artificio.local&quot;, Role.ROLE_ADMIN, s -&gt; {</span>
+<span class="fc" id="L381">            usuarioRepository.findByEmail(&quot;renato.ilustrador@artificio.local&quot;).ifPresent(renato -&gt; {</span>
+<span class="pc bpc" id="L382" title="1 of 2 branches missed.">                if (renato.getRole() == Role.ROLE_CLIENTE) {</span>
+<span class="fc" id="L383">                    renato.setRole(Role.ROLE_ARTISTA);</span>
+<span class="fc" id="L384">                    usuarioRepository.save(renato);</span>
+                }
+<span class="fc" id="L386">            });</span>
+<span class="fc" id="L387">        });</span>
+<span class="fc" id="L388">    }</span>
+
+    private String gerarSvgDemo(String titulo, String corDestaque, String corFundo) {
+<span class="fc" id="L391">        return &quot;&lt;svg xmlns='http://www.w3.org/2000/svg' width='600' height='400' viewBox='0 0 600 400'&gt;&quot; +</span>
+                &quot;&lt;rect width='600' height='400' fill='&quot; + corFundo + &quot;'/&gt;&quot; +
+                &quot;&lt;circle cx='300' cy='180' r='90' fill='&quot; + corDestaque + &quot;' opacity='0.85'/&gt;&quot; +
+                &quot;&lt;text x='300' y='330' font-family='Arial, sans-serif' font-size='22' font-weight='bold' fill='#ffffff' text-anchor='middle'&gt;&quot; +
+                titulo + &quot;&lt;/text&gt;&quot; +
+                &quot;&lt;text x='300' y='360' font-family='Arial, sans-serif' font-size='14' fill='#a0aec0' text-anchor='middle'&gt;&quot; +
+                &quot;Artifício - Obra de Portfólio (Demonstração)&quot; + &quot;&lt;/text&gt;&quot; +
+                &quot;&lt;/svg&gt;&quot;;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

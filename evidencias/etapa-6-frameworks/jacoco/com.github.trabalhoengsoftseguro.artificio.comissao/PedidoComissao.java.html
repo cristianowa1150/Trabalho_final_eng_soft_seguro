@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PedidoComissao.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.comissao</a> &gt; <span class="el_source">PedidoComissao.java</span></div><h1>PedidoComissao.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.comissao;
+
+import com.github.trabalhoengsoftseguro.artificio.artista.TipoComissao;
+import com.github.trabalhoengsoftseguro.artificio.auditoria.EntidadeAuditavel;
+import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
+import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.envers.Audited;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.UUID;
+
+/**
+ * Entidade que gerencia os pedidos de comissão e suas transições de estado.
+ */
+@Entity
+@Table(name = &quot;pedidos_comissao&quot;)
+@Audited
+public class PedidoComissao extends EntidadeAuditavel {
+
+    @Id
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
+
+    @Column(nullable = false, length = 4000)
+    private String briefing;
+
+    @Column(name = &quot;valor_final&quot;, nullable = false, precision = 10, scale = 2)
+    private BigDecimal valorFinal;
+
+    @Column(name = &quot;prazo_dias&quot;, nullable = false)
+    private Integer prazoDias;
+
+    @Column(name = &quot;link_entrega&quot;, length = 1000)
+    private String linkEntrega;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 35)
+    private StatusComissao status;
+
+    @Version
+    private Long versao;
+
+    @Column(name = &quot;codigo_pix_simulado&quot;, length = 255)
+    private String codigoPixSimulado;
+
+    @Column(name = &quot;data_solicitacao&quot;, nullable = false)
+    private LocalDateTime dataSolicitacao;
+
+    @Column(name = &quot;data_conclusao&quot;)
+    private LocalDateTime dataConclusao;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;cliente_id&quot;, nullable = false)
+    private Usuario cliente;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;artista_id&quot;, nullable = false)
+    private Usuario artista;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;tipo_comissao_id&quot;, nullable = false)
+    private TipoComissao tipoComissao;
+
+<span class="fc" id="L68">    public PedidoComissao() {</span>
+<span class="fc" id="L69">    }</span>
+
+<span class="fc" id="L71">    public PedidoComissao(String briefing, BigDecimal valorFinal, Integer prazoDias, Usuario cliente, Usuario artista, TipoComissao tipoComissao) {</span>
+<span class="fc" id="L72">        this.briefing = briefing;</span>
+<span class="fc" id="L73">        this.valorFinal = valorFinal;</span>
+<span class="fc" id="L74">        this.prazoDias = prazoDias;</span>
+<span class="fc" id="L75">        this.cliente = cliente;</span>
+<span class="fc" id="L76">        this.artista = artista;</span>
+<span class="fc" id="L77">        this.tipoComissao = tipoComissao;</span>
+<span class="fc" id="L78">        this.status = StatusComissao.SOLICITADA;</span>
+<span class="fc" id="L79">        this.dataSolicitacao = LocalDateTime.now();</span>
+<span class="fc" id="L80">    }</span>
+
+    @PrePersist
+    public void prePersist() {
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">        if (this.dataSolicitacao == null) {</span>
+<span class="nc" id="L85">            this.dataSolicitacao = LocalDateTime.now();</span>
+        }
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        if (this.status == null) {</span>
+<span class="nc" id="L88">            this.status = StatusComissao.SOLICITADA;</span>
+        }
+<span class="fc" id="L90">    }</span>
+
+    public UUID getId() {
+<span class="fc" id="L93">        return id;</span>
+    }
+
+    public void setId(UUID id) {
+<span class="fc" id="L97">        this.id = id;</span>
+<span class="fc" id="L98">    }</span>
+
+    public String getBriefing() {
+<span class="nc" id="L101">        return briefing;</span>
+    }
+
+    public void setBriefing(String briefing) {
+<span class="nc" id="L105">        this.briefing = briefing;</span>
+<span class="nc" id="L106">    }</span>
+
+    public BigDecimal getValorFinal() {
+<span class="fc" id="L109">        return valorFinal;</span>
+    }
+
+    public void setValorFinal(BigDecimal valorFinal) {
+<span class="nc" id="L113">        this.valorFinal = valorFinal;</span>
+<span class="nc" id="L114">    }</span>
+
+    public Integer getPrazoDias() {
+<span class="fc" id="L117">        return prazoDias;</span>
+    }
+
+    public void setPrazoDias(Integer prazoDias) {
+<span class="nc" id="L121">        this.prazoDias = prazoDias;</span>
+<span class="nc" id="L122">    }</span>
+
+    public String getLinkEntrega() {
+<span class="fc" id="L125">        return linkEntrega;</span>
+    }
+
+    public void setLinkEntrega(String linkEntrega) {
+<span class="fc" id="L129">        this.linkEntrega = linkEntrega;</span>
+<span class="fc" id="L130">    }</span>
+
+    public StatusComissao getStatus() {
+<span class="fc" id="L133">        return status;</span>
+    }
+
+    public void setStatus(StatusComissao status) {
+<span class="fc" id="L137">        this.status = status;</span>
+<span class="fc" id="L138">    }</span>
+
+    public String getCodigoPixSimulado() {
+<span class="fc" id="L141">        return codigoPixSimulado;</span>
+    }
+
+    public void setCodigoPixSimulado(String codigoPixSimulado) {
+<span class="fc" id="L145">        this.codigoPixSimulado = codigoPixSimulado;</span>
+<span class="fc" id="L146">    }</span>
+
+    public LocalDateTime getDataSolicitacao() {
+<span class="nc" id="L149">        return dataSolicitacao;</span>
+    }
+
+    public void setDataSolicitacao(LocalDateTime dataSolicitacao) {
+<span class="nc" id="L153">        this.dataSolicitacao = dataSolicitacao;</span>
+<span class="nc" id="L154">    }</span>
+
+    public LocalDateTime getDataConclusao() {
+<span class="fc" id="L157">        return dataConclusao;</span>
+    }
+
+    public void setDataConclusao(LocalDateTime dataConclusao) {
+<span class="fc" id="L161">        this.dataConclusao = dataConclusao;</span>
+<span class="fc" id="L162">    }</span>
+
+    public Usuario getCliente() {
+<span class="fc" id="L165">        return cliente;</span>
+    }
+
+    public void setCliente(Usuario cliente) {
+<span class="nc" id="L169">        this.cliente = cliente;</span>
+<span class="nc" id="L170">    }</span>
+
+    public Usuario getArtista() {
+<span class="fc" id="L173">        return artista;</span>
+    }
+
+    public void setArtista(Usuario artista) {
+<span class="nc" id="L177">        this.artista = artista;</span>
+<span class="nc" id="L178">    }</span>
+
+    public TipoComissao getTipoComissao() {
+<span class="nc" id="L181">        return tipoComissao;</span>
+    }
+
+    public void setTipoComissao(TipoComissao tipoComissao) {
+<span class="nc" id="L185">        this.tipoComissao = tipoComissao;</span>
+<span class="nc" id="L186">    }</span>
+
+    @Override
+    public boolean equals(Object o) {
+<span class="nc bnc" id="L190" title="All 2 branches missed.">        if (this == o) return true;</span>
+<span class="nc bnc" id="L191" title="All 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="nc" id="L192">        PedidoComissao that = (PedidoComissao) o;</span>
+<span class="nc" id="L193">        return Objects.equals(id, that.id);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L198">        return Objects.hash(id);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ComissaoController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.comissao</a> &gt; <span class="el_source">ComissaoController.java</span></div><h1>ComissaoController.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.comissao;
+
+import com.github.trabalhoengsoftseguro.artificio.artista.TipoComissao;
+import com.github.trabalhoengsoftseguro.artificio.artista.TipoComissaoRepository;
+import com.github.trabalhoengsoftseguro.artificio.avaliacao.AvaliacaoService;
+import com.github.trabalhoengsoftseguro.artificio.avaliacao.NovaAvaliacaoDto;
+import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
+import com.github.trabalhoengsoftseguro.artificio.usuario.UsuarioService;
+import jakarta.validation.Valid;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.security.Principal;
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Controller responsável pelo ciclo completo de encomendas de arte (solicitação, pagamento simulado PIX,
+ * entrega e avaliação).
+ */
+@Controller
+public class ComissaoController {
+
+    private final ComissaoService comissaoService;
+    private final AvaliacaoService avaliacaoService;
+    private final UsuarioService usuarioService;
+    private final TipoComissaoRepository tipoComissaoRepository;
+    private final PedidoComissaoRepository pedidoComissaoRepository;
+
+    public ComissaoController(ComissaoService comissaoService,
+                              AvaliacaoService avaliacaoService,
+                              UsuarioService usuarioService,
+                              TipoComissaoRepository tipoComissaoRepository,
+<span class="fc" id="L37">                              PedidoComissaoRepository pedidoComissaoRepository) {</span>
+<span class="fc" id="L38">        this.comissaoService = comissaoService;</span>
+<span class="fc" id="L39">        this.avaliacaoService = avaliacaoService;</span>
+<span class="fc" id="L40">        this.usuarioService = usuarioService;</span>
+<span class="fc" id="L41">        this.tipoComissaoRepository = tipoComissaoRepository;</span>
+<span class="fc" id="L42">        this.pedidoComissaoRepository = pedidoComissaoRepository;</span>
+<span class="fc" id="L43">    }</span>
+
+    @GetMapping(&quot;/painel/cliente/pedidos&quot;)
+    public String listarPedidosCliente(Principal principal, Model model) {
+<span class="nc" id="L47">        Usuario cliente = usuarioService.buscarPorEmail(principal.getName());</span>
+<span class="nc" id="L48">        List&lt;PedidoComissao&gt; pedidos = comissaoService.listarPorCliente(cliente.getId());</span>
+<span class="nc" id="L49">        model.addAttribute(&quot;pedidos&quot;, pedidos);</span>
+<span class="nc" id="L50">        return &quot;cliente/pedidos&quot;;</span>
+    }
+
+    @GetMapping(&quot;/comissoes/solicitar/{tipoId}&quot;)
+    public String formularioSolicitacao(@PathVariable UUID tipoId,
+                                        Principal principal,
+                                        Model model,
+                                        RedirectAttributes redirectAttributes) {
+<span class="nc" id="L58">        TipoComissao tipo = tipoComissaoRepository.findById(tipoId)</span>
+<span class="nc" id="L59">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Modalidade de serviço não encontrada com ID: &quot; + tipoId));</span>
+
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (principal != null) {</span>
+<span class="nc" id="L62">            Usuario usuarioLogado = usuarioService.buscarPorEmail(principal.getName());</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">            if (usuarioLogado.isAdmin()) {</span>
+<span class="nc" id="L64">                redirectAttributes.addFlashAttribute(&quot;erro&quot;, &quot;Administradores não têm permissão para contratar serviços.&quot;);</span>
+<span class="nc" id="L65">                return &quot;redirect:/artistas/&quot; + tipo.getArtista().getId();</span>
+            }
+<span class="nc bnc" id="L67" title="All 2 branches missed.">            if (tipo.getArtista().getId().equals(usuarioLogado.getId())) {</span>
+<span class="nc" id="L68">                redirectAttributes.addFlashAttribute(&quot;erro&quot;, &quot;Você não pode solicitar uma comissão para o seu próprio serviço.&quot;);</span>
+<span class="nc" id="L69">                return &quot;redirect:/artistas/&quot; + tipo.getArtista().getId();</span>
+            }
+        }
+
+<span class="nc" id="L73">        model.addAttribute(&quot;tipo&quot;, tipo);</span>
+<span class="nc" id="L74">        model.addAttribute(&quot;solicitacaoDto&quot;, new SolicitacaoComissaoDto(tipoId, &quot;&quot;));</span>
+<span class="nc" id="L75">        return &quot;cliente/solicitar&quot;;</span>
+    }
+
+    @PostMapping(&quot;/comissoes/solicitar&quot;)
+    public String submeterSolicitacao(@Valid @ModelAttribute(&quot;solicitacaoDto&quot;) SolicitacaoComissaoDto dto,
+                                      BindingResult bindingResult,
+                                      Principal principal,
+                                      Model model,
+                                      RedirectAttributes redirectAttributes) {
+<span class="nc" id="L84">        Usuario cliente = usuarioService.buscarPorEmail(principal.getName());</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (cliente.isAdmin()) {</span>
+<span class="nc" id="L86">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, &quot;Administradores não têm permissão para contratar serviços.&quot;);</span>
+<span class="nc" id="L87">            return &quot;redirect:/&quot;;</span>
+        }
+
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (dto.tipoComissaoId() == null) {</span>
+<span class="nc" id="L91">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, &quot;Modalidade de serviço inválida ou não especificada.&quot;);</span>
+<span class="nc" id="L92">            return &quot;redirect:/&quot;;</span>
+        }
+
+<span class="nc" id="L95">        TipoComissao tipo = tipoComissaoRepository.findById(dto.tipoComissaoId()).orElse(null);</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        if (tipo == null) {</span>
+<span class="nc" id="L97">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, &quot;Modalidade de serviço não encontrada.&quot;);</span>
+<span class="nc" id="L98">            return &quot;redirect:/&quot;;</span>
+        }
+
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        if (bindingResult.hasErrors()) {</span>
+<span class="nc" id="L102">            model.addAttribute(&quot;tipo&quot;, tipo);</span>
+<span class="nc" id="L103">            return &quot;cliente/solicitar&quot;;</span>
+        }
+
+        try {
+<span class="nc" id="L107">            comissaoService.criarSolicitacao(cliente.getId(), dto);</span>
+<span class="nc" id="L108">            redirectAttributes.addFlashAttribute(&quot;sucesso&quot;, &quot;Solicitação enviada com sucesso! O artista analisará sua proposta.&quot;);</span>
+<span class="nc" id="L109">            return &quot;redirect:/painel/cliente/pedidos&quot;;</span>
+<span class="nc" id="L110">        } catch (IllegalArgumentException ex) {</span>
+<span class="nc" id="L111">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, ex.getMessage());</span>
+<span class="nc" id="L112">            return &quot;redirect:/&quot;;</span>
+        }
+    }
+
+    @PostMapping(&quot;/comissoes/{id}/aceitar&quot;)
+    public String aceitarPedido(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
+<span class="nc" id="L118">        Usuario artista = usuarioService.buscarPorEmail(principal.getName());</span>
+        try {
+<span class="nc" id="L120">            comissaoService.aceitarPedido(id, artista.getId());</span>
+<span class="nc" id="L121">            redirectAttributes.addFlashAttribute(&quot;sucesso&quot;, &quot;Proposta aceita! O cliente foi notificado para efetuar o pagamento.&quot;);</span>
+<span class="nc" id="L122">        } catch (IllegalArgumentException | IllegalStateException ex) {</span>
+<span class="nc" id="L123">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, ex.getMessage());</span>
+<span class="nc" id="L124">        }</span>
+<span class="nc" id="L125">        return &quot;redirect:/painel/artista/pedidos&quot;;</span>
+    }
+
+    @PostMapping(&quot;/comissoes/{id}/recusar&quot;)
+    public String recusarPedido(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
+<span class="nc" id="L130">        Usuario artista = usuarioService.buscarPorEmail(principal.getName());</span>
+        try {
+<span class="nc" id="L132">            comissaoService.recusarPedido(id, artista.getId());</span>
+<span class="nc" id="L133">            redirectAttributes.addFlashAttribute(&quot;sucesso&quot;, &quot;Pedido recusado com sucesso.&quot;);</span>
+<span class="nc" id="L134">        } catch (IllegalArgumentException | IllegalStateException ex) {</span>
+<span class="nc" id="L135">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, ex.getMessage());</span>
+<span class="nc" id="L136">        }</span>
+<span class="nc" id="L137">        return &quot;redirect:/painel/artista/pedidos&quot;;</span>
+    }
+
+    @PostMapping(&quot;/comissoes/{id}/cancelar&quot;)
+    public String cancelarPedido(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
+<span class="nc" id="L142">        Usuario cliente = usuarioService.buscarPorEmail(principal.getName());</span>
+        try {
+<span class="nc" id="L144">            comissaoService.cancelarPedido(id, cliente.getId());</span>
+<span class="nc" id="L145">            redirectAttributes.addFlashAttribute(&quot;sucesso&quot;, &quot;Pedido cancelado com sucesso.&quot;);</span>
+<span class="nc" id="L146">        } catch (IllegalArgumentException | IllegalStateException ex) {</span>
+<span class="nc" id="L147">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, ex.getMessage());</span>
+<span class="nc" id="L148">        }</span>
+<span class="nc" id="L149">        return &quot;redirect:/painel/cliente/pedidos&quot;;</span>
+    }
+
+    @GetMapping(&quot;/comissoes/{id}/pagamento&quot;)
+    public String exibirPagamentoPix(@PathVariable UUID id, Principal principal, Model model) {
+<span class="nc" id="L154">        Usuario cliente = usuarioService.buscarPorEmail(principal.getName());</span>
+<span class="nc" id="L155">        PedidoComissao pedido = comissaoService.buscarPorId(id);</span>
+
+<span class="nc bnc" id="L157" title="All 2 branches missed.">        if (!pedido.getCliente().getId().equals(cliente.getId())) {</span>
+<span class="nc" id="L158">            throw new IllegalArgumentException(&quot;Você não tem permissão para acessar o pagamento deste pedido&quot;);</span>
+        }
+
+<span class="nc" id="L161">        model.addAttribute(&quot;pedido&quot;, pedido);</span>
+<span class="nc" id="L162">        return &quot;cliente/pagamento&quot;;</span>
+    }
+
+    @PostMapping(&quot;/comissoes/{id}/confirmar-pagamento&quot;)
+    public String confirmarPagamento(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
+<span class="nc" id="L167">        Usuario cliente = usuarioService.buscarPorEmail(principal.getName());</span>
+        try {
+<span class="nc" id="L169">            comissaoService.registrarPagamentoSimulado(id, cliente.getId());</span>
+<span class="nc" id="L170">            redirectAttributes.addFlashAttribute(&quot;sucesso&quot;, &quot;Pagamento confirmado com sucesso! O artista iniciará a confecção.&quot;);</span>
+<span class="nc" id="L171">        } catch (IllegalArgumentException | IllegalStateException ex) {</span>
+<span class="nc" id="L172">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, ex.getMessage());</span>
+<span class="nc" id="L173">        }</span>
+<span class="nc" id="L174">        return &quot;redirect:/painel/cliente/pedidos&quot;;</span>
+    }
+
+    @PostMapping(&quot;/comissoes/{id}/iniciar&quot;)
+    public String iniciarProducao(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
+<span class="nc" id="L179">        Usuario artista = usuarioService.buscarPorEmail(principal.getName());</span>
+        try {
+<span class="nc" id="L181">            comissaoService.iniciarProducao(id, artista.getId());</span>
+<span class="nc" id="L182">            redirectAttributes.addFlashAttribute(&quot;sucesso&quot;, &quot;Produção iniciada com sucesso!&quot;);</span>
+<span class="nc" id="L183">        } catch (IllegalArgumentException | IllegalStateException ex) {</span>
+<span class="nc" id="L184">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, ex.getMessage());</span>
+<span class="nc" id="L185">        }</span>
+<span class="nc" id="L186">        return &quot;redirect:/painel/artista/pedidos&quot;;</span>
+    }
+
+    @PostMapping(&quot;/comissoes/{id}/entregar&quot;)
+    public String registrarEntrega(@PathVariable UUID id,
+                                   @RequestParam(&quot;linkEntrega&quot;) String linkEntrega,
+                                   Principal principal,
+                                   RedirectAttributes redirectAttributes) {
+<span class="nc" id="L194">        Usuario artista = usuarioService.buscarPorEmail(principal.getName());</span>
+        try {
+<span class="nc" id="L196">            comissaoService.registrarEntrega(id, linkEntrega, artista.getId());</span>
+<span class="nc" id="L197">            redirectAttributes.addFlashAttribute(&quot;sucesso&quot;, &quot;Arquivo/link de entrega submetido com sucesso! Aguarde a aprovação do cliente.&quot;);</span>
+<span class="nc" id="L198">        } catch (IllegalArgumentException | IllegalStateException ex) {</span>
+<span class="nc" id="L199">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, ex.getMessage());</span>
+<span class="nc" id="L200">        }</span>
+<span class="nc" id="L201">        return &quot;redirect:/painel/artista/pedidos&quot;;</span>
+    }
+
+    @PostMapping(&quot;/comissoes/{id}/revisao&quot;)
+    public String solicitarRevisao(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
+<span class="nc" id="L206">        Usuario cliente = usuarioService.buscarPorEmail(principal.getName());</span>
+        try {
+<span class="nc" id="L208">            comissaoService.solicitarRevisao(id, cliente.getId());</span>
+<span class="nc" id="L209">            redirectAttributes.addFlashAttribute(&quot;sucesso&quot;, &quot;Pedido retornado para revisão do artista.&quot;);</span>
+<span class="nc" id="L210">        } catch (IllegalArgumentException | IllegalStateException ex) {</span>
+<span class="nc" id="L211">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, ex.getMessage());</span>
+<span class="nc" id="L212">        }</span>
+<span class="nc" id="L213">        return &quot;redirect:/painel/cliente/pedidos&quot;;</span>
+    }
+
+    @PostMapping(&quot;/comissoes/{id}/aprovar&quot;)
+    public String aprovarConclusao(@PathVariable UUID id, Principal principal, RedirectAttributes redirectAttributes) {
+<span class="nc" id="L218">        Usuario cliente = usuarioService.buscarPorEmail(principal.getName());</span>
+        try {
+<span class="nc" id="L220">            comissaoService.aprovarConclusao(id, cliente.getId());</span>
+<span class="nc" id="L221">            redirectAttributes.addFlashAttribute(&quot;sucesso&quot;, &quot;Comissão concluída com sucesso! Deixe sua avaliação para o artista.&quot;);</span>
+<span class="nc" id="L222">        } catch (IllegalArgumentException | IllegalStateException ex) {</span>
+<span class="nc" id="L223">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, ex.getMessage());</span>
+<span class="nc" id="L224">        }</span>
+<span class="nc" id="L225">        return &quot;redirect:/painel/cliente/pedidos&quot;;</span>
+    }
+
+    @GetMapping(&quot;/comissoes/{id}/avaliar&quot;)
+    public String formularioAvaliacao(@PathVariable UUID id, Principal principal, Model model) {
+<span class="nc" id="L230">        Usuario cliente = usuarioService.buscarPorEmail(principal.getName());</span>
+<span class="nc" id="L231">        PedidoComissao pedido = comissaoService.buscarPorId(id);</span>
+
+<span class="nc bnc" id="L233" title="All 2 branches missed.">        if (!pedido.getCliente().getId().equals(cliente.getId())) {</span>
+<span class="nc" id="L234">            throw new IllegalArgumentException(&quot;Você não tem permissão para avaliar este pedido&quot;);</span>
+        }
+
+<span class="nc" id="L237">        model.addAttribute(&quot;pedido&quot;, pedido);</span>
+<span class="nc" id="L238">        model.addAttribute(&quot;novaAvaliacaoDto&quot;, new NovaAvaliacaoDto(id, 5, &quot;&quot;));</span>
+<span class="nc" id="L239">        return &quot;cliente/avaliar&quot;;</span>
+    }
+
+    @PostMapping(&quot;/comissoes/{id}/avaliar&quot;)
+    public String submeterAvaliacao(@PathVariable(&quot;id&quot;) UUID id,
+                                    @Valid @ModelAttribute(&quot;novaAvaliacaoDto&quot;) NovaAvaliacaoDto dto,
+                                    BindingResult bindingResult,
+                                    Principal principal,
+                                    Model model,
+                                    RedirectAttributes redirectAttributes) {
+<span class="nc" id="L249">        Usuario cliente = usuarioService.buscarPorEmail(principal.getName());</span>
+
+<span class="nc bnc" id="L251" title="All 4 branches missed.">        UUID pedidoId = (id != null) ? id : (dto != null ? dto.pedidoId() : null);</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">        if (pedidoId == null) {</span>
+<span class="nc" id="L253">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, &quot;Pedido de comissão inválido ou não especificado.&quot;);</span>
+<span class="nc" id="L254">            return &quot;redirect:/painel/cliente/pedidos&quot;;</span>
+        }
+
+<span class="nc" id="L257">        PedidoComissao pedido = pedidoComissaoRepository.findById(pedidoId).orElse(null);</span>
+<span class="nc bnc" id="L258" title="All 4 branches missed.">        if (pedido == null || !pedido.getCliente().getId().equals(cliente.getId())) {</span>
+<span class="nc" id="L259">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, &quot;Pedido de comissão não encontrado ou acesso não autorizado.&quot;);</span>
+<span class="nc" id="L260">            return &quot;redirect:/painel/cliente/pedidos&quot;;</span>
+        }
+
+<span class="nc bnc" id="L263" title="All 2 branches missed.">        if (bindingResult.hasErrors()) {</span>
+<span class="nc" id="L264">            model.addAttribute(&quot;pedido&quot;, pedido);</span>
+<span class="nc" id="L265">            return &quot;cliente/avaliar&quot;;</span>
+        }
+
+        try {
+<span class="nc" id="L269">            avaliacaoService.salvarAvaliacao(cliente.getId(), dto);</span>
+<span class="nc" id="L270">            redirectAttributes.addFlashAttribute(&quot;sucesso&quot;, &quot;Avaliação registrada com sucesso! Obrigado pelo feedback.&quot;);</span>
+<span class="nc" id="L271">            return &quot;redirect:/painel/cliente/pedidos&quot;;</span>
+<span class="nc" id="L272">        } catch (IllegalArgumentException | IllegalStateException ex) {</span>
+<span class="nc" id="L273">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, ex.getMessage());</span>
+<span class="nc" id="L274">            return &quot;redirect:/painel/cliente/pedidos&quot;;</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

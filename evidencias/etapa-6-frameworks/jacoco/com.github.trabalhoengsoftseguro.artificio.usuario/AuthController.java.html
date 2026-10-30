@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.usuario</a> &gt; <span class="el_source">AuthController.java</span></div><h1>AuthController.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.usuario;
+
+import jakarta.validation.Valid;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
+
+/**
+ * Controller responsável pelo fluxo de login e auto-registro de novas contas na plataforma.
+ */
+@Controller
+public class AuthController {
+
+    private final UsuarioService usuarioService;
+
+<span class="fc" id="L23">    public AuthController(UsuarioService usuarioService) {</span>
+<span class="fc" id="L24">        this.usuarioService = usuarioService;</span>
+<span class="fc" id="L25">    }</span>
+
+    @GetMapping(&quot;/login&quot;)
+    public String exibirLogin(@RequestParam(value = &quot;error&quot;, required = false) String error,
+                              @RequestParam(value = &quot;logout&quot;, required = false) String logout,
+                              Model model) {
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        if (error != null) {</span>
+<span class="nc" id="L32">            model.addAttribute(&quot;erro&quot;, &quot;Credenciais inválidas. Verifique seu e-mail e senha informados.&quot;);</span>
+        }
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if (logout != null) {</span>
+<span class="nc" id="L35">            model.addAttribute(&quot;sucesso&quot;, &quot;Você encerrou sua sessão com segurança.&quot;);</span>
+        }
+<span class="fc" id="L37">        return &quot;login&quot;;</span>
+    }
+
+    @GetMapping(&quot;/cadastro&quot;)
+    public String exibirCadastro(Model model) {
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">        if (!model.containsAttribute(&quot;cadastroDto&quot;)) {</span>
+<span class="fc" id="L43">            model.addAttribute(&quot;cadastroDto&quot;, new CadastroDto(&quot;&quot;, &quot;&quot;, &quot;&quot;, Role.ROLE_CLIENTE, &quot;&quot;, &quot;&quot;));</span>
+        }
+<span class="fc" id="L45">        model.addAttribute(&quot;rolesDisponiveis&quot;, List.of(Role.ROLE_CLIENTE, Role.ROLE_ARTISTA));</span>
+<span class="fc" id="L46">        return &quot;cadastro&quot;;</span>
+    }
+
+    @PostMapping(&quot;/cadastro&quot;)
+    public String processarCadastro(@Valid @ModelAttribute(&quot;cadastroDto&quot;) CadastroDto cadastroDto,
+                                    BindingResult bindingResult,
+                                    Model model,
+                                    RedirectAttributes redirectAttributes) {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (bindingResult.hasErrors()) {</span>
+<span class="fc" id="L55">            model.addAttribute(&quot;rolesDisponiveis&quot;, List.of(Role.ROLE_CLIENTE, Role.ROLE_ARTISTA));</span>
+<span class="fc" id="L56">            return &quot;cadastro&quot;;</span>
+        }
+
+        try {
+<span class="fc" id="L60">            usuarioService.registrarUsuario(cadastroDto);</span>
+<span class="fc" id="L61">            redirectAttributes.addFlashAttribute(&quot;sucesso&quot;, &quot;Cadastro realizado com sucesso! Enviamos um link de confirmação para seu e-mail (veja no console do terminal). Ative sua conta para fazer login.&quot;);</span>
+<span class="fc" id="L62">            return &quot;redirect:/login&quot;;</span>
+<span class="nc" id="L63">        } catch (IllegalArgumentException ex) {</span>
+<span class="nc" id="L64">            model.addAttribute(&quot;erro&quot;, ex.getMessage());</span>
+<span class="nc" id="L65">            model.addAttribute(&quot;rolesDisponiveis&quot;, List.of(Role.ROLE_CLIENTE, Role.ROLE_ARTISTA));</span>
+<span class="nc" id="L66">            return &quot;cadastro&quot;;</span>
+        }
+    }
+
+    @GetMapping(&quot;/confirmar-email&quot;)
+    public String confirmarEmail(@RequestParam(value = &quot;token&quot;, required = false) String token,
+                                 RedirectAttributes redirectAttributes) {
+<span class="pc bpc" id="L73" title="2 of 4 branches missed.">        if (token == null || token.isBlank()) {</span>
+<span class="nc" id="L74">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, &quot;Token de confirmação não informado.&quot;);</span>
+<span class="nc" id="L75">            return &quot;redirect:/login&quot;;</span>
+        }
+        try {
+<span class="fc" id="L78">            usuarioService.confirmarEmail(token);</span>
+<span class="fc" id="L79">            redirectAttributes.addFlashAttribute(&quot;sucesso&quot;, &quot;E-mail confirmado com sucesso! Sua conta está ativa para login.&quot;);</span>
+<span class="fc" id="L80">        } catch (IllegalArgumentException ex) {</span>
+<span class="fc" id="L81">            redirectAttributes.addFlashAttribute(&quot;erro&quot;, ex.getMessage());</span>
+<span class="fc" id="L82">        }</span>
+<span class="fc" id="L83">        return &quot;redirect:/login&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

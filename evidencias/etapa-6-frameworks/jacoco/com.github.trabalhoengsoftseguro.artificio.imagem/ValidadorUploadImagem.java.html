@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ValidadorUploadImagem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.imagem</a> &gt; <span class="el_source">ValidadorUploadImagem.java</span></div><h1>ValidadorUploadImagem.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.imagem;
+
+import org.springframework.stereotype.Component;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.regex.Pattern;
+
+/**
+ * Validador de segurança para uploads de imagens.
+ * Aplica limites de tamanho, whitelist de tipos MIME, verificação de magic bytes
+ * e higienização estrita de arquivos SVG contra ataques de Stored XSS.
+ */
+@Component
+<span class="fc" id="L16">public class ValidadorUploadImagem {</span>
+
+    public static final int TAMANHO_MAXIMO_BYTES = 5 * 1024 * 1024; // 5 MB
+
+<span class="fc" id="L20">    private static final byte[] MAGIC_PNG = new byte[]{(byte) 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};</span>
+<span class="fc" id="L21">    private static final byte[] MAGIC_JPEG = new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF};</span>
+<span class="fc" id="L22">    private static final byte[] MAGIC_GIF87A = &quot;GIF87a&quot;.getBytes(StandardCharsets.US_ASCII);</span>
+<span class="fc" id="L23">    private static final byte[] MAGIC_GIF89A = &quot;GIF89a&quot;.getBytes(StandardCharsets.US_ASCII);</span>
+<span class="fc" id="L24">    private static final byte[] MAGIC_RIFF = &quot;RIFF&quot;.getBytes(StandardCharsets.US_ASCII);</span>
+<span class="fc" id="L25">    private static final byte[] MAGIC_WEBP = &quot;WEBP&quot;.getBytes(StandardCharsets.US_ASCII);</span>
+
+<span class="fc" id="L27">    private static final Pattern TAGS_PERIGOSAS = Pattern.compile(</span>
+            &quot;&lt;\\s*(script|foreignobject|iframe|object|embed)\\b&quot;, Pattern.CASE_INSENSITIVE);
+<span class="fc" id="L29">    private static final Pattern ATRIBUTOS_EVENTO = Pattern.compile(</span>
+            &quot;\\bon[a-z]{3,15}\\s*=&quot;, Pattern.CASE_INSENSITIVE);
+
+    public String validarEObterMimeType(byte[] conteudo, String contentType) {
+<span class="fc" id="L33">        validarTamanho(conteudo);</span>
+<span class="fc" id="L34">        String mimeNormalizado = normalizarEValidarMimeType(contentType);</span>
+<span class="fc" id="L35">        validarConteudo(conteudo, mimeNormalizado);</span>
+<span class="fc" id="L36">        return mimeNormalizado;</span>
+    }
+
+    private void validarTamanho(byte[] conteudo) {
+<span class="pc bpc" id="L40" title="2 of 4 branches missed.">        if (conteudo == null || conteudo.length == 0) {</span>
+<span class="nc" id="L41">            throw new IllegalArgumentException(&quot;O arquivo de imagem não pode estar vazio&quot;);</span>
+        }
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">        if (conteudo.length &gt; TAMANHO_MAXIMO_BYTES) {</span>
+<span class="nc" id="L44">            throw new IllegalArgumentException(&quot;O arquivo de imagem excede o tamanho máximo permitido de 5MB&quot;);</span>
+        }
+<span class="fc" id="L46">    }</span>
+
+    private String normalizarEValidarMimeType(String contentType) {
+<span class="pc bpc" id="L49" title="2 of 4 branches missed.">        if (contentType == null || contentType.isBlank()) {</span>
+<span class="nc" id="L50">            throw new IllegalArgumentException(&quot;O tipo de mídia (Content-Type) é obrigatório&quot;);</span>
+        }
+
+<span class="fc" id="L53">        String mime = contentType.trim().toLowerCase(Locale.ROOT);</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if (&quot;image/jpg&quot;.equals(mime)) {</span>
+<span class="nc" id="L55">            mime = &quot;image/jpeg&quot;;</span>
+        }
+
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if (!isMimePermitido(mime)) {</span>
+<span class="nc" id="L59">            throw new IllegalArgumentException(&quot;Tipo de arquivo não suportado: &quot; + contentType +</span>
+                    &quot;. Formatos aceitos: PNG, JPEG, GIF, WEBP e SVG.&quot;);
+        }
+<span class="fc" id="L62">        return mime;</span>
+    }
+
+    private boolean isMimePermitido(String mime) {
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        return switch (mime) {</span>
+<span class="fc" id="L67">            case &quot;image/png&quot;, &quot;image/jpeg&quot;, &quot;image/gif&quot;, &quot;image/webp&quot;, &quot;image/svg+xml&quot; -&gt; true;</span>
+<span class="nc" id="L68">            default -&gt; false;</span>
+        };
+    }
+
+    private void validarConteudo(byte[] conteudo, String mimeType) {
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        if (&quot;image/svg+xml&quot;.equals(mimeType)) {</span>
+<span class="fc" id="L74">            validarSvg(conteudo);</span>
+        } else {
+<span class="nc" id="L76">            validarAssinaturaBinaria(conteudo, mimeType);</span>
+        }
+<span class="fc" id="L78">    }</span>
+
+    private void validarAssinaturaBinaria(byte[] conteudo, String mimeType) {
+<span class="nc bnc" id="L81" title="All 5 branches missed.">        boolean valida = switch (mimeType) {</span>
+<span class="nc" id="L82">            case &quot;image/png&quot; -&gt; iniciaCom(conteudo, MAGIC_PNG);</span>
+<span class="nc" id="L83">            case &quot;image/jpeg&quot; -&gt; iniciaCom(conteudo, MAGIC_JPEG);</span>
+<span class="nc bnc" id="L84" title="All 4 branches missed.">            case &quot;image/gif&quot; -&gt; iniciaCom(conteudo, MAGIC_GIF87A) || iniciaCom(conteudo, MAGIC_GIF89A);</span>
+<span class="nc" id="L85">            case &quot;image/webp&quot; -&gt; isWebpValido(conteudo);</span>
+<span class="nc" id="L86">            default -&gt; false;</span>
+        };
+
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        if (!valida) {</span>
+<span class="nc" id="L90">            throw new IllegalArgumentException(&quot;O conteúdo do arquivo não corresponde a uma imagem válida do tipo &quot; + mimeType);</span>
+        }
+<span class="nc" id="L92">    }</span>
+
+    private boolean isWebpValido(byte[] conteudo) {
+<span class="nc bnc" id="L95" title="All 4 branches missed.">        if (conteudo.length &lt; 12 || !iniciaCom(conteudo, MAGIC_RIFF)) {</span>
+<span class="nc" id="L96">            return false;</span>
+        }
+<span class="nc" id="L98">        byte[] subtipo = Arrays.copyOfRange(conteudo, 8, 12);</span>
+<span class="nc" id="L99">        return Arrays.equals(subtipo, MAGIC_WEBP);</span>
+    }
+
+    private boolean iniciaCom(byte[] dados, byte[] prefixo) {
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (dados.length &lt; prefixo.length) {</span>
+<span class="nc" id="L104">            return false;</span>
+        }
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        for (int i = 0; i &lt; prefixo.length; i++) {</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">            if (dados[i] != prefixo[i]) {</span>
+<span class="nc" id="L108">                return false;</span>
+            }
+        }
+<span class="nc" id="L111">        return true;</span>
+    }
+
+    private void validarSvg(byte[] conteudo) {
+<span class="fc" id="L115">        String svg = new String(conteudo, StandardCharsets.UTF_8).toLowerCase(Locale.ROOT);</span>
+
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        if (!svg.contains(&quot;&lt;svg&quot;)) {</span>
+<span class="nc" id="L118">            throw new IllegalArgumentException(&quot;Arquivo SVG inválido: tag &lt;svg&gt; ausente&quot;);</span>
+        }
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">        if (TAGS_PERIGOSAS.matcher(svg).find()) {</span>
+<span class="nc" id="L121">            throw new IllegalArgumentException(&quot;O arquivo SVG contém tags não permitidas (&lt;script&gt;, &lt;foreignObject&gt;, &lt;object&gt;, &lt;iframe&gt;, &lt;embed&gt;)&quot;);</span>
+        }
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">        if (ATRIBUTOS_EVENTO.matcher(svg).find()) {</span>
+<span class="nc" id="L124">            throw new IllegalArgumentException(&quot;O arquivo SVG contém atributos de evento JavaScript não permitidos&quot;);</span>
+        }
+<span class="pc bpc" id="L126" title="2 of 4 branches missed.">        if (svg.contains(&quot;javascript:&quot;) || svg.contains(&quot;data:text/html&quot;)) {</span>
+<span class="nc" id="L127">            throw new IllegalArgumentException(&quot;O arquivo SVG contém URIs ou esquemas JavaScript potencialmente maliciosos&quot;);</span>
+        }
+<span class="fc" id="L129">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

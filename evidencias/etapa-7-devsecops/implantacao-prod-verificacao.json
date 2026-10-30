@@ -1,0 +1,23 @@
+[
+    {
+        "Path":  "/",
+        "Status":  200,
+        "DemoButton":  false,
+        "DemoPassword":  false,
+        "H2Console":  false
+    },
+    {
+        "Path":  "/login",
+        "Status":  200,
+        "DemoButton":  false,
+        "DemoPassword":  false,
+        "H2Console":  false
+    },
+    {
+        "Path":  "/h2-console",
+        "Status":  404,
+        "DemoButton":  false,
+        "DemoPassword":  false,
+        "H2Console":  false
+    }
+]

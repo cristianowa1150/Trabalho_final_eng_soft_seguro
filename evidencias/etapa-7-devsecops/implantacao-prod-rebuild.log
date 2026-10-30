@@ -1,0 +1,66 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.2)
+
+2026-10-30T07:15:35.078-03:00  INFO 30376 --- [artificio] [           main] c.g.t.artificio.ArtificioApplication     : Starting ArtificioApplication v1.0.0 using Java 25.0.4.1 with PID 30376 (C:\Users\crist\Documents\Trabalho_final_eng_soft_seguro\codigo\artificio\target\artificio-1.0.0.jar started by crist in C:\Users\crist\Documents\Trabalho_final_eng_soft_seguro)
+2026-10-30T07:15:35.082-03:00  INFO 30376 --- [artificio] [           main] c.g.t.artificio.ArtificioApplication     : The following 1 profile is active: "prod"
+2026-10-30T07:15:36.074-03:00  INFO 30376 --- [artificio] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-30T07:15:36.129-03:00  INFO 30376 --- [artificio] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 48 ms. Found 7 JPA repository interfaces.
+2026-10-30T07:15:36.866-03:00  INFO 30376 --- [artificio] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8080 (http)
+2026-10-30T07:15:36.883-03:00  INFO 30376 --- [artificio] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-10-30T07:15:36.883-03:00  INFO 30376 --- [artificio] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.27]
+2026-10-30T07:15:36.925-03:00  INFO 30376 --- [artificio] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1778 ms
+2026-10-30T07:15:37.145-03:00  INFO 30376 --- [artificio] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-10-30T07:15:37.188-03:00  INFO 30376 --- [artificio] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.4.13.Final
+2026-10-30T07:15:37.367-03:00  INFO 30376 --- [artificio] [           main] o.h.e.boot.internal.EnversServiceImpl    : Envers integration enabled? : true
+2026-10-30T07:15:37.499-03:00  INFO 30376 --- [artificio] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-30T07:15:37.527-03:00  INFO 30376 --- [artificio] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-10-30T07:15:37.684-03:00  INFO 30376 --- [artificio] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:artificiodb user=SA
+2026-10-30T07:15:37.686-03:00  INFO 30376 --- [artificio] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-10-30T07:15:37.703-03:00  WARN 30376 --- [artificio] [           main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-10-30T07:15:37.720-03:00  INFO 30376 --- [artificio] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:artificiodb]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: ARTIFICIODB/PUBLIC
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-10-30T07:15:37.916-03:00  INFO 30376 --- [artificio] [           main] o.h.e.c.i.m.AuditMetadataGenerator       : Adding properties for entity: com.github.trabalhoengsoftseguro.artificio.artista.TipoComissao
+2026-10-30T07:15:37.919-03:00  INFO 30376 --- [artificio] [           main] o.h.e.c.i.m.AuditMetadataGenerator       : Adding properties for entity: com.github.trabalhoengsoftseguro.artificio.usuario.Usuario
+2026-10-30T07:15:37.920-03:00  INFO 30376 --- [artificio] [           main] o.h.e.c.i.m.AuditMetadataGenerator       : Adding properties for entity: com.github.trabalhoengsoftseguro.artificio.artista.ObraPortfolio
+2026-10-30T07:15:37.921-03:00  INFO 30376 --- [artificio] [           main] o.h.e.c.i.m.AuditMetadataGenerator       : Adding properties for entity: com.github.trabalhoengsoftseguro.artificio.comissao.PedidoComissao
+2026-10-30T07:15:37.921-03:00  INFO 30376 --- [artificio] [           main] o.h.e.c.i.m.AuditMetadataGenerator       : Adding properties for entity: com.github.trabalhoengsoftseguro.artificio.avaliacao.Avaliacao
+2026-10-30T07:15:38.935-03:00  INFO 30376 --- [artificio] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-30T07:15:39.064-03:00  INFO 30376 --- [artificio] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-30T07:15:39.170-03:00  INFO 30376 --- [artificio] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-10-30T07:15:41.280-03:00  INFO 30376 --- [artificio] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name usuarioService
+2026-10-30T07:15:41.536-03:00  INFO 30376 --- [artificio] [           main] o.s.b.w.a.WelcomePageHandlerMapping      : Adding welcome page template: index
+2026-10-30T07:15:42.001-03:00  INFO 30376 --- [artificio] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8080 (http) with context path '/'
+2026-10-30T07:15:42.033-03:00  INFO 30376 --- [artificio] [           main] c.g.t.artificio.ArtificioApplication     : Started ArtificioApplication in 7.378 seconds (process running for 7.942)
+
+==============================================================================
+  [SEGURANÇA] CREDENCIAIS DO ADMINISTRADOR INICIAL GERADAS COM SUCESSO
+==============================================================================
+  E-mail : admin@artificio.local
+  Senha  : jABJj*skjx$#PabT
+  Papel  : ROLE_ADMIN
+  Aviso  : Esta senha aleatória foi gerada e exibida apenas uma vez.
+           Guarde-a em local seguro ou redefina-a após o primeiro acesso.
+==============================================================================
+
+2026-10-30T07:15:42.326-03:00  INFO 30376 --- [artificio] [           main] c.g.t.artificio.config.AdminInitializer  : Conta inicial de administrador gerada para o e-mail: admin@artificio.local
+2026-10-30T07:15:50.703-03:00  INFO 30376 --- [artificio] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-10-30T07:15:50.704-03:00  INFO 30376 --- [artificio] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-10-30T07:15:50.706-03:00  INFO 30376 --- [artificio] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-10-30T07:15:51.362-03:00  INFO 30376 --- [artificio] [nio-8080-exec-3] c.g.t.a.config.GlobalExceptionHandler    : Recurso estÃ¡tico ou rota nÃ£o localizada: h2-console

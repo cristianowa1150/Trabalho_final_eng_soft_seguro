@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Avaliacao.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.avaliacao</a> &gt; <span class="el_source">Avaliacao.java</span></div><h1>Avaliacao.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.avaliacao;
+
+import com.github.trabalhoengsoftseguro.artificio.auditoria.EntidadeAuditavel;
+import com.github.trabalhoengsoftseguro.artificio.comissao.PedidoComissao;
+import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
+import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.envers.Audited;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.UUID;
+
+/**
+ * Entidade para avaliações e comentários de clientes sobre serviços concluídos.
+ */
+@Entity
+@Table(name = &quot;avaliacoes&quot;)
+@Audited
+public class Avaliacao extends EntidadeAuditavel {
+
+    @Id
+    @GeneratedValue
+    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
+    private UUID id;
+
+    @Column(nullable = false)
+    private Integer nota;
+
+    @Column(length = 1000)
+    private String comentario;
+
+    @Column(name = &quot;data_avaliacao&quot;, nullable = false)
+    private LocalDateTime dataAvaliacao;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;pedido_comissao_id&quot;, nullable = false, unique = true)
+    private PedidoComissao pedidoComissao;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;cliente_id&quot;, nullable = false)
+    private Usuario cliente;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;artista_id&quot;, nullable = false)
+    private Usuario artista;
+
+<span class="fc" id="L48">    public Avaliacao() {</span>
+<span class="fc" id="L49">    }</span>
+
+<span class="fc" id="L51">    public Avaliacao(Integer nota, String comentario, PedidoComissao pedidoComissao, Usuario cliente, Usuario artista) {</span>
+<span class="fc" id="L52">        this.nota = nota;</span>
+<span class="fc" id="L53">        this.comentario = comentario;</span>
+<span class="fc" id="L54">        this.pedidoComissao = pedidoComissao;</span>
+<span class="fc" id="L55">        this.cliente = cliente;</span>
+<span class="fc" id="L56">        this.artista = artista;</span>
+<span class="fc" id="L57">        this.dataAvaliacao = LocalDateTime.now();</span>
+<span class="fc" id="L58">    }</span>
+
+    @PrePersist
+    public void prePersist() {
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        if (this.dataAvaliacao == null) {</span>
+<span class="nc" id="L63">            this.dataAvaliacao = LocalDateTime.now();</span>
+        }
+<span class="fc" id="L65">    }</span>
+
+    public UUID getId() {
+<span class="nc" id="L68">        return id;</span>
+    }
+
+    public void setId(UUID id) {
+<span class="nc" id="L72">        this.id = id;</span>
+<span class="nc" id="L73">    }</span>
+
+    public Integer getNota() {
+<span class="nc" id="L76">        return nota;</span>
+    }
+
+    public void setNota(Integer nota) {
+<span class="nc" id="L80">        this.nota = nota;</span>
+<span class="nc" id="L81">    }</span>
+
+    public String getComentario() {
+<span class="nc" id="L84">        return comentario;</span>
+    }
+
+    public void setComentario(String comentario) {
+<span class="nc" id="L88">        this.comentario = comentario;</span>
+<span class="nc" id="L89">    }</span>
+
+    public LocalDateTime getDataAvaliacao() {
+<span class="nc" id="L92">        return dataAvaliacao;</span>
+    }
+
+    public void setDataAvaliacao(LocalDateTime dataAvaliacao) {
+<span class="nc" id="L96">        this.dataAvaliacao = dataAvaliacao;</span>
+<span class="nc" id="L97">    }</span>
+
+    public PedidoComissao getPedidoComissao() {
+<span class="nc" id="L100">        return pedidoComissao;</span>
+    }
+
+    public void setPedidoComissao(PedidoComissao pedidoComissao) {
+<span class="nc" id="L104">        this.pedidoComissao = pedidoComissao;</span>
+<span class="nc" id="L105">    }</span>
+
+    public Usuario getCliente() {
+<span class="nc" id="L108">        return cliente;</span>
+    }
+
+    public void setCliente(Usuario cliente) {
+<span class="nc" id="L112">        this.cliente = cliente;</span>
+<span class="nc" id="L113">    }</span>
+
+    public Usuario getArtista() {
+<span class="nc" id="L116">        return artista;</span>
+    }
+
+    public void setArtista(Usuario artista) {
+<span class="nc" id="L120">        this.artista = artista;</span>
+<span class="nc" id="L121">    }</span>
+
+    @Override
+    public boolean equals(Object o) {
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (this == o) return true;</span>
+<span class="nc bnc" id="L126" title="All 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="nc" id="L127">        Avaliacao avaliacao = (Avaliacao) o;</span>
+<span class="nc" id="L128">        return Objects.equals(id, avaliacao.id);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L133">        return Objects.hash(id);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>

@@ -995,17 +995,17 @@ Serão considerados:
 
 > Marque `- [x]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
 
-- [ ] 27. Objetivo
-- [ ] Criar `roteiros/etapa-6-deteccao-de-intrusoes.md`
-- [ ] Explicar o que é detecção de intrusões
-- [ ] Explicar a diferença entre prevenir e detectar
-- [ ] Identificar quais eventos do sistema deveriam ser registrados
-- [ ] Criar três regras simples de detecção
-- [ ] Definir risco observado para cada regra
-- [ ] Definir fonte de dados para cada regra
-- [ ] Definir condição de alerta para cada regra
-- [ ] Definir resposta inicial para cada regra
-- [ ] 29. Critérios de avaliação da Etapa 6
+- [x] 27. Objetivo
+- [x] Criar `roteiros/etapa-6-deteccao-de-intrusoes.md`
+- [x] Explicar o que é detecção de intrusões
+- [x] Explicar a diferença entre prevenir e detectar
+- [x] Identificar quais eventos do sistema deveriam ser registrados
+- [x] Criar três regras simples de detecção
+- [x] Definir risco observado para cada regra
+- [x] Definir fonte de dados para cada regra
+- [x] Definir condição de alerta para cada regra
+- [x] Definir resposta inicial para cada regra
+- [x] 29. Critérios de avaliação da Etapa 6
 
 
 ## 27\. Objetivo
@@ -1065,21 +1065,21 @@ Serão considerados:
 
 > Marque `- [x]` conforme cada atividade for concluída. O enunciado original desta etapa permanece abaixo.
 
-- [ ] 30. Objetivo
-- [ ] Criar descrição textual ou diagrama de um pipeline DevSecOps
-- [ ] Criar roteiro do vídeo/apresentação final
-- [ ] Incluir planejamento e análise de ameaças
-- [ ] Incluir requisitos e decisões de arquitetura
-- [ ] Incluir implementação segura
-- [ ] Incluir testes automatizados
-- [ ] Incluir análise de código e dependências
-- [ ] Incluir teste dinâmico ou pentest
-- [ ] Incluir implantação
-- [ ] Incluir monitoramento e resposta
-- [ ] Definir pelo menos três condições que impediriam a continuidade do pipeline
-- [ ] Criar `roteiros/etapa-7-devsecops-e-video-final.md`
-- [ ] Preparar apresentação final de 10 a 15 minutos
-- [ ] 33. Critérios de avaliação da Etapa 7
+- [x] 30. Objetivo
+- [x] Criar descrição textual ou diagrama de um pipeline DevSecOps
+- [x] Criar roteiro do vídeo/apresentação final
+- [x] Incluir planejamento e análise de ameaças
+- [x] Incluir requisitos e decisões de arquitetura
+- [x] Incluir implementação segura
+- [x] Incluir testes automatizados
+- [x] Incluir análise de código e dependências
+- [x] Incluir teste dinâmico ou pentest
+- [x] Incluir implantação
+- [x] Incluir monitoramento e resposta
+- [x] Definir pelo menos três condições que impediriam a continuidade do pipeline
+- [x] Criar `roteiros/etapa-7-devsecops-e-video-final.md`
+- [x] Preparar roteiro da apresentação final de 10 a 15 minutos
+- [x] 33. Critérios de avaliação da Etapa 7
 
 
 ## 30\. Objetivo
@@ -1177,7 +1177,7 @@ Serão considerados:
 - [ ] Etapa 3 concluída
 - [ ] Etapa 4 concluída
 - [ ] Etapa 5 concluída
-- [ ] Etapa 6 concluída
+- [x] Etapa 6 concluída
 - [ ] Etapa 7 concluída
 - [ ] Roteiros revisados
 - [ ] Diagramas revisados
@@ -1217,7 +1217,7 @@ Antes da entrega, o grupo deverá verificar se o repositório contém:
 * \[ ] Etapa 3 — três requisitos, três vulnerabilidades, um diagrama e três decisões;
 * \[ ] Etapa 4 — duas práticas de código seguro com testes;
 * \[ ] Etapa 5 — uma verificação com até três achados analisados;
-* \[ ] Etapa 6 — roteiro com três regras de detecção;
+* \[x] Etapa 6 — roteiro com três regras de detecção;
 * \[ ] Etapa 7 — pipeline, roteiro e apresentação final; a gravação extra de um vídeo pode ser considerado um "plus";
 * \[ ] commits próprios de todos os integrantes;
 * \[ ] arquivos, diagramas e evidências versionados no GitHub.

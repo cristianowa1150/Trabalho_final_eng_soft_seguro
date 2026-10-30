@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UsuarioService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Artifício</a> &gt; <a href="index.source.html" class="el_package">com.github.trabalhoengsoftseguro.artificio.usuario</a> &gt; <span class="el_source">UsuarioService.java</span></div><h1>UsuarioService.java</h1><pre class="source lang-java linenums">package com.github.trabalhoengsoftseguro.artificio.usuario;
+
+import com.github.trabalhoengsoftseguro.artificio.email.EmailService;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+
+@Service
+@Transactional(readOnly = true)
+public class UsuarioService implements UserDetailsService {
+
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenAtivacaoRepository tokenAtivacaoRepository;
+    private final EmailService emailService;
+
+    public UsuarioService(UsuarioRepository usuarioRepository,
+                          PasswordEncoder passwordEncoder,
+                          TokenAtivacaoRepository tokenAtivacaoRepository,
+<span class="fc" id="L30">                          EmailService emailService) {</span>
+<span class="fc" id="L31">        this.usuarioRepository = usuarioRepository;</span>
+<span class="fc" id="L32">        this.passwordEncoder = passwordEncoder;</span>
+<span class="fc" id="L33">        this.tokenAtivacaoRepository = tokenAtivacaoRepository;</span>
+<span class="fc" id="L34">        this.emailService = emailService;</span>
+<span class="fc" id="L35">    }</span>
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+<span class="nc bnc" id="L39" title="All 4 branches missed.">        if (email == null || email.isBlank()) {</span>
+<span class="nc" id="L40">            throw new UsernameNotFoundException(&quot;E-mail não pode ser nulo ou vazio&quot;);</span>
+        }
+<span class="nc" id="L42">        String emailNormalizado = normalizarEmail(email);</span>
+<span class="nc" id="L43">        Usuario usuario = usuarioRepository.findByEmail(emailNormalizado)</span>
+<span class="nc" id="L44">                .orElseThrow(() -&gt; new UsernameNotFoundException(&quot;Usuário não encontrado para o e-mail: &quot; + email));</span>
+
+<span class="nc" id="L46">        return User.builder()</span>
+<span class="nc" id="L47">                .username(usuario.getEmail())</span>
+<span class="nc" id="L48">                .password(usuario.getSenha())</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">                .disabled(!usuario.isEmailConfirmado())</span>
+<span class="nc" id="L50">                .authorities(new SimpleGrantedAuthority(usuario.getRole().name()))</span>
+<span class="nc" id="L51">                .build();</span>
+    }
+
+    @Transactional
+    public Usuario registrarUsuario(CadastroDto dto) {
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">        if (dto == null) {</span>
+<span class="nc" id="L57">            throw new IllegalArgumentException(&quot;Dados de cadastro não podem ser nulos&quot;);</span>
+        }
+<span class="fc" id="L59">        String emailNormalizado = normalizarEmail(dto.email());</span>
+<span class="pc bpc" id="L60" title="2 of 4 branches missed.">        if (emailNormalizado == null || emailNormalizado.isBlank()) {</span>
+<span class="nc" id="L61">            throw new IllegalArgumentException(&quot;O e-mail é obrigatório&quot;);</span>
+        }
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        if (usuarioRepository.existsByEmail(emailNormalizado)) {</span>
+<span class="nc" id="L64">            throw new IllegalArgumentException(&quot;E-mail já cadastrado na plataforma&quot;);</span>
+        }
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        if (dto.role() == Role.ROLE_ADMIN) {</span>
+<span class="nc" id="L67">            throw new IllegalArgumentException(&quot;Não é permitido cadastrar administradores diretamente&quot;);</span>
+        }
+
+<span class="fc" id="L70">        String senhaCriptografada = passwordEncoder.encode(dto.senha());</span>
+<span class="fc" id="L71">        Usuario novoUsuario = new Usuario(</span>
+<span class="fc" id="L72">                dto.nome(),</span>
+                emailNormalizado,
+                senhaCriptografada,
+<span class="fc" id="L75">                dto.role(),</span>
+<span class="fc" id="L76">                dto.bio(),</span>
+<span class="fc" id="L77">                dto.chavePix()</span>
+        );
+<span class="fc" id="L79">        novoUsuario.setEmailConfirmado(false);</span>
+<span class="fc" id="L80">        novoUsuario = usuarioRepository.save(novoUsuario);</span>
+
+<span class="fc" id="L82">        String tokenValor = UUID.randomUUID().toString();</span>
+<span class="fc" id="L83">        TokenAtivacao token = new TokenAtivacao(tokenValor, novoUsuario, LocalDateTime.now().plusHours(24));</span>
+<span class="fc" id="L84">        tokenAtivacaoRepository.save(token);</span>
+
+<span class="fc" id="L86">        String linkAtivacao = &quot;http://localhost:8080/confirmar-email?token=&quot; + tokenValor;</span>
+<span class="fc" id="L87">        emailService.enviarEmailConfirmacao(novoUsuario.getEmail(), novoUsuario.getNome(), linkAtivacao);</span>
+
+<span class="fc" id="L89">        return novoUsuario;</span>
+    }
+
+    @Transactional
+    public Usuario confirmarEmail(String tokenValor) {
+<span class="pc bpc" id="L94" title="2 of 4 branches missed.">        if (tokenValor == null || tokenValor.isBlank()) {</span>
+<span class="nc" id="L95">            throw new IllegalArgumentException(&quot;Token de confirmação é obrigatório&quot;);</span>
+        }
+<span class="fc" id="L97">        TokenAtivacao token = tokenAtivacaoRepository.findByToken(tokenValor)</span>
+<span class="fc" id="L98">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Token de confirmação inválido ou não encontrado&quot;));</span>
+
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">        if (token.isExpirado()) {</span>
+<span class="nc" id="L101">            tokenAtivacaoRepository.delete(token);</span>
+<span class="nc" id="L102">            throw new IllegalArgumentException(&quot;O link de confirmação expirou. Por favor, realize um novo cadastro.&quot;);</span>
+        }
+
+<span class="fc" id="L105">        Usuario usuario = token.getUsuario();</span>
+<span class="fc" id="L106">        usuario.setEmailConfirmado(true);</span>
+<span class="fc" id="L107">        usuarioRepository.save(usuario);</span>
+<span class="fc" id="L108">        tokenAtivacaoRepository.delete(token);</span>
+<span class="fc" id="L109">        return usuario;</span>
+    }
+
+    public Usuario buscarPorEmail(String email) {
+<span class="nc bnc" id="L113" title="All 4 branches missed.">        if (email == null || email.isBlank()) {</span>
+<span class="nc" id="L114">            throw new IllegalArgumentException(&quot;E-mail não pode ser nulo ou vazio&quot;);</span>
+        }
+<span class="nc" id="L116">        String emailNormalizado = normalizarEmail(email);</span>
+<span class="nc" id="L117">        return usuarioRepository.findByEmail(emailNormalizado)</span>
+<span class="nc" id="L118">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Usuário não encontrado para o e-mail: &quot; + email));</span>
+    }
+
+    private String normalizarEmail(String email) {
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if (email == null) {</span>
+<span class="nc" id="L123">            return null;</span>
+        }
+<span class="fc" id="L125">        return email.trim().toLowerCase(Locale.ROOT);</span>
+    }
+
+    public Usuario buscarPorId(UUID id) {
+<span class="nc" id="L129">        return usuarioRepository.findById(id)</span>
+<span class="nc" id="L130">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Usuário não encontrado com ID: &quot; + id));</span>
+    }
+
+    public List&lt;Usuario&gt; listarTodos() {
+<span class="nc" id="L134">        return usuarioRepository.findAll();</span>
+    }
+
+    public List&lt;Usuario&gt; listarArtistas() {
+<span class="nc" id="L138">        return usuarioRepository.findByRoleOrderByNomeAsc(Role.ROLE_ARTISTA);</span>
+    }
+
+    @Transactional
+    public Usuario promoverParaArtista(UUID usuarioId) {
+<span class="nc" id="L143">        Usuario usuario = buscarPorId(usuarioId);</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">        if (usuario.getRole() != Role.ROLE_CLIENTE) {</span>
+<span class="nc" id="L145">            throw new IllegalArgumentException(&quot;Apenas contas com papel de Cliente podem ser promovidas a Artista&quot;);</span>
+        }
+<span class="nc" id="L147">        usuario.setRole(Role.ROLE_ARTISTA);</span>
+<span class="nc" id="L148">        return usuarioRepository.save(usuario);</span>
+    }
+
+    @Transactional
+    public Usuario atualizarPerfil(UUID usuarioId, String bio, String chavePix) {
+<span class="nc" id="L153">        Usuario usuario = buscarPorId(usuarioId);</span>
+<span class="nc" id="L154">        usuario.setBio(bio);</span>
+<span class="nc" id="L155">        usuario.setChavePix(chavePix);</span>
+<span class="nc" id="L156">        return usuarioRepository.save(usuario);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.15.202606040825</span></div></body></html>
