@@ -44,6 +44,13 @@ vulnerabilidades confirmadas. O log completo está em
 para não falhar o build automaticamente, permitindo registrar os achados sem
 alterar o código durante esta etapa.
 
+### 2.1 Triagem inicial de achados (SAST/SCA)
+
+| Ferramenta | Achado registrado | Classificação inicial | Mitigação/justificativa | Status |
+|---|---|---|---|---|
+| SpotBugs | `EI_EXPOSE_REP`/`EI_EXPOSE_REP2` em DTOs/entidades e injeção por construtor (45 itens no total) | Predominantemente baixo risco arquitetural, exige revisão caso a caso | Manter build sem bloqueio automático nesta execução e abrir triagem técnica por classe antes de tratar como vulnerabilidade real | **Pendente de triagem detalhada** |
+| Dependency-Check | Execução interrompida durante atualização NVD, sem relatório final | Sem classificação possível nesta execução | Reexecutar com atualização completa da base NVD e gerar relatório para decisão de mitigação | **Pendente** |
+
 ## 3. Implantação no perfil de produção
 
 Antes da implantação, o artefato foi reconstruído com:
@@ -75,11 +82,28 @@ Evidências:
 | `/` e `/login` | Sem botão ou modal demo | Facilitadores de credenciais não expostos |
 | `/` e `/login` | Sem senhas demo conhecidas | Senhas de demonstração não renderizadas |
 
+Configurações que sustentam o resultado no perfil de produção:
+
+- `codigo/artificio/src/main/resources/application-prod.properties` define
+  `spring.h2.console.enabled=false`;
+- `codigo/artificio/src/main/resources/application-prod.properties` define
+  `artificio.demo.exibir-credenciais=false`.
+
 Após a verificação, o processo local foi encerrado. A implantação comprova a
 execução do artefato atual em perfil `prod`; não representa publicação em um
 servidor externo ou pipeline CI/CD.
 
-## 4. Conclusão
+## 4. Conformidade com o checklist oficial da Etapa 7
+
+| Item do checklist de entrega | Evidência no repositório | Status |
+|---|---|---|
+| Perfil `prod` sem console H2 e sem credenciais padrão | [implantacao-prod-verificacao.json](./implantacao-prod-verificacao.json), [implantacao-prod-verificacao.txt](./implantacao-prod-verificacao.txt), `codigo/artificio/src/main/resources/application-prod.properties` | Atendido |
+| Análise SAST com triagem/mitigação documentada | [spotbugs-execucao.txt](./spotbugs-execucao.txt), seção 2.1 deste relatório | Parcial (triagem detalhada pendente) |
+| Análise SCA com resultado documentado | [dependency-check-execucao.txt](./dependency-check-execucao.txt), seção 2.1 deste relatório | Parcial (execução completa pendente) |
+| Inventário de dependências da build | [dependency-tree.txt](./dependency-tree.txt) | Atendido |
+| Relato consolidado da implantação segura | [implantacao-prod-rebuild.log](./implantacao-prod-rebuild.log), [implantacao-prod-verificacao.json](./implantacao-prod-verificacao.json) | Atendido |
+
+## 5. Conclusão
 
 O item de **implantação** foi coberto com execução real do JAR reconstruído,
 perfil `prod` ativo e validações HTTP dos controles principais. O item de
