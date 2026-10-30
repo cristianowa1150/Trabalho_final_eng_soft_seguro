@@ -1,6 +1,6 @@
 # Artifício
 <p align="center">
-  <img src="assets/image.png" alt="Logotipo" width="70%">
+  <img src="https://raw.githubusercontent.com/cristianowa1150/Trabalho_final_eng_soft_seguro/main/assets/image.png" alt="Logotipo" width="70%">
 </p>
 
 ## Trabalho Final
