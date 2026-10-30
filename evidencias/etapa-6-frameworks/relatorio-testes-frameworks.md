@@ -51,6 +51,18 @@ O relatório HTML e o CSV do JaCoCo estão em
 [jacoco/](./jacoco/). O JaCoCo mede cobertura; ele não substitui os testes e
 não é um scanner de vulnerabilidades.
 
+### Rastreabilidade dos módulos críticos
+
+Com base no `jacoco.csv`, os módulos críticos pedidos no checklist da revisão
+ficam rastreados pelas seguintes classes:
+
+| Módulo crítico | Classes mapeadas no JaCoCo | Evidência |
+|---|---|---|
+| Autenticação | `AuthController`, `UsuarioService` | [jacoco.csv](./jacoco/jacoco.csv) |
+| Controle de acesso | `SecurityConfig`, `AuthController` | [jacoco.csv](./jacoco/jacoco.csv) |
+| Auditoria | `AuditoriaService`, `AdminAuditoriaController` | [jacoco.csv](./jacoco/jacoco.csv) |
+| Upload | `ValidadorUploadImagem`, `ImagemController` | [jacoco.csv](./jacoco/jacoco.csv) |
+
 ## OWASP ZAP
 
 O ZAP não foi reinstalado nem executado novamente nesta rodada. As duas
@@ -63,11 +75,15 @@ Etapa 5:
 
 ## Ferramentas não configuradas
 
-SpotBugs, OWASP Dependency-Check, Semgrep, Gitleaks, Snyk, SonarQube, Burp
-Suite, Wazuh, Suricata e Falco não possuem configuração ou evidência anterior
-no repositório. Portanto, não foram apresentados como resultados executados.
-Eles podem ser adicionados em uma etapa posterior, preferencialmente no
-pipeline DevSecOps, com seus próprios comandos, versões e arquivos de saída.
+Semgrep, Gitleaks, Snyk, SonarQube, Burp Suite, Wazuh, Suricata e Falco não
+possuem configuração ou evidência anterior no repositório. Portanto, não foram
+apresentados como resultados executados.
+
+SpotBugs e OWASP Dependency-Check não foram executados nesta etapa de
+frameworks, mas possuem execução registrada na Etapa 7:
+
+- [spotbugs-execucao.txt](../etapa-7-devsecops/spotbugs-execucao.txt);
+- [dependency-check-execucao.txt](../etapa-7-devsecops/dependency-check-execucao.txt).
 
 ## Conclusão
 
