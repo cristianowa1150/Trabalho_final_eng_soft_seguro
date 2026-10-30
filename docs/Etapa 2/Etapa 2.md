@@ -733,6 +733,9 @@ Trata da restauração de estados íntegros. Envolve políticas de recuperação
 
 ### 14.3 Mapeamento dos riscos para o NIST CSF
 
+O mapeamento dos riscos para as funções do NIST CSF está integrado ao plano de tratamento da seção 14.4, na coluna “Funções do NIST”. Para cada risco, essa coluna indica as funções relacionadas aos controles propostos.
+
+Um mesmo risco pode estar associado a mais de uma função, conforme as ações necessárias para seu tratamento.
 
 ### 14.4 Plano de tratamento
 O plano de tratamento foi elaborado a partir dos riscos identificados na seção 13.4 e das estratégias definidas na seção 14.1. Os controles propostos têm como objetivo reduzir a probabilidade de ocorrência dos eventos ou limitar seus impactos sobre os usuários, dados e componentes do Artifício.
