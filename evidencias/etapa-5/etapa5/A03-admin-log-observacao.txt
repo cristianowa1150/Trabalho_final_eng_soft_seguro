@@ -1,3 +1,0 @@
-timestamp=2026-10-26T15:55:10-03:00
-evidencia: a inicializacao do perfil padrao exibiu a senha administrativa em texto claro na saida do processo; o valor foi deliberadamente omitido desta evidência.
-fonte_tecnica: codigo/artificio/src/main/java/com/github/trabalhoengsoftseguro/artificio/config/AdminInitializer.java, metodo imprimirCredenciaisConsole

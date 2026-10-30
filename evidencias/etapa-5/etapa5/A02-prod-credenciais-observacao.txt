@@ -1,2 +1,0 @@
-indicadores_de_credenciais_no_html_prod=
-113:    <!-- Balão Flutuante e Modal de Contas de Teste (Ativo apenas em ambiente de desenvolvimento/avaliação) -->

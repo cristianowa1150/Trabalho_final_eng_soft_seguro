@@ -1,2 +1,0 @@
-status_h2_console_prod=HTTP/1.1 404 
-html_bytes=3538
