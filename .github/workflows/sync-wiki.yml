@@ -1,0 +1,52 @@
+name: Sincronizar Wiki com a Documentação
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'README.md'
+  workflow_dispatch: # Permite disparar manualmente pela aba Actions do GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  sync-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do Repositório Principal
+        uses: actions/checkout@v4
+
+      - name: Checkout do Repositório da Wiki
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: repo_wiki
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Preparar e Sincronizar Documentação
+        run: |
+          echo "Configurando Git..."
+          cd repo_wiki
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          echo "Sincronizando arquivos..."
+          # Copia README como Home.md caso não queira sobrescrever customizado
+          cp ../README.md ./Home.md
+          
+          # Copia recursivamente os arquivos da pasta docs preservando conteúdo
+          mkdir -p docs
+          cp -r ../docs/* ./docs/
+          
+          # Adiciona e verifica se há alterações para commitar
+          git add .
+          if git diff --staged --quiet; then
+            echo "Nenhuma alteração detectada na documentação para a Wiki."
+          else
+            git commit -m "docs(wiki): sincronizacao automatica a partir de main"
+            git push origin master || git push origin main
+            echo "Wiki sincronizada com sucesso!"
+          fi
