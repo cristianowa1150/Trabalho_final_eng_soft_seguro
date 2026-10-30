@@ -65,3 +65,11 @@ Serão considerados:
 * qualidade do roteiro;
 * participação individual nos commits.
 
+## Relatório de execução
+
+As verificações realizadas com JUnit 5, Mockito, Spring Boot Test, MockMvc,
+Spring Data JPA, H2 e JaCoCo estão documentadas no
+[relatório de testes dos frameworks](../../evidencias/etapa-6-frameworks/relatorio-testes-frameworks.md).
+O relatório também referencia as evidências do OWASP ZAP produzidas na Etapa 5
+e separa ferramentas configuradas de ferramentas que ainda não foram
+executadas.
