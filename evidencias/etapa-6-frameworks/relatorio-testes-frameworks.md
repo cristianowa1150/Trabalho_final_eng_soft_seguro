@@ -53,15 +53,20 @@ não é um scanner de vulnerabilidades.
 
 ### Rastreabilidade dos módulos críticos
 
-Com base no `jacoco.csv`, os módulos críticos pedidos no checklist da revisão
-ficam rastreados pelas seguintes classes:
+Com base no `jacoco.csv` e na estrutura de testes do projeto, os módulos críticos pedidos no checklist da revisão ficam rastreados pelas seguintes classes e suítes:
 
-| Módulo crítico | Classes mapeadas no JaCoCo | Evidência |
-|---|---|---|
-| Autenticação | `AuthController`, `UsuarioService` | [jacoco.csv](./jacoco/jacoco.csv) |
-| Controle de acesso | `SecurityConfig`, `AuthController` | [jacoco.csv](./jacoco/jacoco.csv) |
-| Auditoria | `AuditoriaService`, `AdminAuditoriaController` | [jacoco.csv](./jacoco/jacoco.csv) |
-| Upload | `ValidadorUploadImagem`, `ImagemController` | [jacoco.csv](./jacoco/jacoco.csv) |
+| Módulo crítico | Classes mapeadas no JaCoCo | Suítes de teste dedicadas no repositório | Evidência de medição |
+|---|---|---|---|
+| Autenticação | `AuthController`, `UsuarioService` | `AuthControllerTest`, `UsuarioServiceTest`, `GeminiAutenticacaoControleAcessoTests` | [jacoco.csv](./jacoco/jacoco.csv) |
+| Controle de acesso | `SecurityConfig`, `AuthController` | `AuthControllerTest`, `CasosAbusoTests`, `GeminiAutenticacaoControleAcessoTests` | [jacoco.csv](./jacoco/jacoco.csv) |
+| Auditoria | `AuditoriaService`, `AdminAuditoriaController` | `AdminAuditoriaControllerTest`, `GeminiWebAuditoriaTests`, `ArtificioJpaTests` | [jacoco.csv](./jacoco/jacoco.csv) |
+| Upload | `ValidadorUploadImagem`, `ImagemController` | `ImagemControllerTest`, `ImagemServiceTest`, `GeminiUploadSegurancaMidiaTests` | [jacoco.csv](./jacoco/jacoco.csv) |
+
+> **Nota sobre as métricas do JaCoCo:** Os percentuais presentes no `jacoco.csv` desta pasta
+> decorrem da execução seletiva das três classes de demonstração dos frameworks
+> (`ComissaoServiceTest`, `AuthControllerTest`, `ArtificioJpaTests`), conforme comando registrado
+> na seção de execução Maven. Para a cobertura completa de auditoria, upload e casos de abuso,
+> as suítes dedicadas acima são executadas na suíte integral de testes (`mvn test`).
 
 ## OWASP ZAP
 
