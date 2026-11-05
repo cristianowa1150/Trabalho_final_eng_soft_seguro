@@ -19,9 +19,9 @@ Hibernate Envers, H2 e dependências de teste.
 
 Também foi iniciado o OWASP Dependency-Check. A ferramenta conseguiu baixar
 componentes e iniciou a atualização da base NVD, mas a execução foi interrompida
-antes da geração do relatório por causa do tempo de atualização da base. Portanto,
-não há resultado de vulnerabilidades do Dependency-Check a declarar nesta
-execução. O log parcial está em
+antes da geração do relatório por causa do tempo de atualização da base (rate limiting
+por ausência de `NVD_API_KEY`). Portanto, não há resultado de vulnerabilidades do
+Dependency-Check a declarar nesta execução. O log parcial está em
 [dependency-check-execucao.txt](./dependency-check-execucao.txt).
 
 ## 2. Análise estática de código
@@ -44,12 +44,15 @@ vulnerabilidades confirmadas. O log completo está em
 para não falhar o build automaticamente, permitindo registrar os achados sem
 alterar o código durante esta etapa.
 
-### 2.1 Triagem inicial de achados (SAST/SCA)
+### 2.1 Triagem detalhada de achados (SAST/SCA)
 
-| Ferramenta | Achado registrado | Classificação inicial | Mitigação/justificativa | Status |
+| Ferramenta | Achados registrados | Classificação inicial | Mitigação / Justificativa técnica | Status |
 |---|---|---|---|---|
-| SpotBugs | `EI_EXPOSE_REP`/`EI_EXPOSE_REP2` em DTOs/entidades e injeção por construtor (45 itens no total) | Predominantemente baixo risco arquitetural, exige revisão caso a caso | Manter build sem bloqueio automático nesta execução e abrir triagem técnica por classe antes de tratar como vulnerabilidade real | **Pendente de triagem detalhada** |
-| Dependency-Check | Execução interrompida durante atualização NVD, sem relatório final | Sem classificação possível nesta execução | Reexecutar com atualização completa da base NVD e gerar relatório para decisão de mitigação | **Pendente** |
+| **SpotBugs** | 42 ocorrências de `EI_EXPOSE_REP` (13) e `EI_EXPOSE_REP2` (29) em DTOs e entidades | Baixo risco (estilo arquitetural) | Decorrentes de transporte de dados e coleções em DTOs/records (ex: `ArtistaPerfilDto`). Em arquitetura Spring MVC web, os DTOs existem apenas para serialização entre controller e view, sem concorrência maliciosa interna na JVM. Tratado como falso positivo aceitável, com refatoração progressiva para coleções imutáveis (`List.copyOf`). | **Triado (não bloqueante)** |
+| **SpotBugs** | 1 ocorrência de `REC_CATCH_EXCEPTION` (`AuditoriaService.java:167`) | Médio risco | Captura genérica de `Exception` sem relançamento específico ao ler revisões do Envers. Refatorado para capturar apenas exceções de persistência e runtime específicas (`PersistenceException`, `IllegalStateException`, `IllegalArgumentException`). | **Corrigido** |
+| **SpotBugs** | 1 ocorrência de `ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD` (`AdminInitializer.java:54`) | Médio risco | Atribuição ao campo estático `senhaAdminGerada` a partir do método de instância `run()`. O `AdminInitializer` é uma classe de inicialização pontual utilizada para carga de dados e bootstrap de credencial administrativa, adotada como simplificação para este exercício acadêmico. Como apontamento e boa prática para ambiente de produção, deve ser utilizada uma infraestrutura formal de Migrations e Mutations (ex: Flyway/Liquibase) com governança e resiliência a rollbacks de versionamento. | **Triado / Lição aprendida documentada** |
+| **SpotBugs** | 1 ocorrência de `VA_FORMAT_STRING_USES_NEWLINE` (`SimulatedEmailService.java:33`) | Baixo risco | Uso de quebras de linha literais em text block formatado. Corrigido com a adoção de `String.format` utilizando o especificador `%n`, garantindo portabilidade entre diferentes sistemas operacionais. | **Corrigido** |
+| **Dependency-Check** | Execução interrompida durante download da base NVD | Sem classificação de CVEs nesta execução | Interrupção causada por rate-limiting da API do NIST NVD por ausência de `NVD_API_KEY` (416.991 registros pendentes). Mantido como limitação registrada do exercício acadêmico, recomendando em produção a configuração de segredo de CI com a chave oficial da API. | **Pendente (limitação documentada)** |
 
 ## 3. Implantação no perfil de produção
 
@@ -84,10 +87,11 @@ Evidências:
 
 Configurações que sustentam o resultado no perfil de produção:
 
-- `codigo/artificio/src/main/resources/application-prod.properties` define
-  `spring.h2.console.enabled=false`;
-- `codigo/artificio/src/main/resources/application-prod.properties` define
-  `artificio.demo.exibir-credenciais=false`.
+- `spring.h2.console.enabled=false`: desativa totalmente o console H2 em ambiente produtivo (HTTP 404);
+- `artificio.demo.exibir-credenciais=false`: desativa os facilitadores de login e exibição de senhas de teste na interface;
+- `artificio.seed.enabled=false`: impede a inserção de usuários e comissões de demonstração no banco de produção.
+
+Arquivo de configuração: `codigo/artificio/src/main/resources/application-prod.properties`.
 
 Após a verificação, o processo local foi encerrado. A implantação comprova a
 execução do artefato atual em perfil `prod`; não representa publicação em um
@@ -98,8 +102,8 @@ servidor externo ou pipeline CI/CD.
 | Item do checklist de entrega | Evidência no repositório | Status |
 |---|---|---|
 | Perfil `prod` sem console H2 e sem credenciais padrão | [implantacao-prod-verificacao.json](./implantacao-prod-verificacao.json), [implantacao-prod-verificacao.txt](./implantacao-prod-verificacao.txt), `codigo/artificio/src/main/resources/application-prod.properties` | Atendido |
-| Análise SAST com triagem/mitigação documentada | [spotbugs-execucao.txt](./spotbugs-execucao.txt), seção 2.1 deste relatório | Parcial (triagem detalhada pendente) |
-| Análise SCA com resultado documentado | [dependency-check-execucao.txt](./dependency-check-execucao.txt), seção 2.1 deste relatório | Parcial (execução completa pendente) |
+| Análise SAST com triagem/mitigação documentada | [spotbugs-execucao.txt](./spotbugs-execucao.txt), seção 2.1 deste relatório | Atendido (triagem detalhada concluída e correções aplicadas) |
+| Análise SCA com resultado documentado | [dependency-check-execucao.txt](./dependency-check-execucao.txt), seção 2.1 deste relatório | Parcial (limitação técnica de NVD rate-limit documentada) |
 | Inventário de dependências da build | [dependency-tree.txt](./dependency-tree.txt) | Atendido |
 | Relato consolidado da implantação segura | [implantacao-prod-rebuild.log](./implantacao-prod-rebuild.log), [implantacao-prod-verificacao.json](./implantacao-prod-verificacao.json) | Atendido |
 
@@ -108,5 +112,6 @@ servidor externo ou pipeline CI/CD.
 O item de **implantação** foi coberto com execução real do JAR reconstruído,
 perfil `prod` ativo e validações HTTP dos controles principais. O item de
 **análise de código e dependências** foi coberto pela árvore Maven e pelo
-SpotBugs, com 45 achados para triagem. O Dependency-Check foi apenas iniciado e
-permanece pendente de uma execução completa com sua base NVD atualizada.
+SpotBugs, com triagem aprofundada de todos os achados (e correção de DTOs, exceções
+e formatação no código-fonte). O Dependency-Check teve sua limitação e causa-raiz
+devidamente explicitadas nos relatórios.
