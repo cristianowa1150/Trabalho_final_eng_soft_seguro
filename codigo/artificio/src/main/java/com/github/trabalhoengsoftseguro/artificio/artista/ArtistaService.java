@@ -53,7 +53,8 @@ public class ArtistaService {
         Double media = avaliacaoRepository.calcularMediaNotasPorArtista(artistaId);
         long total = avaliacaoRepository.countByArtistaId(artistaId);
 
-        return new ArtistaPerfilDto(artista, obras, tipos, media != null ? media : 0.0, total);
+        ArtistaResumoDto artistaResumo = new ArtistaResumoDto(artista.getId(), artista.getNome(), artista.getBio());
+        return new ArtistaPerfilDto(artistaResumo, obras, tipos, media != null ? media : 0.0, total);
     }
 
     @Transactional
