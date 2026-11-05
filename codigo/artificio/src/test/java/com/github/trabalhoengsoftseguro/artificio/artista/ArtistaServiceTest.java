@@ -161,6 +161,7 @@ class ArtistaServiceTest {
         ArtistaPerfilDto perfil = service.obterPerfilCompleto(artistaId);
 
         assertNotNull(perfil);
+        assertEquals("Renata", perfil.artista().nome());
         assertEquals(4.8, perfil.mediaNotas());
         assertEquals(12L, perfil.totalAvaliacoes());
         assertEquals(1, perfil.obras().size());

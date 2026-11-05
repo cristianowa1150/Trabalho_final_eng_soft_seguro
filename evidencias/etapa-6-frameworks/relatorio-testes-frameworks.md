@@ -51,6 +51,23 @@ O relatório HTML e o CSV do JaCoCo estão em
 [jacoco/](./jacoco/). O JaCoCo mede cobertura; ele não substitui os testes e
 não é um scanner de vulnerabilidades.
 
+### Rastreabilidade dos módulos críticos
+
+Com base no `jacoco.csv` e na estrutura de testes do projeto, os módulos críticos pedidos no checklist da revisão ficam rastreados pelas seguintes classes e suítes:
+
+| Módulo crítico | Classes mapeadas no JaCoCo | Suítes de teste dedicadas no repositório | Evidência de medição |
+|---|---|---|---|
+| Autenticação | `AuthController`, `UsuarioService` | `AuthControllerTest`, `UsuarioServiceTest`, `GeminiAutenticacaoControleAcessoTests` | [jacoco.csv](./jacoco/jacoco.csv) |
+| Controle de acesso | `SecurityConfig`, `AuthController` | `AuthControllerTest`, `CasosAbusoTests`, `GeminiAutenticacaoControleAcessoTests` | [jacoco.csv](./jacoco/jacoco.csv) |
+| Auditoria | `AuditoriaService`, `AdminAuditoriaController` | `AdminAuditoriaControllerTest`, `GeminiWebAuditoriaTests`, `ArtificioJpaTests` | [jacoco.csv](./jacoco/jacoco.csv) |
+| Upload | `ValidadorUploadImagem`, `ImagemController` | `ImagemControllerTest`, `ImagemServiceTest`, `GeminiUploadSegurancaMidiaTests` | [jacoco.csv](./jacoco/jacoco.csv) |
+
+> **Nota sobre as métricas do JaCoCo:** Os percentuais presentes no `jacoco.csv` desta pasta
+> decorrem da execução seletiva das três classes de demonstração dos frameworks
+> (`ComissaoServiceTest`, `AuthControllerTest`, `ArtificioJpaTests`), conforme comando registrado
+> na seção de execução Maven. Para a cobertura completa de auditoria, upload e casos de abuso,
+> as suítes dedicadas acima são executadas na suíte integral de testes (`mvn test`).
+
 ## OWASP ZAP
 
 O ZAP não foi reinstalado nem executado novamente nesta rodada. As duas
@@ -63,11 +80,15 @@ Etapa 5:
 
 ## Ferramentas não configuradas
 
-SpotBugs, OWASP Dependency-Check, Semgrep, Gitleaks, Snyk, SonarQube, Burp
-Suite, Wazuh, Suricata e Falco não possuem configuração ou evidência anterior
-no repositório. Portanto, não foram apresentados como resultados executados.
-Eles podem ser adicionados em uma etapa posterior, preferencialmente no
-pipeline DevSecOps, com seus próprios comandos, versões e arquivos de saída.
+Semgrep, Gitleaks, Snyk, SonarQube, Burp Suite, Wazuh, Suricata e Falco não
+possuem configuração ou evidência anterior no repositório. Portanto, não foram
+apresentados como resultados executados.
+
+SpotBugs e OWASP Dependency-Check não foram executados nesta etapa de
+frameworks, mas possuem execução registrada na Etapa 7:
+
+- [spotbugs-execucao.txt](../etapa-7-devsecops/spotbugs-execucao.txt);
+- [dependency-check-execucao.txt](../etapa-7-devsecops/dependency-check-execucao.txt).
 
 ## Conclusão
 

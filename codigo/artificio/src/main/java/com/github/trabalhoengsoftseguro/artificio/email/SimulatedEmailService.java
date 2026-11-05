@@ -19,18 +19,10 @@ public class SimulatedEmailService implements EmailService {
     @Override
     public void enviarEmailConfirmacao(String destinatario, String nomeUsuario, String linkAtivacao) {
         String separador = "=================================================================================";
-        String banner = """
-                
-                %s
-                📧 [SIMULADOR DE E-MAIL - ARTIFÍCIO]
-                Para: %s <%s>
-                Assunto: Confirme seu cadastro na plataforma Artifício
-                
-                Olá, %s! Para confirmar a titularidade do seu e-mail e ativar sua conta,
-                clique ou acesse o link abaixo:
-                👉 Link de Ativação: %s
-                %s
-                """.formatted(separador, nomeUsuario, destinatario, nomeUsuario, linkAtivacao, separador);
+        String banner = String.format(
+                "%n%s%n📧 [SIMULADOR DE E-MAIL - ARTIFÍCIO]%nPara: %s <%s>%nAssunto: Confirme seu cadastro na plataforma Artifício%n%nOlá, %s! Para confirmar a titularidade do seu e-mail e ativar sua conta,%nclique ou acesse o link abaixo:%n👉 Link de Ativação: %s%n%s%n",
+                separador, nomeUsuario, destinatario, nomeUsuario, linkAtivacao, separador
+        );
 
         // Imprime diretamente na saída padrão para visibilidade imediata no terminal de execução
         System.out.println(banner);

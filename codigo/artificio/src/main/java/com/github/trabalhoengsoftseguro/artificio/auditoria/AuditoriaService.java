@@ -7,6 +7,7 @@ import com.github.trabalhoengsoftseguro.artificio.comissao.PedidoComissao;
 import com.github.trabalhoengsoftseguro.artificio.usuario.Usuario;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.DefaultRevisionEntity;
@@ -164,7 +165,7 @@ public class AuditoriaService {
                         resumo
                 ));
             }
-        } catch (Exception ignored) {
+        } catch (PersistenceException | IllegalStateException | IllegalArgumentException ignored) {
             // Tratamento defensivo caso o banco ainda não possua revisões da entidade
         }
     }
