@@ -69,6 +69,10 @@ Os arquivos HTML abaixo podem ser abertos em uma nova aba:
 
 ### Comandos para liberar e executar o ZAP no Fedora
 
+Para o procedimento completo de instalação do Docker, preparação da aplicação e
+execução do scan, consulte o
+[Tutorial de instalação e execução do OWASP ZAP no Fedora](../tutorial%20install%20oawsp%20zap.md).
+
 O comando abaixo foi tentado automaticamente, mas o Fedora exigiu a senha do
 administrador em um terminal interativo. Execute os comandos a seguir no terminal
 local:
