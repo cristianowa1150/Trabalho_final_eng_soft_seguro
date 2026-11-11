@@ -7,6 +7,11 @@
 
 Trabalho final desenvolvido para a disciplina de **Engenharia de Software Seguro**, abordando conceitos, práticas e estratégias relacionadas ao desenvolvimento seguro de software.
 
+## Vídeo Final no YouTube
+
+[![Vídeo Final_Apresentação_do_Grupo](https://youtube.com)](https://youtube.com)
+
+
 ## 🌐 Navegação Online (GitHub Pages)
 
 Você pode navegar por todos os documentos, relatórios e páginas interativas do repositório através do portal do **GitHub Pages**:
