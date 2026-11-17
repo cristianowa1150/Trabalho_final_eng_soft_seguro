@@ -389,28 +389,3 @@ Obrigado pela atenção!
 
 ---
 
-# 15. Checklist de edição antes de exportar o vídeo
-
-- [ ] Inserir o slide de abertura com o nome do projeto e os integrantes.
-- [ ] Exibir o diagrama de casos de uso durante a explicação dos atores.
-- [ ] Exibir o questionário, o diagrama de contexto, o fluxo de dados e a análise STRIDE.
-- [ ] Mostrar o caso de abuso CA22 e o risco R28.
-- [ ] Mostrar a configuração do Spring Security e os testes de autorização.
-- [ ] Exibir os relatórios do OWASP ZAP e a cobertura de código.
-- [ ] Comparar visualmente os ambientes de desenvolvimento e produção.
-- [ ] Demonstrar a restrição da console H2 em produção.
-- [ ] Demonstrar a validação de arquivos.
-- [ ] Demonstrar o bloqueio da autocontratação.
-- [ ] Exibir a organização dos testes e o total de 277 testes.
-- [ ] Remover pausas, conversas paralelas, erros de fala e trechos marcados para corte.
-- [ ] Conferir os números e os nomes técnicos diretamente nos relatórios e no código antes da gravação final.
-
----
-
-## Observações de conferência
-
-1. **Formatos de imagem:** a transcrição menciona PNG, JPG, GIF, WebP, SVG e “PMG”. O roteiro normaliza a repetição aparente de PNG, mas é necessário conferir no código se o formato pretendido é PNG ou outro.
-2. **Código HTTP:** a transcrição alterna entre referências a HTTP 403 e HTTP 404. O roteiro mantém 403 para a tentativa de acesso não autorizado à área administrativa e 404 para recursos internos indisponíveis em produção, conforme as demonstrações descritas.
-3. **Ferramentas e siglas:** conferir a grafia dos nomes nos slides e relatórios, especialmente OWASP ZAP, JUnit 5, MockMvc, DAST, SAST e SCA.
-4. **Resultados:** os números 64 perguntas, 33 ameaças, 27 casos de abuso, 42,4% de cobertura e 277 testes foram mantidos conforme a transcrição. Confirmar os valores nos artefatos do projeto antes da apresentação.
-5. **Duração:** a reunião transcrita tem aproximadamente 41 minutos. O roteiro organiza e limpa as falas, mas a duração final dependerá do ritmo da narração e do tempo das demonstrações.
