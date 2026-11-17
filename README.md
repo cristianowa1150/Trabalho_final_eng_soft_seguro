@@ -17,6 +17,7 @@ Trabalho final desenvolvido para a disciplina de **Engenharia de Software Seguro
 
 - [Roteiro da apresentação](roteiros/roteiro_apresentacao_artificio.md)
 - [Vídeo final da apresentação](https://www.youtube.com/watch?v=hQnJ1ffUymM)
+- [Versão PDF do artigo](docs/ES_SEGURO_UFU_2026___GRUPO_5.pdf)
 
 ## 🌐 Navegação Online (GitHub Pages)
 
