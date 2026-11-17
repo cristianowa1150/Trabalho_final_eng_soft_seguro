@@ -13,6 +13,11 @@ Trabalho final desenvolvido para a disciplina de **Engenharia de Software Seguro
   <img src="assets/artificio.jpg" alt="Artifício" width="100%">
 </a>
 
+## Materiais da apresentação
+
+- [Roteiro da apresentação](roteiros/roteiro_apresentacao_artificio.md)
+- [Vídeo final da apresentação](https://www.youtube.com/watch?v=hQnJ1ffUymM)
+
 ## 🌐 Navegação Online (GitHub Pages)
 
 Você pode navegar por todos os documentos, relatórios e páginas interativas do repositório através do portal do **GitHub Pages**:
