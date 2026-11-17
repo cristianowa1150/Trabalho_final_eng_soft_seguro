@@ -9,7 +9,9 @@ Trabalho final desenvolvido para a disciplina de **Engenharia de Software Seguro
 
 ## Vídeo Final no YouTube
 
-[![Artifício](assets/artificio.jpg)](https://www.youtube.com/watch?v=hQnJ1ffUymM)
+<a href="https://www.youtube.com/watch?v=hQnJ1ffUymM" target="_blank" rel="noopener noreferrer">
+  <img src="assets/artificio.jpg" alt="Artifício" width="100%">
+</a>
 
 ## 🌐 Navegação Online (GitHub Pages)
 
