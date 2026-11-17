@@ -1067,7 +1067,7 @@ Serão considerados:
 
 - [🟢] 30. Objetivo
 - [🟢] Criar descrição textual ou diagrama de um pipeline DevSecOps
-- [x] Criar roteiro do vídeo/apresentação final
+- [🟢] Criar roteiro do vídeo/apresentação final
 - [🟢] Incluir planejamento e análise de ameaças
 - [🟢] Incluir requisitos e decisões de arquitetura
 - [🟢] Incluir implementação segura
@@ -1078,7 +1078,7 @@ Serão considerados:
 - [🟢] Incluir monitoramento e resposta
 - [🟢] Definir pelo menos três condições que impediriam a continuidade do pipeline
 - [🟢] Criar `roteiros/etapa-7-devsecops-e-video-final.md`
-- [x] Preparar roteiro da apresentação final de 10 a 15 minutos
+- [🟢] Preparar roteiro da apresentação final de 10 a 15 minutos
 - [🟢] 33. Critérios de avaliação da Etapa 7
 
 
@@ -1171,33 +1171,33 @@ Serão considerados:
 
 ## 📄 Entregáveis
 
-- [ ] Artigo (template SBC ou IEEE)
-- [ ] Etapa 1 concluída
-- [ ] Etapa 2 concluída
-- [ ] Etapa 3 concluída
-- [ ] Etapa 4 concluída
-- [ ] Etapa 5 concluída
-- [x] Etapa 6 concluída
-- [ ] Etapa 7 concluída
-- [ ] Roteiros revisados
-- [ ] Diagramas revisados
-- [ ] Evidências organizadas
-- [ ] Apresentação final preparada
-- [ ] Vídeo final, caso seja produzido
+- [🟢] Artigo (template SBC ou IEEE)
+- [🟢] Etapa 1 concluída
+- [🟢] Etapa 2 concluída
+- [🟢] Etapa 3 concluída
+- [🟢] Etapa 4 concluída
+- [🟢] Etapa 5 concluída
+- [🟢] Etapa 6 concluída
+- [🟢] Etapa 7 concluída
+- [🟢] Roteiros revisados
+- [🟢] Diagramas revisados
+- [🟢] Evidências organizadas
+- [🟢] Apresentação final preparada
+- [🟢] Vídeo final, caso seja produzido
 
 ## 🔀 GitHub
 
-- [ ] Commits próprios de todos os integrantes
-- [ ] Arquivos versionados no GitHub
-- [ ] Diagramas versionados no GitHub
-- [ ] Evidências versionadas no GitHub
-- [ ] Roteiros versionados no GitHub
-- [ ] Commits associados corretamente às contas dos integrantes
-- [ ] Links internos testados
-- [ ] Imagens testadas
-- [ ] Organização das pastas revisada
-- [ ] `README.md` revisado
-- [ ] Repositório acessível ao professor
+- [🟢] Commits próprios de todos os integrantes
+- [🟢] Arquivos versionados no GitHub
+- [🟢] Diagramas versionados no GitHub
+- [🟢] Evidências versionadas no GitHub
+- [🟢] Roteiros versionados no GitHub
+- [🟢] Commits associados corretamente às contas dos integrantes
+- [🟢] Links internos testados
+- [🟢] Imagens testadas
+- [🟢] Organização das pastas revisada
+- [🟢] `README.md` revisado
+- [🟢] Repositório acessível ao professor
 
 ## 🟩 Status
 
@@ -1211,13 +1211,13 @@ Serão considerados:
 
 Antes da entrega, o grupo deverá verificar se o repositório contém:
 
-* \[ ] Artigo (template SBC ou IEEE) relatando o trabalho desenvolvido, incluindo as etapas abaixo;
-* \[ ] Etapa 1 — ameaças STRIDE e casos de abuso;
-* \[ ] Etapa 2 — análise, priorização e tratamento dos riscos;
-* \[ ] Etapa 3 — três requisitos, três vulnerabilidades, um diagrama e três decisões;
-* \[ ] Etapa 4 — duas práticas de código seguro com testes;
-* \[ ] Etapa 5 — uma verificação com até três achados analisados;
-* \[x] Etapa 6 — roteiro com três regras de detecção;
-* \[ ] Etapa 7 — pipeline, roteiro e apresentação final; a gravação extra de um vídeo pode ser considerado um "plus";
-* \[ ] commits próprios de todos os integrantes;
-* \[ ] arquivos, diagramas e evidências versionados no GitHub.
+* \[🟢] Artigo (template SBC ou IEEE) relatando o trabalho desenvolvido, incluindo as etapas abaixo;
+* \[🟢] Etapa 1 — ameaças STRIDE e casos de abuso;
+* \[🟢] Etapa 2 — análise, priorização e tratamento dos riscos;
+* \[🟢] Etapa 3 — três requisitos, três vulnerabilidades, um diagrama e três decisões;
+* \[🟢] Etapa 4 — duas práticas de código seguro com testes;
+* \[🟢] Etapa 5 — uma verificação com até três achados analisados;
+* \[🟢] Etapa 6 — roteiro com três regras de detecção;
+* \[🟢] Etapa 7 — pipeline, roteiro e apresentação final; a gravação extra de um vídeo pode ser considerado um "plus";
+* \[🟢] commits próprios de todos os integrantes;
+* \[🟢] arquivos, diagramas e evidências versionados no GitHub.
